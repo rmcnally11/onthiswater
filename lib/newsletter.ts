@@ -161,7 +161,7 @@ async function computeNewsletter(weekId: string): Promise<NewsletterIssue> {
   };
 }
 
-const cachedNewsletter = unstable_cache(computeNewsletter, ["field-letter-v2"], {
+const cachedNewsletter = unstable_cache(computeNewsletter, ["field-letter-v3"], {
   revalidate: 60 * 60 * 24 * 7,
 });
 

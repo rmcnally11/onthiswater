@@ -576,9 +576,9 @@ export function buildBriefing(
     );
   }
   if (conditions.hab?.hot) {
-    warnings.push(
-      `${conditions.hab.source} K. brevis ${conditions.hab.level}${conditions.hab.when ? ` · ${conditions.hab.when}` : ""}. ${conditions.hab.where}. Patchy — not a score. Check the cite before you wade.`,
-    );
+    const habLine = `${conditions.hab.source} K. brevis ${conditions.hab.level}${conditions.hab.when ? ` · ${conditions.hab.when}` : ""}. ${conditions.hab.where} Patchy — not a score. Check the cite before you wade.`;
+    warnings.push(habLine);
+    why.unshift(habLine);
   }
   if (conditions.sargassum?.elevated) {
     warnings.push(`${conditions.sargassum.note} Not a GPS weed pin. Treat the neighborhood as weedy until you see the water.`);

@@ -8,6 +8,7 @@ import {
   louisianaFlounderClosed,
   seFloridaSnookClosed,
 } from "@/lib/data/species";
+import { texasKareniaClosureNote, texasKareniaShellfishClosed } from "@/lib/data/texas-hab";
 
 export { theaterLabel };
 
@@ -459,6 +460,9 @@ export type ClosureNote = { title: string; body: string; theaters: TheaterId[] }
 
 export function closuresThisMonth(month: number, date = new Date()): ClosureNote[] {
   const notes: ClosureNote[] = [];
+  if (texasKareniaShellfishClosed(date)) {
+    notes.push(texasKareniaClosureNote());
+  }
   if (flounderClosed(date, "America/Chicago")) {
     notes.push({
       title: "Texas flounder",
