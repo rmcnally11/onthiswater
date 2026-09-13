@@ -70,6 +70,15 @@ export async function GET(request: Request) {
             .slice(0, 4)
             .map((s) => ({ name: s.species.commonName, score: s.score })) ?? [],
         why: d.briefing?.why.slice(0, 2) ?? [],
+        hab: d.briefing?.conditions.hab
+          ? {
+              hot: d.briefing.conditions.hab.hot,
+              level: d.briefing.conditions.hab.level,
+              where: d.briefing.conditions.hab.where,
+              when: d.briefing.conditions.hab.when,
+              source: d.briefing.conditions.hab.source,
+            }
+          : null,
         seasonal: d.seasonal,
         error: d.error,
       })),

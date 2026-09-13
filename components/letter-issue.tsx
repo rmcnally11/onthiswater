@@ -150,7 +150,19 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
           ))}
         </div>
       )}
-      {briefing?.why.slice(0, 2).map((line) => (
+      {c?.hab?.hot ? (
+        <p className="mt-3 text-sm text-amber-900">
+          <span className="text-[color:var(--copper)]">Red tide. </span>
+          {c.hab.level}
+          {c.hab.when ? ` · ${c.hab.when}` : ""}. {c.hab.where} Not a bite.
+        </p>
+      ) : null}
+      {(c?.hab?.hot
+        ? (briefing?.why.filter((line) => !/K\. brevis|red tide|Karenia/i.test(line)) ?? [])
+        : (briefing?.why ?? [])
+      )
+        .slice(0, 2)
+        .map((line) => (
         <p key={line} className="mt-3 text-sm text-[color:var(--cream)]/60">
           — {line}
         </p>

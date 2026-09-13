@@ -1,11 +1,19 @@
 import { USER_AGENT } from "@/lib/brand";
 import type { Area, HabNow } from "@/lib/types";
+import {
+  NCCOS_GULF_FORECAST,
+  TPWD_RED_TIDE_STATUS,
+  citedTexasHab,
+  habFromTpwdBlock,
+  parseTpwdLatestBlock,
+  texasHabBulletinWindow,
+} from "@/lib/data/texas-hab";
 
 const FWC_QUERY =
   "https://gis.myfwc.com/mapping/rest/services/Projects_FWC/HAB_forDEP_Dashboard/MapServer/0/query";
 const FWC_STATUS = "https://myfwc.com/research/redtide/statewide/";
-const TPWD_STATUS = "https://tpwd.texas.gov/landwater/water/environconcerns/hab/redtide/status.phtml";
-const NCCOS = "https://coastalscience.noaa.gov/science-areas/habs/hab-forecasts/gulf-coast/";
+const TPWD_STATUS = TPWD_RED_TIDE_STATUS;
+const NCCOS = NCCOS_GULF_FORECAST;
 
 const RANK: Array<{ match: string; rank: number; label: string }> = [
   { match: "high", rank: 4, label: "high" },
@@ -102,28 +110,27 @@ function fromFwc(area: Area, rows: FwcRow[]): HabNow {
   };
 }
 
-async function fromTpwd(): Promise<HabNow> {
-  const res = await fetch(TPWD_STATUS, {
-    headers: { "User-Agent": USER_AGENT, Accept: "text/html" },
-    next: { revalidate: 21600 },
-    signal: AbortSignal.timeout(7000),
-  });
-  if (!res.ok) throw new Error(`TPWD HAB ${res.status}`);
-  const html = await res.text();
-  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-  const yearHits = [...text.matchAll(/\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:\s*[–-]\s*\d{1,2})?,?\s+(20\d{2})/gi)];
-  const latestYear = yearHits.length ? Number(yearHits[yearHits.length - 1][2]) : 0;
-  const recent = latestYear >= new Date().getUTCFullYear();
-  return {
-    hot: recent,
-    level: recent ? "posted update" : "no current post",
-    where: recent
-      ? "TPWD status page has a current-year update — read the cite. Blooms are patchy."
-      : "TPWD posts only when a bloom is confirmed. No current-year update on the status page.",
-    when: yearHits.length ? yearHits[yearHits.length - 1][0] : null,
-    source: "TPWD",
-    href: TPWD_STATUS,
-  };
+async function fromTpwd(area: Area): Promise<HabNow> {
+  const nowYear = new Date().getUTCFullYear();
+  try {
+    const res = await fetch(TPWD_STATUS, {
+      headers: { "User-Agent": USER_AGENT, Accept: "text/html" },
+      next: { revalidate: 21600 },
+      signal: AbortSignal.timeout(7000),
+    });
+    if (!res.ok) throw new Error(`TPWD HAB ${res.status}`);
+    const html = await res.text();
+    const block = parseTpwdLatestBlock(html);
+    if (!block) throw new Error("TPWD HAB: no status heading");
+    return habFromTpwdBlock(area.id, block, nowYear);
+  } catch {
+    // Live page failed. Do not invent water — only the cited September 2026 bulletin.
+    if (texasHabBulletinWindow(new Date())) {
+      const cited = citedTexasHab(area.id);
+      if (cited) return cited;
+    }
+    throw new Error("TPWD HAB quiet");
+  }
 }
 
 export function habCovers(area: Area) {
@@ -133,7 +140,7 @@ export function habCovers(area: Area) {
 export async function fetchHab(area: Area): Promise<HabNow | null> {
   try {
     if (area.theater === "florida") return fromFwc(area, await fwcSamples());
-    if (area.theater === "texas") return fromTpwd();
+    if (area.theater === "texas") return fromTpwd(area);
     if (area.theater === "louisiana") {
       return {
         hot: false,

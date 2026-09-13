@@ -71,6 +71,7 @@ Not a nightly batch. Each Brief / Calendar / Map load hits live gauges, then cac
 | Open-Meteo (wind, precip, weather code; always fetched in parallel so NOAA wind never blanks the sky) | ~10 minutes |
 | USGS IV discharge (`00060`) on Texas / Louisiana river mouths | ~15 minutes |
 | USGS GNIS / NOAA ENC / FKNMS polygons | ~1 hour |
+| FWC / TPWD red tide (K. brevis) | ~6 hours |
 | Moon phase | computed from the clock, every load |
 | Calendar days past the wind forecast | tide + moon + season only (labeled astronomical) |
 

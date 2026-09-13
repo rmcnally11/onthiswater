@@ -59,6 +59,9 @@ function extraBit(briefing: Briefing) {
     /small craft|gale|tropical|hurricane|special marine|storm warning/i.test(a.event),
   );
   if (alert) return ` NWS ${alert.event}.`;
+  if (briefing.conditions.hab?.hot) {
+    return ` ${briefing.conditions.hab.source} red tide ${briefing.conditions.hab.level}.`;
+  }
   const river = briefing.conditions.river;
   if (river?.high) {
     return ` ${river.name.split(",")[0]} ${Math.round(river.cfs).toLocaleString()} cfs — stain is the story.`;
