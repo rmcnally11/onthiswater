@@ -3,7 +3,7 @@ import type { ActivityId, Area, CalendarDay } from "@/lib/types";
 import { clockParts, ymdInZone } from "@/lib/time";
 import { moonGlyph, moonPhase, modeledHourlyTide } from "@/lib/moon";
 import { SPECIES } from "@/lib/data/species";
-import { getArea } from "@/lib/data/areas";
+import { getArea, usesModeledOcean } from "@/lib/data/areas";
 import { fetchHiLo } from "@/lib/noaa";
 import { fetchNwsDayWinds } from "@/lib/nws";
 import { fetchOpenMeteo } from "@/lib/openmeteo";
@@ -124,7 +124,7 @@ async function loadCalendarInputs(area: Area, start: Date, dayCount: number): Pr
     area.noaaStation
       ? withBudget(fetchHiLo(area.noaaStation, new Date(start.getTime() - 86400000), dayCount + 2), 2800, "NOAA hi/lo")
       : Promise.resolve([]),
-    area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles"
+    usesModeledOcean(area)
       ? withBudget(fetchOpenMeteo(area.lat, area.lon), 2500, "Open-Meteo")
       : withBudget(fetchNwsDayWinds(area.lat, area.lon), 2800, "NWS"),
   ]);

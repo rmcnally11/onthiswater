@@ -528,6 +528,142 @@ export const AREAS: Area[] = [
     leadSpecies: ["gt", "tuna"],
     offshoreLead: ["tuna", "mahi", "wahoo", "blue-marlin"],
   },
+  {
+    id: "hatteras",
+    theater: "north-carolina",
+    name: "Hatteras / Oregon Inlet",
+    shortName: "Hatteras",
+    lat: 35.219,
+    lon: -75.69,
+    timezone: "America/New_York",
+    noaaStation: "8654467",
+    noaaTempStation: "8654467",
+    summary:
+      "Outer Banks. Oregon Inlet to Hatteras Inlet. The Stream is a short run when it lays down — tuna, mahi, marlin, winter bluefin. NOAA 8654467 USCG Station Hatteras is the clock. Wind and the Stream decide more than a marsh table.",
+    tideCharacter: "pass-current",
+    meanRangeFt: 3.2,
+    leadSpecies: ["redfish", "speckled-trout", "flounder", "cobia"],
+    offshoreLead: ["tuna", "mahi", "blue-marlin", "wahoo", "white-marlin"],
+  },
+  {
+    id: "morehead-city",
+    theater: "north-carolina",
+    name: "Morehead City / Beaufort Inlet",
+    shortName: "Morehead",
+    lat: 34.723,
+    lon: -76.696,
+    timezone: "America/New_York",
+    noaaStation: "8656483",
+    noaaTempStation: "8656483",
+    summary:
+      "Crystal Coast. Beaufort Inlet is a short bluewater run — Big Rock tournament water. Reds, trout, and flounder inside; marlin and tuna outside. NOAA 8656483 Duke Marine Lab is the clock. NCDMF, not FWC.",
+    tideCharacter: "pass-current",
+    meanRangeFt: 3.5,
+    leadSpecies: ["redfish", "speckled-trout", "flounder", "cobia"],
+    offshoreLead: ["blue-marlin", "tuna", "mahi", "wahoo", "white-marlin"],
+  },
+  {
+    id: "wilmington",
+    theater: "north-carolina",
+    name: "Wilmington / Wrightsville",
+    shortName: "Wilmington",
+    lat: 34.213,
+    lon: -77.797,
+    timezone: "America/New_York",
+    noaaStation: "8658163",
+    noaaTempStation: "8658163",
+    summary:
+      "Cape Fear. Heavier inshore — reds, trout, flounder — then a longer run to Frying Pan and the Stream. NOAA 8658163 Wrightsville Beach is the clock. Do not fish it like Hatteras. NCDMF.",
+    tideCharacter: "marsh-current",
+    meanRangeFt: 3.8,
+    leadSpecies: ["redfish", "speckled-trout", "flounder", "black-drum"],
+    offshoreLead: ["tuna", "mahi", "king-mackerel", "wahoo", "blue-marlin"],
+  },
+  {
+    id: "charleston",
+    theater: "south-carolina",
+    name: "Charleston / Lowcountry",
+    shortName: "Charleston",
+    lat: 32.781,
+    lon: -79.925,
+    timezone: "America/New_York",
+    noaaStation: "8665530",
+    noaaTempStation: "8665530",
+    summary:
+      "Lowcountry capital. Marsh reds, trout, flounder, harbor bulls. NOAA 8665530 Cooper River Entrance is the clock. SCDNR, not NCDMF. The harbor is current water; the creeks want a moving tide.",
+    tideCharacter: "marsh-current",
+    meanRangeFt: 5.3,
+    leadSpecies: ["redfish", "speckled-trout", "flounder", "black-drum"],
+    offshoreLead: ["tuna", "mahi", "king-mackerel", "wahoo", "blue-marlin"],
+  },
+  {
+    id: "hilton-head",
+    theater: "south-carolina",
+    name: "Hilton Head / Port Royal",
+    shortName: "Hilton Head",
+    lat: 32.216,
+    lon: -80.753,
+    timezone: "America/New_York",
+    noaaStation: "8670870",
+    noaaTempStation: "8670870",
+    summary:
+      "Beaufort and Port Royal Sound. Same Lowcountry fish as Charleston — more resort, bigger tide. Clock is Fort Pulaski 8670870, the nearest live NOAA well. Not Charleston Harbor. SCDNR.",
+    tideCharacter: "marsh-current",
+    meanRangeFt: 7.0,
+    leadSpecies: ["redfish", "speckled-trout", "flounder", "black-drum"],
+    offshoreLead: ["king-mackerel", "cobia", "mahi", "tuna"],
+  },
+  {
+    id: "myrtle-beach",
+    theater: "south-carolina",
+    name: "Myrtle Beach / Grand Strand",
+    shortName: "Myrtle",
+    lat: 33.655,
+    lon: -78.918,
+    timezone: "America/New_York",
+    noaaStation: "8661070",
+    noaaTempStation: "8661070",
+    summary:
+      "Grand Strand. Murrells Inlet, Georgetown, Winyah Bay. Surf, inlet, and river-marsh. NOAA 8661070 Springmaid Pier is the clock. Do not fish it like Charleston Harbor. SCDNR.",
+    tideCharacter: "marsh-current",
+    meanRangeFt: 5.1,
+    leadSpecies: ["redfish", "speckled-trout", "flounder", "pompano"],
+    offshoreLead: ["king-mackerel", "tuna", "mahi", "wahoo"],
+  },
+  {
+    id: "horta",
+    theater: "azores",
+    name: "Horta / Faial",
+    shortName: "Horta",
+    lat: 38.534,
+    lon: -28.628,
+    timezone: "Atlantic/Azores",
+    noaaStation: null,
+    summary:
+      "Faial. World blue-marlin hub. English-facing charter fleet, Jul–Oct peak. Princess Alice is the named bank. Tide is a modeled Atlantic clock — there is no NOAA gauge. Not a Carolina marsh.",
+    tideCharacter: "blue-water",
+    meanRangeFt: 4.4,
+    modeledTideOffsetHours: 0.2,
+    leadSpecies: ["blue-marlin", "tuna", "mahi", "wahoo"],
+    offshoreLead: ["blue-marlin", "tuna", "mahi", "wahoo", "swordfish", "white-marlin"],
+  },
+  {
+    id: "sao-miguel",
+    theater: "azores",
+    name: "São Miguel / Ponta Delgada",
+    shortName: "S. Miguel",
+    lat: 37.741,
+    lon: -25.668,
+    timezone: "Atlantic/Azores",
+    noaaStation: null,
+    summary:
+      "Ponta Delgada. Early-season secondary Azores hub — the other island door before Horta’s peak. Tuna and a billfish on the south drop. Modeled tide. Not Faial. Not a bonefish morning.",
+    tideCharacter: "blue-water",
+    meanRangeFt: 4.2,
+    modeledTideOffsetHours: 0.05,
+    leadSpecies: ["tuna", "blue-marlin", "mahi", "wahoo"],
+    offshoreLead: ["tuna", "blue-marlin", "mahi", "wahoo", "swordfish"],
+  },
 ];
 
 export const AREA_BY_ID = Object.fromEntries(AREAS.map((a) => [a.id, a]));
@@ -541,6 +677,8 @@ export function waterChipLabel(area: Area) {
   if (area.id === "lower-laguna") return "Lower Laguna";
   if (area.id === "grand-bahama") return "Grand Bahama";
   if (area.id === "isla-mujeres") return "Isla Mujeres";
+  if (area.id === "hilton-head") return "Hilton Head";
+  if (area.id === "sao-miguel") return "São Miguel";
   return area.shortName;
 }
 
@@ -572,5 +710,10 @@ export function leadsFor(area: Area, activity: ActivityId | "all"): SpeciesId[] 
 }
 
 export function usesModeledOcean(area: Area) {
-  return area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles";
+  return (
+    area.theater === "bahamas" ||
+    area.theater === "mexico" ||
+    area.theater === "seychelles" ||
+    area.theater === "azores"
+  );
 }

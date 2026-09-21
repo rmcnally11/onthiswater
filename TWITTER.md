@@ -30,21 +30,29 @@ If `/api/tweets` fails: do not post. Tell the operator the dispatch did not set.
 
 If a desk has `"skip": true`: skip that desk. Do not invent a score or a picture.
 
-### Morning — one post per theater
+### Morning — one post per letter water
 
-Post seven separate morning tweets (not one dump), in this order, using `mornings[]` from the JSON:
+Post one morning tweet per item in `mornings[]` (not one dump), in that exact JSON order:
 
-1. Texas desk — Galveston
-2. Louisiana desk — Venice
-3. Florida desk — Islamorada
-4. Bahamas desk — Andros
-5. Mexico desk — Ascension
-6. Puerto Rico desk — San Juan
-7. Seychelles desk — Alphonse
+1. Texas water — Galveston
+2. Louisiana water — Venice
+3. Florida water — Islamorada
+4. Bahamas water — Andros
+5. Mexico water — Ascension
+6. Puerto Rico water — San Juan
+7. Seychelles water — Alphonse
+8. North Carolina water — Hatteras
+9. North Carolina water — Morehead City
+10. North Carolina water — Wilmington
+11. South Carolina water — Charleston
+12. South Carolina water — Hilton Head
+13. South Carolina water — Myrtle Beach
+14. Azores water — Horta
+15. Azores water — São Miguel
 
 For each desk:
 
-- Tweet text = JSON `text` **verbatim**. That line is already the dispatch — fishing weather, location, wind, sky — and it already ends with the live desk URL (`/?area=…&theater=…`) so readers open the site, not the screenshot. Do not rewrite it. Do not add hashtags, emoji, or “thread 1/7.” Do not swap in the `image` URL.
+- Tweet text = JSON `text` **verbatim**. That line is already the dispatch — fishing weather, location, wind, sky — and it already ends with the live desk URL (`/?area=…&theater=…`) so readers open the site, not the screenshot. Do not rewrite it. Do not add hashtags, emoji, or “thread 1/15.” Do not swap in the `image` URL.
 - Attach the screenshot of JSON `image` (the `/card` page). That URL is for the picture only.
 - Alt text = JSON `alt`.
 - The only link is the one already in `text`. Same destination as JSON `url` / `href`.
@@ -53,7 +61,7 @@ Cadence: once each morning after the live brief has today’s wind and sky. Do n
 
 ### Calendar — one post per theater
 
-Post seven calendar tweets from `calendars[]`, same desk order.
+Post one calendar tweet per item in `calendars[]`, same water order.
 
 - Tweet text = JSON `text` verbatim. Last line is the live calendar (`/calendar?area=…&theater=…`).
 - Attach the screenshot of JSON `image` (`/card/calendar` — the month grid, moon cells, YOLO / rain labels from the site). That URL is for the picture only.

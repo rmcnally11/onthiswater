@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Waterline } from "@/components/viz/waterline";
 import { GITHUB_REPO, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
+import { DESKS, deskChoiceLabel } from "@/lib/desks";
 
 export const metadata: Metadata = {
   title: "For Saturday and Twitter bots",
@@ -10,15 +11,10 @@ export const metadata: Metadata = {
 
 const ORIGIN = siteOrigin();
 
-const DESK_HREFS = [
-  ["Texas water — Galveston", `${ORIGIN}/?area=galveston&theater=texas`],
-  ["Louisiana water — Venice", `${ORIGIN}/?area=venice&theater=louisiana`],
-  ["Florida water — Islamorada", `${ORIGIN}/?area=islamorada&theater=florida`],
-  ["Bahamas water — Andros", `${ORIGIN}/?area=andros&theater=bahamas`],
-  ["Mexico water — Ascension", `${ORIGIN}/?area=ascension&theater=mexico`],
-  ["Puerto Rico water — San Juan", `${ORIGIN}/?area=san-juan&theater=puerto-rico`],
-  ["Seychelles water — Alphonse", `${ORIGIN}/?area=alphonse&theater=seychelles`],
-];
+const DESK_HREFS = DESKS.map((desk) => [
+  `${desk.desk} — ${deskChoiceLabel(desk).split(" — ")[1]}`,
+  `${ORIGIN}/?area=${desk.areaId}&theater=${desk.theater}`,
+]);
 
 export default function ForTheLetterPage() {
   return (
@@ -128,14 +124,14 @@ export default function ForTheLetterPage() {
       <section className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5 text-sm text-[color:var(--cream)]/80">
         <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Twitter / X</p>
         <p className="mt-3">
-          Morning: seven posts, one theater each, text from <code>/api/tweets</code> mornings[]
+          Morning: one post per letter water, text from <code>/api/tweets</code> mornings[]
           verbatim — the last line is the live desk so a reader of the tweet lands on this site
           (same as JSON <code>url</code> / <code>href</code>). Picture = screenshot of{" "}
           <a className="underline" href="/card?area=galveston&amp;theater=texas">
             /card
           </a>{" "}
           (score ring, wind compass, moon, tide curve, sky) — do not put that card URL in the tweet.
-          Calendar: seven posts from calendars[], last line is the live{" "}
+          Calendar: one post per item in calendars[], last line is the live{" "}
           <a className="underline" href="/calendar?area=galveston&amp;theater=texas">
             /calendar
           </a>

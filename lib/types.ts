@@ -5,7 +5,10 @@ export type TheaterId =
   | "bahamas"
   | "mexico"
   | "puerto-rico"
-  | "seychelles";
+  | "seychelles"
+  | "north-carolina"
+  | "south-carolina"
+  | "azores";
 
 export type ActivityId = "wade" | "skiff" | "kayak" | "fly" | "spin" | "structure" | "offshore";
 

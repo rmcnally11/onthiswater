@@ -208,6 +208,21 @@ export const REGION_ESSAYS: Record<
     dek: "Indian Ocean atolls. Modeled tide. Lodge water on the outer rims.",
     body: "Alphonse and St François are the photograph — giant trevally on the edge, bones and Indo-Pacific permit on the sand. Farquhar is the southern atoll, same fish, farther. Mahé is the public door: reef, park water, blue water, not the St François flat. There is no NOAA gauge. Tide is a labeled model. SFA license. Roosterfish does not live here. Atlantic jack crevalle does not either. You came for a GT.",
   },
+  "north-carolina": {
+    title: "North Carolina — the Stream or the wind",
+    dek: "Outer Banks to Cape Fear. Live NOAA gauges. NCDMF, not FWC.",
+    body: "Hatteras is Oregon Inlet to Hatteras Inlet — a short run to the Stream when it lays down, tuna and mahi in the heat, winter bluefin when they show, a billfish if you booked that boat. Morehead City is the Crystal Coast: Beaufort Inlet, a short bluewater run, Big Rock tournament water. Wilmington is heavier inshore — Wrightsville, Cape Fear, reds and trout and fall flounder — then a longer run to Frying Pan. Clock the inlet you actually left. Do not fish Wilmington like Hatteras. Flounder seasons move; verify NCDMF before you keep a flatfish.",
+  },
+  "south-carolina": {
+    title: "South Carolina — marsh reds, harbor bulls",
+    dek: "Lowcountry and the Grand Strand. Live NOAA gauges. SCDNR, not NCDMF.",
+    body: "Charleston is the Lowcountry capital — marsh reds, trout, flounder, harbor bulls, Cooper River Entrance as the clock. Hilton Head and Port Royal are the same fish under a bigger tide; Fort Pulaski is the nearest live well, not a Charleston Harbor substitute. Myrtle Beach is the Grand Strand: Murrells Inlet, Georgetown, Winyah Bay, Springmaid Pier on the surf. Do not fish Winyah like the harbor. SCDNR bags are not North Carolina numbers.",
+  },
+  azores: {
+    title: "Azores — blue-marlin country",
+    dek: "Mid-Atlantic islands. Modeled tide. Jul–Oct is why Horta exists.",
+    body: "Horta on Faial is the world hub — English-facing charter fleet, Princess Alice the named bank, July through October the photograph. São Miguel / Ponta Delgada is the early-season second door, tuna and a billfish on the south drop before Faial’s peak. Tide is a labeled Atlantic model. There is no NOAA gauge. Blue marlin is catch-and-release culture here. Do not invent a Carolina marsh on Pico.",
+  },
 };
 
 export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
@@ -226,6 +241,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Tarpon in Condado if the winter wind lays down. Snook in the edges. The north drop is a coat and a kite.",
     seychelles:
       "NW monsoon. Atolls fish. GT on the rim, bones inside. This is why the week was booked in June.",
+    "north-carolina":
+      "Winter bluefin if they show off Hatteras. Inshore is a coat and a gut. Flounder is a later story — verify NCDMF.",
+    "south-carolina":
+      "Marsh reds on the warm afternoon. Harbor bulls if the wind lays down. A front is a plan.",
+    azores:
+      "Off-season. The fleet is not here yet. Tuna if a boat is running. Horta’s photograph is July.",
   },
   2: {
     texas:
@@ -242,6 +263,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Same winter pattern. Harbor tarpon. East-island bones if the trade is honest.",
     seychelles:
       "Still the atoll season. Farquhar and Alphonse both eat. Mahé is a reef day.",
+    "north-carolina":
+      "Last of the winter inlets. Bluefin taper. Reds start to show on warm afternoons.",
+    "south-carolina":
+      "Last of the winter ponds. Reds start to show. A front is still a plan.",
+    azores:
+      "Still early. São Miguel is the second door if anyone is running. Horta waits.",
   },
   3: {
     texas:
@@ -258,6 +285,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Tarpon turn on. Permit on the east banks. San Juan still a lagoon, not a flat.",
     seychelles:
       "Peak shoulder. GT and bones both honest. Book this week in October.",
+    "north-carolina":
+      "The coast wakes up. Reds and trout both turn on. Cobia start to talk.",
+    "south-carolina":
+      "Marsh fills. Reds and trout both honest. The harbor starts to feel like itself.",
+    azores:
+      "Shoulder. São Miguel tuna if the water is right. Horta’s peak is still months away.",
   },
   4: {
     texas:
@@ -274,6 +307,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Tarpon month in the harbor. East-island permit. The north coast starts talking mahi.",
     seychelles:
       "Last of the classic atoll window before the SE trades build. GT still the headline.",
+    "north-carolina":
+      "Prime inshore. Reds and trout. Cobia on the beach. The Stream starts to look like spring.",
+    "south-carolina":
+      "Prime marsh. Reds in the creeks, trout on bait. Book Charleston now.",
+    azores:
+      "Early tuna on São Miguel. The Horta fleet starts to think about July.",
   },
   5: {
     texas:
@@ -290,6 +329,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Heat arrives. First-light tarpon. Mahi on the north drop. Snook in the trees at Parguera.",
     seychelles:
       "SE trades start. The atolls get wind. Mahé reef and a GT that still eats.",
+    "north-carolina":
+      "Still excellent early. Cobia. First mahi on the Stream. Heat starts at midday.",
+    "south-carolina":
+      "Still excellent early. Heat starts. First-light creeks. Kings on the beach.",
+    azores:
+      "The island warms. São Miguel still the honest early door. Horta is weeks out.",
   },
   6: {
     texas:
@@ -306,6 +351,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Too hot in the middle. Condado at dawn. The drop is a boat-and-ice problem.",
     seychelles:
       "Wind. This is not the photograph month on St François. Inner islands still fish.",
+    "north-carolina":
+      "Heat. First-light reds. Mahi and tuna on the Stream. Hatteras is a dawn inlet.",
+    "south-carolina":
+      "Heat. First-light creeks. Kings and a cobia if you already know the water.",
+    azores:
+      "The fleet starts to gather. Late June is a maybe. July is the photograph.",
   },
   7: {
     texas:
@@ -322,6 +373,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Midsummer. Night and first-light tarpon. Mahi if the weed is in. Do not invent a bonefish morning in Condado.",
     seychelles:
       "SE monsoon. Offshore and reef more than the skinny sand. Tuna if you came for that.",
+    "north-carolina":
+      "Stream month. Mahi, tuna, a billfish off Hatteras and Morehead. Inshore is first light.",
+    "south-carolina":
+      "Midsummer. Night and first-light reds. Mahi if the weed is in. Do not invent a Hatteras morning in Winyah.",
+    azores:
+      "Peak starts. Horta is why the week was booked. Princess Alice if the water is right.",
   },
   8: {
     texas:
@@ -338,6 +395,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Same heat. Parguera trees at first light. The north drop if a storm missed you.",
     seychelles:
       "Still the windy half. Plan Mahé or wait for October.",
+    "north-carolina":
+      "Same heat. Stream still honest. Flounder are a later story — do not force them.",
+    "south-carolina":
+      "Same heat. Creeks at first light. The Strand if a storm missed you.",
+    azores:
+      "Peak. Horta and Princess Alice. This is the photograph month.",
   },
   9: {
     texas:
@@ -354,6 +417,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "The island exhales. Tarpon still eat. East banks start to look like themselves.",
     seychelles:
       "Trades ease. The atolls remember why you booked them.",
+    "north-carolina":
+      "The coast exhales. Reds and trout come back up. Stream still has mahi. Flounder start to think about the inlets.",
+    "south-carolina":
+      "The marsh exhales. Reds come back up. Flounder start to talk. Verify SCDNR.",
+    azores:
+      "Last of the classic window. Horta still eats. Book this week in March.",
   },
   10: {
     texas:
@@ -370,6 +439,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Shoulder. Permit and bones on Vieques. Harbor tarpon still honest.",
     seychelles:
       "The atoll year starts. GT peak. This is the week people should have booked in March.",
+    "north-carolina":
+      "Reds, trout, and the flounder run. NCDMF seasons move — verify before you keep a flatfish.",
+    "south-carolina":
+      "Reds, trout, and the flounder run. Measure everything. SCDNR, not NCDMF.",
+    azores:
+      "The fleet thins. Last honest billfish weeks. São Miguel is a plane change.",
   },
   11: {
     texas:
@@ -386,6 +461,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Cooler water. East-island bones. A north swell is a plan, not a cancellation.",
     seychelles:
       "Prime. Alphonse and Farquhar both look like the photograph. You came for a GT.",
+    "north-carolina":
+      "Cooler water. Reds still eat. Flounder may already be shut — verify NCDMF. A norther is a plan.",
+    "south-carolina":
+      "Cooler water. Marsh reds. A north swell is a plan, not a cancellation.",
+    azores:
+      "Off-season. The photograph was July. Tuna if a boat is still running.",
   },
   12: {
     texas:
@@ -402,6 +483,12 @@ export const MONTH_THEATER: Record<number, Record<TheaterId, string>> = {
       "Winter tarpon in the lagoon. Sail on the north drop. DNER, not an FWC calendar.",
     seychelles:
       "Peak atoll. GT and bones. Mahé is where you change planes.",
+    "north-carolina":
+      "Winter inlets. Drum and reds in the remaining water. Bluefin if they show. A Christmas norther is a plan.",
+    "south-carolina":
+      "Winter marsh. Drum and reds. A front is still a plan. SCDNR, not an FWC calendar.",
+    azores:
+      "Off-season. Horta is a harbor and a plane. The fleet comes back in June.",
   },
 };
 
@@ -417,7 +504,13 @@ export function areasForType(type: WaterTypeId, theater?: TheaterId | "all") {
     if (type === "skinny" || type === "sight") return a.tideCharacter === "sight-skinny";
     if (type === "offshore") return Boolean(a.offshoreLead?.length) || a.tideCharacter === "blue-water";
     if (type === "structure")
-      return a.tideCharacter === "pass-current" || a.theater === "texas" || a.theater === "louisiana";
+      return (
+        a.tideCharacter === "pass-current" ||
+        a.theater === "texas" ||
+        a.theater === "louisiana" ||
+        a.theater === "north-carolina" ||
+        a.theater === "south-carolina"
+      );
     if (type === "fly" || type === "spin" || type === "wade" || type === "skiff") {
       return a.leadSpecies.some((id) => def?.species.includes(id));
     }

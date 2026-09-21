@@ -17,6 +17,14 @@ const PLACE: Record<string, string> = {
   ascension: "Ascension Bay Mexico flats fishing",
   "san-juan": "San Juan Puerto Rico inshore fishing",
   alphonse: "Alphonse Seychelles flats fishing",
+  hatteras: "Hatteras Outer Banks Gulf Stream fishing",
+  "morehead-city": "Morehead City Beaufort Inlet fishing",
+  wilmington: "Wilmington Wrightsville Beach fishing",
+  charleston: "Charleston Lowcountry inshore fishing",
+  "hilton-head": "Hilton Head Port Royal Sound fishing",
+  "myrtle-beach": "Myrtle Beach Grand Strand fishing",
+  horta: "Horta Faial Azores blue marlin fishing",
+  "sao-miguel": "Sao Miguel Azores bluewater fishing",
 };
 
 export function deskHref(areaId: string, theater: string) {

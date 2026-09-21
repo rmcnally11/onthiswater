@@ -12,7 +12,7 @@ import type {
   WindowPick,
 } from "@/lib/types";
 import { SPECIES, SPECIES_BY_ID } from "@/lib/data/species";
-import { leadsFor } from "@/lib/data/areas";
+import { leadsFor, usesModeledOcean } from "@/lib/data/areas";
 import { spotsForArea } from "@/lib/data/spots";
 import {
   flounderClosed,
@@ -193,9 +193,13 @@ function wreckMarkToSpot(mark: OfficialMark, area: Area): Spot {
         ? ["permit", "tarpon", "hogfish", "yellowtail-snapper", "mutton-snapper", "black-grouper"]
         : area.theater === "texas" || area.theater === "louisiana"
           ? ["red-snapper", "mangrove-snapper", "sheepshead", "cobia", "amberjack"]
-          : area.theater === "bahamas" || area.theater === "puerto-rico" || area.theater === "mexico"
-            ? ["hogfish", "yellowtail-snapper", "mutton-snapper", "black-grouper"]
-            : ["gt", "tuna"],
+          : area.theater === "north-carolina" || area.theater === "south-carolina"
+            ? ["red-snapper", "mangrove-snapper", "cobia", "amberjack", "king-mackerel"]
+            : area.theater === "bahamas" || area.theater === "puerto-rico" || area.theater === "mexico"
+              ? ["hogfish", "yellowtail-snapper", "mutton-snapper", "black-grouper"]
+              : area.theater === "azores"
+                ? ["tuna", "mahi", "blue-marlin"]
+                : ["gt", "tuna"],
     source: "public-structure",
     note: `${mark.detail || "Charted wreck / obstruction."} NOAA ENC — surveyed position, not a navigation chart.`,
     depth: "deep",
@@ -468,7 +472,7 @@ export function buildBriefing(
         : " from NOAA"
       : gauge
         ? ` (modeled — NOAA ${gauge.id} ${gauge.name} did not answer)`
-        : area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles"
+        : usesModeledOcean(area)
           ? " (modeled — no NOAA gauge on this water)"
           : " (modeled — no NOAA gauge on this water)";
   why.push(`Tide is ${conditions.tides.stage.replace("-", " ")}${modeledNote}.`);
@@ -480,17 +484,18 @@ export function buildBriefing(
         why.push(
           `On this coast the wind often outruns the printed tide. Observed water is ${signed} ft versus the prediction.`,
         );
-      } else if (area.theater === "florida") {
+      } else if (
+        area.theater === "florida" ||
+        area.theater === "puerto-rico" ||
+        area.theater === "north-carolina" ||
+        area.theater === "south-carolina"
+      ) {
         why.push(
           `The gauge is ${signed} ft off the predicted table — read the water, not just the printout.`,
         );
-      } else if (area.theater === "mexico" || area.theater === "bahamas" || area.theater === "seychelles") {
+      } else if (usesModeledOcean(area)) {
         why.push(
           `The model is ${signed} ft off the harmonic table. Treat it as setup, not a guarantee.`,
-        );
-      } else if (area.theater === "puerto-rico") {
-        why.push(
-          `The gauge is ${signed} ft off the predicted table — read the water, not just the printout.`,
         );
       }
     } else {
@@ -613,6 +618,15 @@ export function buildBriefing(
   }
   if (area.theater === "seychelles") {
     warnings.push("Seychelles requires an SFA license. Outer atolls are lodge water. Ste Anne and other parks are marked — verify before you fish.");
+  }
+  if (area.theater === "north-carolina") {
+    warnings.push("North Carolina is NCDMF water. Flounder seasons move. Verify before you keep a flatfish.");
+  }
+  if (area.theater === "south-carolina") {
+    warnings.push("South Carolina is SCDNR water. Verify bag and season the morning you keep a fish.");
+  }
+  if (area.theater === "azores") {
+    warnings.push("Azores recreational fishing follows regional rules. Blue marlin is catch-and-release culture on this water. There is no NOAA tide.");
   }
   if (flounderClosed(now, area.timezone) && area.theater === "texas") {
     warnings.push("Texas flounder season is closed Nov 1–Dec 14. Catch-and-release only if you hook one.");

@@ -12,6 +12,7 @@ import { moonPhase } from "@/lib/moon";
 import { cardinalFromDeg, ymdInZone } from "@/lib/time";
 import { coerceSky, skyFromWmo, skyPhraseFromWmo } from "@/lib/wx";
 import { tideGauge } from "@/lib/data/tide-gauges";
+import { usesModeledOcean } from "@/lib/data/areas";
 
 function blankWeather(source: WeatherNow["source"]): WeatherNow {
   return {
@@ -93,8 +94,7 @@ function openMeteoAt(
 }
 
 async function weatherFor(area: Area, at: Date, today: boolean): Promise<WeatherNow> {
-  const modeledOcean =
-    area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles";
+  const modeledOcean = usesModeledOcean(area);
 
   if (today && area.noaaStation) {
     const [noaaWind, nws, om] = await Promise.allSettled([
@@ -229,7 +229,9 @@ function nwsCovers(area: Area) {
     area.theater === "texas" ||
     area.theater === "louisiana" ||
     area.theater === "florida" ||
-    area.theater === "puerto-rico"
+    area.theater === "puerto-rico" ||
+    area.theater === "north-carolina" ||
+    area.theater === "south-carolina"
   );
 }
 

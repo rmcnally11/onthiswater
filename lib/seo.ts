@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { PRODUCT_DOMAIN, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
 
 export const HOME_TITLE =
-  "On This Water — tide and wind this morning, Texas to the Keys";
+  "On This Water — tide and wind this morning, Texas to the Azores";
 export const HOME_DESCRIPTION =
-  "This morning on your water. Live NOAA tides, wind, and whether to leave. Not On The Water magazine. Scores are 1–10, not a bite.";
+  "This morning on your water. Live NOAA tides, wind, and whether to leave. Texas through the Carolinas, the islands, and the Azores. Not On The Water magazine. Scores are 1–10, not a bite.";
 
 export const FLEET_SAME_AS = [
   "https://www.dockposted.com",
@@ -91,7 +91,7 @@ export const HOME_FAQ = [
   {
     question: "Where does the tide come from?",
     answer:
-      "Live NOAA CO-OPS gauges on Texas, Louisiana, Florida, and Puerto Rico. Bahamas, Mexico, and Seychelles use a modeled tide, and the brief says so.",
+      "Live NOAA CO-OPS gauges on Texas, Louisiana, Florida, Puerto Rico, and the Carolinas. Bahamas, Mexico, Seychelles, and the Azores use a modeled tide, and the brief says so.",
   },
   {
     question: "What does go or wait mean?",
