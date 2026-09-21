@@ -222,7 +222,7 @@ export function filterNewsletter(issue: NewsletterIssue, coasts: TheaterId[] | n
   };
 }
 
-/** Coast chip: every micro-area on those theaters. All coasts stays the seven letter desks. */
+/** Coast chip: every micro-area on those theaters. All coasts stays the letter desks. */
 export async function withCoastWaters(
   issue: NewsletterIssue,
   coasts: TheaterId[] | null,

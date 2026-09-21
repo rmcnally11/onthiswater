@@ -56,7 +56,7 @@ export async function fetchGnisNear(area: Area): Promise<OfficialPoint[]> {
     "Point",
     "Key",
   ];
-  if (area.theater === "mexico" || area.theater === "bahamas" || area.theater === "seychelles") return [];
+  if (area.theater === "mexico" || area.theater === "bahamas" || area.theater === "seychelles" || area.theater === "azores") return [];
   const state =
     area.theater === "texas"
       ? "TX"
@@ -66,7 +66,11 @@ export async function fetchGnisNear(area: Area): Promise<OfficialPoint[]> {
           ? "LA"
           : area.theater === "puerto-rico"
             ? "PR"
-            : "";
+            : area.theater === "north-carolina"
+              ? "NC"
+              : area.theater === "south-carolina"
+                ? "SC"
+                : "";
   const nameClause = names.map((n) => `gaz_name LIKE '%${n}%'`).join(" OR ");
   const where = state ? `state_alpha='${state}' AND (${nameClause})` : nameClause;
   const geom = `${xmin},${ymin},${xmax},${ymax}`;
@@ -101,7 +105,7 @@ export async function fetchGnisNear(area: Area): Promise<OfficialPoint[]> {
 }
 
 export async function fetchEncWrecks(area: Area): Promise<OfficialPoint[]> {
-  if (area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles") return [];
+  if (area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles" || area.theater === "azores") return [];
   const { xmin, ymin, xmax, ymax } = bbox(area, Math.min(0.28, deskPad(area) + 0.04));
   const url =
     `https://gis.charttools.noaa.gov/arcgis/rest/services/encdirect/enc_harbour/MapServer/36/query` +
@@ -719,6 +723,96 @@ const ACCESS: OfficialPoint[] = [
     sourceUrl: "https://www.sfa.sc/",
     detail: "Southern atoll door. Lodge and SFA rules.",
   },
+  {
+    id: "acc-oregon-inlet",
+    name: "Oregon Inlet Fishing Center",
+    lat: 35.796,
+    lon: -75.547,
+    kind: "access",
+    source: "NCDMF / Dare County",
+    sourceUrl: "https://www.deq.nc.gov/about/divisions/marine-fisheries",
+    detail: "North Outer Banks door. The inlet is in sight. Confirm which ramps are open after a blow.",
+  },
+  {
+    id: "acc-hatteras",
+    name: "Hatteras village launches",
+    lat: 35.219,
+    lon: -75.69,
+    kind: "access",
+    source: "NCDMF / National Park Service",
+    sourceUrl: "https://www.nps.gov/caha/",
+    detail: "South Banks door. NOAA 8654467 is on this water. Cape Hatteras National Seashore rules.",
+  },
+  {
+    id: "acc-morehead",
+    name: "Morehead City / Beaufort waterfront",
+    lat: 34.723,
+    lon: -76.696,
+    kind: "access",
+    source: "NCDMF / Town of Morehead City",
+    sourceUrl: "https://www.deq.nc.gov/about/divisions/marine-fisheries",
+    detail: "Crystal Coast door. Beaufort Inlet is the run. Duke Marine Lab 8656483 is the clock.",
+  },
+  {
+    id: "acc-wrightsville",
+    name: "Wrightsville / Seapath launches",
+    lat: 34.213,
+    lon: -77.797,
+    kind: "access",
+    source: "NCDMF / New Hanover County",
+    sourceUrl: "https://www.deq.nc.gov/about/divisions/marine-fisheries",
+    detail: "Cape Fear door. Masonboro Inlet is in sight. NOAA 8658163 is on this beach.",
+  },
+  {
+    id: "acc-charleston",
+    name: "Charleston public landings",
+    lat: 32.781,
+    lon: -79.925,
+    kind: "access",
+    source: "SCDNR / City of Charleston",
+    sourceUrl: "https://www.dnr.sc.gov/marine/",
+    detail: "Harbor door. NOAA 8665530 is the entrance clock. County ramps shift after a blow.",
+  },
+  {
+    id: "acc-hilton-head",
+    name: "Hilton Head / Broad Creek landings",
+    lat: 32.216,
+    lon: -80.753,
+    kind: "access",
+    source: "SCDNR / Town of Hilton Head Island",
+    sourceUrl: "https://www.dnr.sc.gov/marine/",
+    detail: "Port Royal door. Clock is Fort Pulaski 8670870, the nearest live NOAA well.",
+  },
+  {
+    id: "acc-murrells",
+    name: "Murrells Inlet / Georgetown landings",
+    lat: 33.528,
+    lon: -79.025,
+    kind: "access",
+    source: "SCDNR",
+    sourceUrl: "https://www.dnr.sc.gov/marine/",
+    detail: "Grand Strand door. Winyah is the next river south. Springmaid 8661070 is the clock.",
+  },
+  {
+    id: "acc-horta",
+    name: "Horta marina",
+    lat: 38.534,
+    lon: -28.628,
+    kind: "access",
+    source: "Portos dos Açores",
+    sourceUrl: "https://www.azores.gov.pt/",
+    detail: "Faial door. The English-facing fleet. Princess Alice is the run, not a freelance wade.",
+  },
+  {
+    id: "acc-ponta-delgada",
+    name: "Ponta Delgada marina",
+    lat: 37.741,
+    lon: -25.668,
+    kind: "access",
+    source: "Portos dos Açores",
+    sourceUrl: "https://www.azores.gov.pt/",
+    detail: "São Miguel door. Early-season second hub. The south drop is the run.",
+  },
 ];
 
 export function accessNear(area: Area): OfficialPoint[] {
@@ -729,8 +823,13 @@ export function accessNear(area: Area): OfficialPoint[] {
       ? 0.28
       : area.theater === "texas"
         ? 0.55
-        : area.theater === "mexico" || area.theater === "seychelles" || area.theater === "puerto-rico"
-          ? 0.4
+        : area.theater === "mexico" ||
+          area.theater === "seychelles" ||
+          area.theater === "puerto-rico" ||
+          area.theater === "azores"
+        ? 0.4
+        : area.theater === "north-carolina" || area.theater === "south-carolina"
+          ? 0.35
           : 0.9;
   return ACCESS.filter((p) => {
     const dlat = p.lat - area.lat;

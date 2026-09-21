@@ -33,14 +33,22 @@ If step 2 or 3 fails, or the JSON has `"error"`, or a desk says the gauge was qu
 
 - Title: `Saturday Letter · [rangeLabel from JSON]` (example: `Saturday Letter · August 24 – August 30, 2026`)
 - Open with the JSON `letter` string **verbatim**. Do not rewrite the month essay.
-- Then the seven desks, in this exact order, using only the JSON `desks` array:
-  1. Texas desk — Galveston
-  2. Louisiana desk — Venice
-  3. Florida desk — Islamorada
-  4. Bahamas desk — Andros
-  5. Mexico desk — Ascension
-  6. Puerto Rico desk — San Juan
-  7. Seychelles desk — Alphonse
+- Then the letter waters, in this exact order, using only the JSON `desks` array:
+  1. Texas water — Galveston
+  2. Louisiana water — Venice
+  3. Florida water — Islamorada
+  4. Bahamas water — Andros
+  5. Mexico water — Ascension
+  6. Puerto Rico water — San Juan
+  7. Seychelles water — Alphonse
+  8. North Carolina water — Hatteras
+  9. North Carolina water — Morehead City
+  10. North Carolina water — Wilmington
+  11. South Carolina water — Charleston
+  12. South Carolina water — Hilton Head
+  13. South Carolina water — Myrtle Beach
+  14. Azores water — Horta
+  15. Azores water — São Miguel
 - For each desk, print only what the JSON gave you: kicker, headline, score, wind, sky / rain chance, water temp, tide, moon, window, in-play species, the two `why` lines, seasonal line. If a field is `null`, skip it. If `error` is set, write “Gauge quiet” and that error. Do not invent a score.
 - Then “In peak this month” from `peaks`. Then “Closed or closing” from `closures`.
 - Close with this sentence, verbatim: `Scores are 1–10. They are not bite guarantees. Not for navigation. Open the live brief.`
@@ -99,4 +107,12 @@ https://onthiswater.com/?area=andros&theater=bahamas
 https://onthiswater.com/?area=ascension&theater=mexico
 https://onthiswater.com/?area=san-juan&theater=puerto-rico
 https://onthiswater.com/?area=alphonse&theater=seychelles
+https://onthiswater.com/?area=hatteras&theater=north-carolina
+https://onthiswater.com/?area=morehead-city&theater=north-carolina
+https://onthiswater.com/?area=wilmington&theater=north-carolina
+https://onthiswater.com/?area=charleston&theater=south-carolina
+https://onthiswater.com/?area=hilton-head&theater=south-carolina
+https://onthiswater.com/?area=myrtle-beach&theater=south-carolina
+https://onthiswater.com/?area=horta&theater=azores
+https://onthiswater.com/?area=sao-miguel&theater=azores
 ```

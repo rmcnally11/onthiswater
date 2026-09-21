@@ -1,6 +1,6 @@
 # On This Water
 
-Inshore and offshore conditions for seven theaters: the **Texas coast**, **Louisiana**, **Florida** (Keys, Boca Grande, Jupiter), the **Bahamas**, **Mexico** (Yucatan flats + Baja), **Puerto Rico**, and the **Seychelles**. The brief tells you **where**, **when**, and **why** fish should be on a given piece of water — and which species are actually in play.
+Inshore and offshore conditions for the **Texas coast**, **Louisiana**, **Florida** (Keys, Boca Grande, Jupiter), the **Bahamas**, **Mexico** (Yucatan flats + Baja), **Puerto Rico**, the **Seychelles**, **North Carolina**, **South Carolina**, and the **Azores**. The brief tells you **where**, **when**, and **why** fish should be on a given piece of water — and which species are actually in play.
 
 GitHub: [rmcnally11/onthiswater](https://github.com/rmcnally11/onthiswater). Live site: [onthiswater.com](https://onthiswater.com) (Vercel project `onthiswater`). Substack bots: [SUBSTACK.md](./SUBSTACK.md). Twitter / X bots: [TWITTER.md](./TWITTER.md) (morning and calendar screenshots of `/card`). Live rules: [/for-the-letter](https://onthiswater.com/for-the-letter). Your three My Maps are imported as cream pins:
 
@@ -12,19 +12,19 @@ This is a conditions instrument, not a bite guarantee and not a chart for naviga
 
 ## What it does
 
-- Live **NOAA CO-OPS** tides, observed water level, water temperature, station wind, and **air pressure** (the glass) on Texas, Florida, Louisiana, and Puerto Rico gauges. NDBC PRES when the dock station is quiet. Bahamas / Mexico / Seychelles use modeled Open-Meteo MSL and say so. The reading and the 3-hour trend are not a bite.
+- Live **NOAA CO-OPS** tides, observed water level, water temperature, station wind, and **air pressure** (the glass) on Texas, Florida, Louisiana, Puerto Rico, and Carolina gauges. NDBC PRES when the dock station is quiet. Bahamas / Mexico / Seychelles / Azores use modeled Open-Meteo MSL and say so. The reading and the 3-hour trend are not a bite.
 - **Wind versus the table**: observed minus predicted water. On the Texas coast the wind often *is* the tide.
-- **NWS** marine/hourly weather (U.S.) and **Open-Meteo** (Bahamas, Mexico, Seychelles) — wind **and rain / thunderstorms**.
+- **NWS** marine/hourly weather (U.S.) and **Open-Meteo** (Bahamas, Mexico, Seychelles, Azores) — wind **and rain / thunderstorms**.
 - Visual instruments on the brief: **tide curve**, **moon disk**, **wind compass**, **score ring**, water-temp bar, the **glass** (inHg + mb + rising/falling), and a **14-day upcoming strip**. Texas desks add the **TPWD long record** — in-water monitoring vs dock creel — cited, not live. Feed chips say when a gauge is live, modeled, quiet, or missing. **Today or tomorrow** sits on the same water. Windows name **first light** and **last light** when the clock is the story. The 5am mail leads with that same tide chart — and says **partial brief** if a desk you elected stayed quiet.
-- **Saturday Letter** (`/newsletter`) — All coasts is the seven-desk newspaper (Galveston, Venice, Islamorada, Andros, Ascension, San Juan, Alphonse). Open a coast chip to see every water on that coast — Texas is Sabine through Lower Laguna, not Galveston only. This week’s desks are the same live `getBriefing()` as Today — not a week-old letter cache. Desk cards use the same instruments: feed chips, moon, wind, tide curve, first/last light, and today-vs-tomorrow. The Saturday email carries the tide chart, feed line, wind word, and window. A Texas-only reader does not see Andros or Seychelles. Peaks and harvest closures follow the same coasts. Frozen permalinks keep that Saturday’s snapshot.
+- **Saturday Letter** (`/newsletter`) — All coasts is the letter-water newspaper (the original seven plus Hatteras, Morehead City, Wilmington, Charleston, Hilton Head, Myrtle Beach, Horta, and São Miguel). Open a coast chip to see every water on that coast — Texas is Sabine through Lower Laguna, not Galveston only. This week’s desks are the same live `getBriefing()` as Today — not a week-old letter cache. Desk cards use the same instruments: feed chips, moon, wind, tide curve, first/last light, and today-vs-tomorrow. The Saturday email carries the tide chart, feed line, wind word, and window. A Texas-only reader does not see Andros, Seychelles, or the Azores. Peaks and harvest closures follow the same coasts. Frozen permalinks keep that Saturday’s snapshot.
 - **Seasonal fundamentals** (`/fundamentals`) — doctrine by the coasts you elected, then water type (fly / spin / sight / wade / skiff / rocks / marsh / skinny), species, and month. Texas pages also name the **TPWD long record** — fish in the water vs fish across the dock. It does not move the score.
 - Two-month **1–10 calendar** by micro-area: this month and next. Tap a day for that date’s brief. Copper outline = amazing day. The monthly **YOLO** day is the best remaining **dry** day with a real wind forecast. Rain and thunderstorms tax the score; a soaker cannot be a copper day. Sea outline = a catch in **The Book**, or a day that rhymes with one.
 - **The Book** (`/book`) — a catch log on this phone. Write a fish and the live instruments go with it (wind, sky, moon, tide, glass, score). The calendar flags days that rhyme. Same glass, not the same fish. Not a cloud login yet; export the JSON if you change phones.
 - **Stay or drive** (`/compare`) — two desks, one morning.
-- **Today** (`/`) starts on **All water** — the seven letter desks, not Galveston. A last-desk cookie does not pull the homepage back to one coast. Pick a water to open that brief.
+- **Today** (`/`) starts on **All water** — the letter waters, not Galveston. A last-desk cookie does not pull the homepage back to one coast. Pick a water to open that brief.
 - **Morning line** (`/morning`) — one sentence for the water on Today. Copy it. The rest of that coast is named underneath. Join lives on `/join`, not here.
 - Last theater / area / method is remembered in a cookie for calendar, morning, compare, and map.
-- The species book covers the fish that actually live on these seven theaters — drum, snook, hogfish, the snappers, grouper, cobia, kings, billfish — not a Texas-only short list. Join lives on `/join`, not on the Saturday Letter.
+- The species book covers the fish that actually live on these coasts — drum, snook, hogfish, the snappers, grouper, cobia, kings, billfish — not a Texas-only short list. Join lives on `/join`, not on the Saturday Letter.
 - The Saturday Letter has a permalink (`/newsletter/YYYY-MM-DD`) and a short archive.
 - Satellite chart (Esri imagery) with official layers and your My Maps. Pick a micro-area and the camera zooms to that water only — Flamingo does not keep Islamorada lit.
 - Filters for **wade / skiff / kayak / fly / spin / jetty / offshore** (troll, edge, deep jig).
@@ -43,7 +43,7 @@ npm install
 npm run dev -- --port 43217 --hostname 127.0.0.1
 ```
 
-Open [http://127.0.0.1:43217](http://127.0.0.1:43217). Today opens on **All water** (seven letter desks). The instrument is public: today, calendar, map, compare, morning, species, method, season, letter, join, and the book. The subscriber table is not on the site — it lives in Airtable.
+Open [http://127.0.0.1:43217](http://127.0.0.1:43217). Today opens on **All water** (the letter waters). The instrument is public: today, calendar, map, compare, morning, species, method, season, letter, join, and the book. The subscriber table is not on the site — it lives in Airtable.
 
 No API keys for the gauges. NOAA, NWS, USGS, and Open-Meteo are public. NWS requires a User-Agent, which the app sends. The 5am email needs Resend if you want it to leave the machine (see below).
 
@@ -83,7 +83,7 @@ Others can subscribe. The family door is [`/join`](https://onthiswater.com/join?
 
 There **is** a managed table: [Subscribers](https://airtable.com/app3GRvkkpJdnVIKy/tblqoCAVvAvEFYMe6) in the Costal Cavaliers workspace (the Airtable base is still named Field Brief until you rename it in Airtable). Columns: Name, Email, Home ZIP, Coasts they fish, What they receive (`Daily` = 5am brief / `Weekly` = Saturday letter / `Calendar` = Sunday month grid / `Seasonal` = first-of-month fundamentals), Status (`Active` / `Paid` / `Unsubscribed`), How they joined, Joined on, Notes. `Paid` is the monetize hook — same list, later a charge. That table is not a page on the site. Production cannot read or write it until `AIRTABLE_API_KEY` is on Vercel and you redeploy.
 
-Signup elects **coasts** and **cadence**. Default is the water on the page (Texas / Galveston on a cold letter visit), not all seven desks. A Texas-only fisherman does not get Andros or Seychelles in the 5am line, the Saturday letter, Sunday’s calendar, or the season page. `fb_coasts` remembers that election the same way `fb_water` remembers the last desk. Letter chips (`/newsletter?coasts=texas`) and `?theater=` on `/fundamentals` write the cookie.
+Signup elects **coasts** and **cadence**. Default is the water on the page (Texas / Galveston on a cold letter visit), not every letter water. A Texas-only fisherman does not get Andros, Seychelles, or the Azores in the 5am line, the Saturday letter, Sunday’s calendar, or the season page. `fb_coasts` remembers that election the same way `fb_water` remembers the last desk. Letter chips (`/newsletter?coasts=texas`) and `?theater=` on `/fundamentals` write the cookie.
 
 **How you get the email.** You are a row on that table (operator). Nothing lands in your inbox until sending is on. Fastest path: add `RESEND_API_KEY` + a verified `RESEND_FROM` on Vercel, and `AIRTABLE_API_KEY` (an Airtable PAT scoped to this base) so the cron can read the table. You can also put your address in `SUBSCRIBER_EMAILS` as a belt-and-suspenders (that env list still receives every desk).
 
@@ -107,7 +107,13 @@ There is no nightly rebuild of the gauges. The mailer asks the same `getBriefing
 
 **Seychelles:** Alphonse / St François · Farquhar Atoll · Inner islands / Mahé
 
-Bahamas, Mexico, and Seychelles tides are a modeled lunar tide, labeled as such. There is no NOAA gauge on those coasts. Puerto Rico uses live NOAA CO-OPS (San Juan, Vieques, Magueyes).
+**North Carolina:** Hatteras / Oregon Inlet · Morehead City / Beaufort Inlet · Wilmington / Wrightsville
+
+**South Carolina:** Charleston / Lowcountry · Hilton Head / Port Royal · Myrtle Beach / Grand Strand
+
+**Azores:** Horta / Faial · São Miguel / Ponta Delgada
+
+Bahamas, Mexico, Seychelles, and the Azores tides are a modeled lunar tide, labeled as such. There is no NOAA gauge on those coasts. Puerto Rico, North Carolina, and South Carolina use live NOAA CO-OPS.
 
 ## Official sources we cite
 
@@ -115,7 +121,7 @@ Bahamas, Mexico, and Seychelles tides are a modeled lunar tide, labeled as such.
 | --- | --- |
 | [NOAA CO-OPS](https://api.tidesandcurrents.noaa.gov/) | Tides, water temp, station wind |
 | [NWS API](https://www.weather.gov/documentation/services-web-api) | U.S. wind, sky, rain chance, thunderstorms, active marine/flood alerts |
-| [Open-Meteo](https://open-meteo.com/) | Wind and precip where NWS does not cover (Bahamas, Mexico, Seychelles) |
+| [Open-Meteo](https://open-meteo.com/) | Wind and precip where NWS does not cover (Bahamas, Mexico, Seychelles, Azores) |
 | [USGS GNIS](https://www.usgs.gov/tools/geographic-names-information-system-gnis) | Named-feature coordinates (pins snapped where the hydro layer has a Feature ID) |
 | [USGS NWIS IV](https://waterservices.usgs.gov/) | River discharge (`00060`) — Trinity, Sabine, Colorado, Nueces, Mississippi at Belle Chasse, Calcasieu |
 | [TxGIO](https://data.geographic.texas.gov/) | State clearinghouse (formerly TNRIS) for TPWD coastal GIS |
@@ -132,6 +138,8 @@ Bahamas, Mexico, and Seychelles tides are a modeled lunar tide, labeled as such.
 | [CONAPESCA](https://www.gob.mx/conapesca) | Mexico recreational license and harvest rules |
 | [DNER Puerto Rico](https://www.drna.pr.gov/) | Puerto Rico recreational license and reserves |
 | [Seychelles Fishing Authority](https://www.sfa.sc/) | Seychelles license and harvest rules |
+| [NCDMF](https://www.deq.nc.gov/about/divisions/marine-fisheries) | North Carolina recreational saltwater |
+| [SCDNR](https://www.dnr.sc.gov/marine/) | South Carolina recreational saltwater |
 
 The TPWD coastal-ramp GIS and the GLO Beach & Bay Access feature service are the right legal inventories; the public TAMU ramp layer we tested is inland only, and the GLO Hub query required a token. Those go live when the open endpoints are reachable. Drop a Google My Maps **KML** into the project to add your saved structure as a layer — no matching export was in Drive.
 

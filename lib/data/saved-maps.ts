@@ -1771,8 +1771,8 @@ export function deskAtlasMiles(area: Area) {
   if (area.id === "florida-bay" || area.id === "calcasieu" || area.id === "key-largo") return 16;
   if (area.id === "boca-grande" || area.id === "jupiter" || area.id === "venice" || area.id === "grand-isle") return 18;
   if (area.theater === "florida") return 22;
-  if (area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles") return 40;
-  if (area.theater === "puerto-rico") return 28;
+  if (area.theater === "bahamas" || area.theater === "mexico" || area.theater === "seychelles" || area.theater === "azores") return 40;
+  if (area.theater === "puerto-rico" || area.theater === "north-carolina" || area.theater === "south-carolina") return 28;
   return 42;
 }
 

@@ -26,6 +26,12 @@ const NAMES: Record<string, string> = {
   "9755371": "San Juan, La Puntilla",
   "9752621": "Isabel Segunda, Vieques",
   "9759110": "Magueyes Island",
+  "8654467": "USCG Station Hatteras",
+  "8656483": "Beaufort, Duke Marine Lab",
+  "8658163": "Wrightsville Beach",
+  "8665530": "Charleston, Cooper River Entrance",
+  "8670870": "Fort Pulaski, Savannah River",
+  "8661070": "Springmaid Pier, Myrtle Beach",
 };
 
 export function tideGauge(station: string | null | undefined): TideGauge | null {

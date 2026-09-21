@@ -25,6 +25,9 @@ assert.match(fuelHref({ theater: "florida", areaId: "biscayne" }).href, /region=
 assert.equal(fuelHref({ theater: "bahamas", areaId: "andros" }).label, "US posted fuel");
 assert.match(fuelHref({ theater: "bahamas", areaId: "andros" }).href, /#board/);
 assert.doesNotMatch(fuelHref({ theater: "bahamas", areaId: "andros" }).href, /corridor=|region=/);
+assert.equal(fuelHref({ theater: "north-carolina", areaId: "hatteras" }).label, "US posted fuel");
+assert.equal(fuelHref({ theater: "south-carolina", areaId: "charleston" }).label, "US posted fuel");
+assert.equal(fuelHref({ theater: "azores", areaId: "horta" }).label, "US posted fuel");
 assert.match(dockPostedHomeHref(), /#board/);
 assert.match(dockPostedHomeHref(), /utm_source=onthiswater/);
 assert.doesNotMatch(dockPostedHomeHref(), /\/run/);
@@ -76,5 +79,54 @@ assert.match(robots, /siteOrigin/);
 const sitemap = readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
 assert.match(sitemap, /morning\/\$\{area/);
 assert.doesNotMatch(sitemap, /vercel\.app/);
+
+const desks = readFileSync(path.join(root, "lib/desks.ts"), "utf8");
+for (const id of [
+  "galveston",
+  "venice",
+  "islamorada",
+  "andros",
+  "ascension",
+  "san-juan",
+  "alphonse",
+  "hatteras",
+  "morehead-city",
+  "wilmington",
+  "charleston",
+  "hilton-head",
+  "myrtle-beach",
+  "horta",
+  "sao-miguel",
+]) {
+  assert.match(desks, new RegExp(`areaId: "${id}"`));
+}
+assert.match(desks, /São Miguel/);
+
+const areas = readFileSync(path.join(root, "lib/data/areas.ts"), "utf8");
+assert.match(areas, /id: "hatteras"/);
+assert.match(areas, /noaaStation: "8654467"/);
+assert.match(areas, /id: "morehead-city"/);
+assert.match(areas, /noaaStation: "8656483"/);
+assert.match(areas, /id: "wilmington"/);
+assert.match(areas, /noaaStation: "8658163"/);
+assert.match(areas, /id: "charleston"/);
+assert.match(areas, /noaaStation: "8665530"/);
+assert.match(areas, /id: "hilton-head"/);
+assert.match(areas, /noaaStation: "8670870"/);
+assert.match(areas, /id: "myrtle-beach"/);
+assert.match(areas, /noaaStation: "8661070"/);
+assert.match(areas, /id: "horta"/);
+assert.match(areas, /id: "sao-miguel"/);
+assert.match(areas, /theater === "azores"/);
+
+const theaters = readFileSync(path.join(root, "lib/data/theaters.ts"), "utf8");
+assert.match(theaters, /"north-carolina"/);
+assert.match(theaters, /"south-carolina"/);
+assert.match(theaters, /"azores"/);
+
+const hubs = readFileSync(path.join(root, "lib/coast-hubs.ts"), "utf8");
+assert.match(hubs, /"north-carolina"/);
+assert.match(hubs, /"south-carolina"/);
+assert.match(hubs, /"azores"/);
 
 console.log("dock-posted sister tests passed");

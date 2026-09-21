@@ -19,7 +19,7 @@ function heatNote(area: Area, water: number | null, wind: number | null) {
   if (wind != null && wind >= 18) {
     return area.theater === "texas" || area.theater === "louisiana"
       ? "The wind is the tide. Work the leeward shore."
-      : area.theater === "mexico" && area.tideCharacter === "blue-water"
+      : area.tideCharacter === "blue-water"
         ? "Work the leeward edge — troll if the fly will not go."
         : "Work the leeward shore — fly gets harder.";
   }
@@ -221,6 +221,54 @@ const PLACE: Record<
     outgoing: "the same reef edges, then the drop if you came to troll",
     "high-slack": "the town run is legal; the park wants current",
     "low-slack": "hold for the next push around the granitic islands",
+  },
+  hatteras: {
+    incoming: "Oregon Inlet and the first sound drains — then the Stream if the wind lets you go",
+    outgoing: "the same inlet bars as they dump; winter bluefin live outside",
+    "high-slack": "the sound wants current; the Stream still has a seam",
+    "low-slack": "hold for the next push through the inlet",
+  },
+  "morehead-city": {
+    incoming: "Beaufort Inlet and the first Crystal Coast points — reds inside, Big Rock outside",
+    outgoing: "the inlet jetties and the falling bight",
+    "high-slack": "wait; slack here is traffic",
+    "low-slack": "hold for the next incoming through the inlet",
+  },
+  wilmington: {
+    incoming: "flood Wrightsville and the Cape Fear marsh — reds and trout, not a Hatteras Stream sentence",
+    outgoing: "Snows Cut and the river edges as they empty",
+    "high-slack": "the beach still fishes; the creeks want current",
+    "low-slack": "sit the remaining guts until the river turns",
+  },
+  charleston: {
+    incoming: "flood the harbor creeks and the first marsh — reds, then a bull if they are in",
+    outgoing: "the same drains as they dump; trout sit a foot deeper",
+    "high-slack": "the harbor is a pause; the creeks want moving water",
+    "low-slack": "sit the remaining guts until the Lowcountry breathes",
+  },
+  "hilton-head": {
+    incoming: "flood Port Royal and Calibogue — same Lowcountry fish, a bigger tide than Charleston",
+    outgoing: "the sound edges and the first marsh drains",
+    "high-slack": "wait; this sound wants current",
+    "low-slack": "hold for the next push through Port Royal",
+  },
+  "myrtle-beach": {
+    incoming: "Murrells Inlet and the Winyah edges — surf pompano, then a creek red",
+    outgoing: "the same inlet as it dumps; Georgetown marsh on the fall",
+    "high-slack": "the Strand still fishes; the inlet wants water",
+    "low-slack": "sit Winyah until it turns",
+  },
+  horta: {
+    incoming: "the Faial Channel and Princess Alice — blue marlin, not a marsh morning",
+    outgoing: "the same bank as the current dumps; troll along it, never across",
+    "high-slack": "keep the spread out; slack here is still a seam",
+    "low-slack": "work the south drop off Pico",
+  },
+  "sao-miguel": {
+    incoming: "the Ponta Delgada south drop — tuna first, a billfish if you earned the early season",
+    outgoing: "the same edge as it dumps; this is not Horta’s July photograph",
+    "high-slack": "the town run is legal; the canyon wants bait",
+    "low-slack": "hold for the next push along the south coast",
   },
 };
 

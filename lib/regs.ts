@@ -58,6 +58,27 @@ const STAMPS: Record<TheaterId, RegStamp> = {
     url: "https://www.sfa.sc/",
     note: "Outer atolls are lodge water. Giant trevally lives here. Not on Texas. Not in Puerto Rico.",
   },
+  "north-carolina": {
+    book: "NCDMF recreational saltwater",
+    span: "current NCDMF coastal rules",
+    rollsOn: "2026-09-01",
+    url: "https://www.deq.nc.gov/about/divisions/marine-fisheries",
+    note: "Flounder seasons move. Verify NCDMF the week you keep a flatfish. Not SCDNR. Not FWC.",
+  },
+  "south-carolina": {
+    book: "SCDNR recreational saltwater",
+    span: "current SCDNR coastal rules",
+    rollsOn: "2026-09-01",
+    url: "https://www.dnr.sc.gov/marine/",
+    note: "Lowcountry bags are SCDNR, not NCDMF. Verify before you keep a red or a flounder.",
+  },
+  azores: {
+    book: "Azores regional fisheries",
+    span: "current regional recreational rules",
+    rollsOn: "2026-09-01",
+    url: "https://www.azores.gov.pt/",
+    note: "Blue marlin is catch-and-release culture on this water. No NOAA gauge. Not a Carolina marsh.",
+  },
 };
 
 export function regsStamp(theater: TheaterId): RegStamp {

@@ -32,6 +32,12 @@ const BY_AREA: Record<string, BuoyMeta> = {
   "san-juan": { id: "41053", name: "San Juan", kind: "buoy", where: "North coast buoy — not Condado Lagoon" },
   vieques: { id: "41056", name: "Vieques", kind: "buoy", where: "East of the island — not Mosquito Bay" },
   parguera: { id: "42085", name: "South of Ponce", kind: "buoy", where: "Caribbean south of the island — not the mangroves" },
+  hatteras: { id: "41025", name: "Diamond Shoals", kind: "buoy", where: "Gulf Stream shelf — not Oregon Inlet, not the sound" },
+  "morehead-city": { id: "CLKN7", name: "Cape Lookout", kind: "c-man", where: "Cape Lookout C-MAN — not Beaufort Inlet, not a pond" },
+  wilmington: { id: "41013", name: "Frying Pan Shoals", kind: "buoy", where: "Offshore shoals — not Wrightsville, not the Cape Fear river" },
+  charleston: { id: "41004", name: "Edisto", kind: "buoy", where: "South Atlantic shelf — not Charleston Harbor" },
+  "hilton-head": { id: "41008", name: "Gray's Reef", kind: "buoy", where: "Georgia shelf — not Port Royal Sound" },
+  "myrtle-beach": { id: "41013", name: "Frying Pan Shoals", kind: "buoy", where: "Nearest reporting shelf buoy — not Murrells Inlet" },
 };
 
 export function buoyForArea(areaId: string): BuoyMeta | null {

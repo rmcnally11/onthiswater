@@ -97,6 +97,33 @@ export const COAST_HUBS: CoastHub[] = [
     "Alphonse, Farquhar, the inner islands. Modeled tide. Scores are 1–10, not a bite.",
     areasInTheater("seychelles"),
   ),
+  hub(
+    "north-carolina",
+    "north-carolina",
+    "North Carolina this morning — tide, wind, go or wait",
+    "This morning on North Carolina",
+    "The Stream or the wind",
+    "Hatteras, Morehead City, Wilmington. Live NOAA gauges. The Stream is a short run from the Outer Banks. Scores are 1–10, not a bite.",
+    areasInTheater("north-carolina"),
+  ),
+  hub(
+    "south-carolina",
+    "south-carolina",
+    "South Carolina this morning — tide, wind, go or wait",
+    "This morning on South Carolina",
+    "Marsh reds, harbor bulls",
+    "Charleston, Hilton Head, Myrtle Beach. Live NOAA gauges. Lowcountry marsh and the Grand Strand. Scores are 1–10, not a bite.",
+    areasInTheater("south-carolina"),
+  ),
+  hub(
+    "azores",
+    "azores",
+    "Azores this morning — tide, wind, go or wait",
+    "This morning in the Azores",
+    "Blue-marlin country",
+    "Horta and São Miguel. Tide is a modeled Atlantic clock — there is no NOAA gauge. Scores are 1–10, not a bite.",
+    areasInTheater("azores"),
+  ),
 ];
 
 export const COAST_HUB_BY_SLUG = Object.fromEntries(COAST_HUBS.map((h) => [h.slug, h]));

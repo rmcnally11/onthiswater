@@ -70,7 +70,10 @@ export function fuelHref(input: {
     theater === "bahamas" ||
     theater === "mexico" ||
     theater === "puerto-rico" ||
-    theater === "seychelles"
+    theater === "seychelles" ||
+    theater === "north-carolina" ||
+    theater === "south-carolina" ||
+    theater === "azores"
   ) {
     return { href: boardUrl(), label: "US posted fuel" };
   }

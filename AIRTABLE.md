@@ -6,7 +6,7 @@ The table already exists. Production cannot read or write it until you put an Ai
 
 **Table:** [Subscribers](https://airtable.com/app3GRvkkpJdnVIKy/tblqoCAVvAvEFYMe6) (Airtable base is still named Field Brief until you rename it in the Airtable UI)
 
-Your operator row is already on it: `rmcnally11@gmail.com`, all seven desks, Daily / Weekly / Calendar / Seasonal, Status **Active**.
+Your operator row is already on it: `rmcnally11@gmail.com`, the original seven desks, Daily / Weekly / Calendar / Seasonal, Status **Active**. New Carolina and Azores waters typecast on write — add them to the row if you want those mornings.
 
 ---
 
@@ -131,14 +131,14 @@ You do not have to wait for `/join` if you want names on the list now. After the
 | Name | The name they go by |
 | Email | Their real address |
 | Home ZIP | Home ZIP or postal code |
-| Coasts they fish | Micro-areas. Texas `galveston` or the whole set (`sabine`, `galveston`, `matagorda`, `aransas`, `corpus`, `baffin`, `lower-laguna`). Florida is not only `islamorada` — add `biscayne`, `key-largo`, `florida-bay`, `marathon`, `key-west`, `boca-grande`, `jupiter`. |
+| Coasts they fish | Micro-areas. Texas `galveston` or the whole set (`sabine`, `galveston`, `matagorda`, `aransas`, `corpus`, `baffin`, `lower-laguna`). Florida is not only `islamorada` — add `biscayne`, `key-largo`, `florida-bay`, `marathon`, `key-west`, `boca-grande`, `jupiter`. Carolinas: `hatteras`, `morehead-city`, `wilmington`, `charleston`, `hilton-head`, `myrtle-beach`. Azores: `horta`, `sao-miguel`. |
 | What they receive | `Daily` (5am brief), `Weekly` (Saturday letter), `Calendar` (Sunday month grid), `Seasonal` (1st fundamentals) |
 | Status | **Active** |
 | How they joined | `Operator` if you typed it; `/join` writes `Letter` |
 | Joined on | Today (`YYYY-MM-DD`) |
 | Notes | Optional |
 
-A Texas-only row must **not** include Andros or Alphonse. Empty Desks is not “all seven” — the cron skips a row with no desks.
+A Texas-only row must **not** include Andros, Alphonse, or Horta. Empty Desks is not “every letter water” — the cron skips a row with no desks.
 
 To take someone off: set Status to **Unsubscribed**. Do not delete the row unless you mean to lose the history.
 

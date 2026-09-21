@@ -425,7 +425,9 @@ export function BriefingPanel({
                 ? "Mexico tides are modeled from lunar M2. Use them for windows, not a bar crossing. There is no NOAA gauge here."
                 : area.theater === "seychelles"
                   ? "Seychelles tides are modeled from lunar M2. Use them for windows, not a bar crossing. There is no NOAA gauge on these atolls."
-                : "Bahamas tides are modeled from lunar M2. Use them for windows, not a bar crossing."}
+                  : area.theater === "azores"
+                    ? "Azores tides are modeled from lunar M2. Use them for windows, not a bar crossing. There is no NOAA gauge on these islands."
+                    : "Bahamas tides are modeled from lunar M2. Use them for windows, not a bar crossing."}
             </p>
           )}
         </Instrument>
@@ -582,15 +584,21 @@ export function BriefingPanel({
                 ? "Cited to TPWD, Texas GLO beach-access plans, and NPS. 2WD/4WD is the county plan, not a guess."
                 : area.theater === "louisiana"
                   ? "Cited to LDWF ramp lists and Louisiana State Parks. Parish rules shift after a blow."
-                : area.theater === "florida"
-                  ? "County and state ramps near this water. FKNMS no-take is Keys-only, on the legal list."
-                  : area.theater === "mexico"
-                    ? "Lodge towns and cited marinas. CONAPESCA license. Biosphere and park water is not a freelance wade."
-                  : area.theater === "puerto-rico"
-                    ? "Cited village and harbor launches. DNER rules. Reserves are marked."
-                  : area.theater === "seychelles"
-                    ? "Lodge and Victoria doors. SFA license. Outer atolls are not a freelance wade."
-                  : "Settlement and lodge launches. There is no TPWD-style ramp inventory on this island."}
+                  : area.theater === "florida"
+                    ? "County and state ramps near this water. FKNMS no-take is Keys-only, on the legal list."
+                    : area.theater === "mexico"
+                      ? "Lodge towns and cited marinas. CONAPESCA license. Biosphere and park water is not a freelance wade."
+                      : area.theater === "puerto-rico"
+                        ? "Cited village and harbor launches. DNER rules. Reserves are marked."
+                        : area.theater === "seychelles"
+                          ? "Lodge and Victoria doors. SFA license. Outer atolls are not a freelance wade."
+                          : area.theater === "north-carolina"
+                            ? "Cited NCDMF and county ramps. Cape Hatteras National Seashore rules on the Banks. Confirm after a blow."
+                            : area.theater === "south-carolina"
+                              ? "Cited SCDNR and town landings. County ramps shift after a blow."
+                              : area.theater === "azores"
+                                ? "Cited marina doors. Regional rules. Princess Alice is a run, not a freelance wade."
+                                : "Settlement and lodge launches. There is no TPWD-style ramp inventory on this island."}
             </p>
             {briefing.access.length === 0 ? (
               <p className="mt-3 text-sm text-[color:var(--cream)]/55">No public access pin in this box.</p>

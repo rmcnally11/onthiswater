@@ -43,7 +43,8 @@ export default async function JoinPage({
         <p className="mt-3 text-sm text-[color:var(--cream)]/65">
           Tell us the water. We’ll send the morning. Take a whole coast or only the subsections —
           Florida is Key Largo, Islamorada, Flamingo, Marathon, Key West, Boca Grande, Jupiter,
-          and Biscayne, not Islamorada alone. A Texas-only list does not get Andros or Seychelles.
+          and Biscayne, not Islamorada alone. North Carolina is Hatteras, Morehead City, and
+          Wilmington. A Texas-only list does not get Andros, Seychelles, or the Azores.
         </p>
         <Waterline className="mt-4" />
       </header>

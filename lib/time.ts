@@ -6,10 +6,11 @@ const NASSAU = "America/Nassau";
 
 export function timezoneForTheater(theater: TheaterId) {
   if (theater === "texas" || theater === "louisiana") return CHICAGO;
-  if (theater === "florida") return NEW_YORK;
+  if (theater === "florida" || theater === "north-carolina" || theater === "south-carolina") return NEW_YORK;
   if (theater === "mexico") return "America/Cancun";
   if (theater === "puerto-rico") return "America/Puerto_Rico";
   if (theater === "seychelles") return "Indian/Mahe";
+  if (theater === "azores") return "Atlantic/Azores";
   return NASSAU;
 }
 

@@ -41,7 +41,63 @@ export const DESKS = [
     desk: "Seychelles water",
     kicker: "GT country",
   },
+  {
+    theater: "north-carolina" as const,
+    areaId: "hatteras",
+    desk: "North Carolina water",
+    kicker: "The Stream or the wind",
+  },
+  {
+    theater: "north-carolina" as const,
+    areaId: "morehead-city",
+    desk: "North Carolina water",
+    kicker: "Short run to blue water",
+  },
+  {
+    theater: "north-carolina" as const,
+    areaId: "wilmington",
+    desk: "North Carolina water",
+    kicker: "Cape Fear inshore, then the shoals",
+  },
+  {
+    theater: "south-carolina" as const,
+    areaId: "charleston",
+    desk: "South Carolina water",
+    kicker: "Marsh reds, harbor bulls",
+  },
+  {
+    theater: "south-carolina" as const,
+    areaId: "hilton-head",
+    desk: "South Carolina water",
+    kicker: "Port Royal Sound",
+  },
+  {
+    theater: "south-carolina" as const,
+    areaId: "myrtle-beach",
+    desk: "South Carolina water",
+    kicker: "Grand Strand to Winyah",
+  },
+  {
+    theater: "azores" as const,
+    areaId: "horta",
+    desk: "Azores water",
+    kicker: "Blue-marlin country",
+  },
+  {
+    theater: "azores" as const,
+    areaId: "sao-miguel",
+    desk: "Azores water",
+    kicker: "Early-season second door",
+  },
 ] as const;
+
+const PLACE_NAME: Record<string, string> = {
+  "san-juan": "San Juan",
+  "sao-miguel": "São Miguel",
+  "morehead-city": "Morehead City",
+  "hilton-head": "Hilton Head",
+  "myrtle-beach": "Myrtle Beach",
+};
 
 export function letterDeskForTheater(theater: string) {
   return DESKS.find((d) => d.theater === theater)?.areaId;
@@ -49,8 +105,7 @@ export function letterDeskForTheater(theater: string) {
 
 export function deskChoiceLabel(desk: (typeof DESKS)[number]) {
   const place =
-    desk.areaId === "san-juan"
-      ? "San Juan"
-      : desk.areaId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    PLACE_NAME[desk.areaId] ??
+    desk.areaId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   return `${desk.desk.replace(" water", "")} — ${place}`;
 }
