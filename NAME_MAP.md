@@ -42,20 +42,22 @@ Company names stay. Furniture names change. If a word needs a footnote, it does 
 | Brief | This morning | “This morning on Galveston.” | Home, mail |
 | Hunt | The fish | “Redfish today.” No quarry language. | Home cards |
 | Clock | When to go | “First light, or last light, or stay home.” | Home cards |
-| Morning line | The line | “One sentence you can text.” | `/morning` |
-| Saturday Letter | Saturday | “Saturday on your water.” | `/newsletter` |
-| The Book | Your book | “Write the fish. Keep the morning with it.” | `/book` |
-| Atlas / cream pins | Your marks | “Your marks, cream on the chart.” | Map |
-| YOLO / copper | Best dry day | “Best dry day left this month.” | Calendar |
-| Fundamentals | The season | “What this month is for, on the coasts you asked for.” | `/fundamentals` |
+| Morning line | Morning line | “This morning on this water.” | `/morning` |
+| Saturday Letter | Saturday letter | “Only the coasts you asked for.” | `/newsletter` |
+| The Book | Logbook | “Write the fish.” | `/book` |
+| Atlas / cream pins | Map | “Your spots on the chart.” | Map |
+| YOLO / copper | Calendar | “What’s left this month.” | Calendar |
+| Fundamentals | Season | “What this month is for.” | `/fundamentals` |
+| The fish | Species | “What’s in play.” | `/species` |
+| The score | How we score | “What the 1–10 means.” | `/method` |
 | Join / elect a coast | Get the morning | “Tell us the water. We’ll send the morning.” | `/join` |
-| Stay or drive | Stay or drive | Keep. Already human. | `/compare` |
+| Stay or drive | Compare | “Two waters side by side.” | `/compare` |
 | The glass | The glass | Keep. Old salt for pressure. Define once. | Brief instruments |
 | First light / last light | Keep | Already the right words. | Everywhere |
 | Score 1–10 | Keep, never a bite | “Galveston is an 8. Not a promise.” | Cards, letter |
 
 ## Words that are dead on every public page
 
-Call · Pin · Board · Run · Desk · Theater · Hunt · Clock · YOLO · copper · Field Brief · cadence · elect · users · instrument · “the product working, not failing.”
+Call · Pin · Board · Run · Desk · Theater · Hunt · Clock · YOLO · copper · Field Brief · cadence · elect · users · instrument · Your marks · Cream on the chart · “the product working, not failing.”
 
 Internal code and URLs can change later. The mouth changes this week.

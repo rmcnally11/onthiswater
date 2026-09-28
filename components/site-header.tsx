@@ -28,15 +28,15 @@ type NavItem = {
 
 const LINKS: NavItem[] = [
   { href: "/", label: "This morning", dek: "Pick a water", bar: "lg" },
-  { href: "/calendar", label: "Best dry day", dek: "What’s left this month", bar: "lg" },
-  { href: "/compare", label: "Stay or drive", dek: "Two waters, one morning", bar: "2xl" },
-  { href: "/map", label: "Your marks", dek: "Cream on the chart", bar: "lg" },
-  { href: "/morning", label: "The line", dek: "This morning on this water" },
-  { href: "/species", label: "The fish", dek: "Who is in play" },
-  { href: "/method", label: "The score", dek: "How the 1–10 is built" },
-  { href: "/newsletter", label: "Saturday", dek: "Only the coasts you asked for", bar: "lg" },
-  { href: "/fundamentals", label: "The season", dek: "What this month is for" },
-  { href: "/book", label: "Your book", dek: "Write the fish", bar: "lg" },
+  { href: "/calendar", label: "Calendar", dek: "What’s left this month", bar: "lg" },
+  { href: "/compare", label: "Compare", dek: "Two waters side by side", bar: "2xl" },
+  { href: "/map", label: "Map", dek: "Your spots on the chart", bar: "lg" },
+  { href: "/morning", label: "Morning line", dek: "This morning on this water" },
+  { href: "/species", label: "Species", dek: "What’s in play" },
+  { href: "/method", label: "How we score", dek: "What the 1–10 means" },
+  { href: "/newsletter", label: "Saturday letter", dek: "Only the coasts you asked for", bar: "lg" },
+  { href: "/fundamentals", label: "Season", dek: "What this month is for" },
+  { href: "/book", label: "Logbook", dek: "Write the fish", bar: "lg" },
 ];
 
 function activePath(pathname: string, href: string) {
