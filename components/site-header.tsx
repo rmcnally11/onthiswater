@@ -151,7 +151,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
               <Waterline className="px-4" />
               <div className="px-4 pt-3">
                 <JoinLink on={onJoin} className="w-full">
-                  Get the morning
+                  Join the list
                 </JoinLink>
               </div>
               <nav className="flex flex-1 flex-col overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">

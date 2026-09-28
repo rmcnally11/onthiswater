@@ -50,7 +50,7 @@ Company names stay. Furniture names change. If a word needs a footnote, it does 
 | Fundamentals | Season | “What this month is for.” | `/fundamentals` |
 | The fish | Species | “What’s in play.” | `/species` |
 | The score | How we score | “What the 1–10 means.” | `/method` |
-| Join / elect a coast | Get the morning | “Tell us the water. We’ll send the morning.” | `/join` |
+| Join / elect a coast | Join the list | “Tell us the water. We’ll send the morning.” | `/join` |
 | Stay or drive | Compare | “Two waters side by side.” | `/compare` |
 | The glass | The glass | Keep. Old salt for pressure. Define once. | Brief instruments |
 | First light / last light | Keep | Already the right words. | Everywhere |
