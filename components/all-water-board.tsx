@@ -2,6 +2,7 @@ import type { Briefing } from "@/lib/types";
 import { DESKS } from "@/lib/desks";
 import { theaterLabel } from "@/lib/data/theaters";
 import { DockPostedHandoff } from "@/components/dock-posted-handoff";
+import { JoinStrip } from "@/components/join-strip";
 import { ScoreRing } from "@/components/viz/score-ring";
 import { Waterline } from "@/components/viz/waterline";
 import { briefHref, morningHref } from "@/lib/hrefs";
@@ -27,6 +28,7 @@ export function AllWaterSkeleton() {
         </p>
         <Waterline className="mt-3" />
       </div>
+      <JoinStrip />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {DESKS.map((desk) => (
           <div
@@ -102,6 +104,8 @@ export function AllWaterBoard({
         <Waterline className="mt-3" />
         <DockPostedHandoff compact />
       </div>
+
+      <JoinStrip />
 
       {live === 0 ? (
         <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
