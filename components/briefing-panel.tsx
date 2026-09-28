@@ -33,6 +33,7 @@ import { pressureInHg, pressureTrendWord } from "@/lib/pressure";
 import { LongRecord } from "@/components/long-record";
 import { longRecordBay } from "@/lib/data/long-record";
 import { DockPostedHandoff } from "@/components/dock-posted-handoff";
+import { JoinStrip } from "@/components/join-strip";
 import { LogCatchLaunch } from "@/components/log-catch";
 import { logContextFromBriefing } from "@/lib/book";
 
@@ -113,6 +114,9 @@ export function BriefingPanel({
             <LogCatchLaunch context={logContextFromBriefing(briefing)} />
           </div>
           <DockPostedHandoff theater={area.theater} areaId={area.id} compact />
+        </div>
+        <div className="border-t border-[color:var(--line)] px-5 py-4 md:px-7">
+          <JoinStrip />
         </div>
         <div className="border-t border-[color:var(--line)] px-3 py-4 md:px-6">
           <TideCurve

@@ -20,6 +20,7 @@ import { coastEditionLabel, isAllCoasts } from "@/lib/coasts";
 import { scoreHex, scoreInk } from "@/lib/viz";
 import { pressureLine } from "@/lib/pressure";
 import { LongRecord } from "@/components/long-record";
+import { JoinStrip } from "@/components/join-strip";
 import { longRecordBay } from "@/lib/data/long-record";
 
 function tideLabel(desk: DeskIssue) {
@@ -238,6 +239,8 @@ export function LetterIssue({
         </p>
         <Waterline className="mx-auto mt-4 max-w-xl" />
       </header>
+
+      <JoinStrip className="mx-auto max-w-3xl" />
 
       <nav className="flex flex-wrap justify-center gap-2 text-xs">
         <a

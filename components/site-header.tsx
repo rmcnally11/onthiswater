@@ -97,7 +97,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-[color:var(--line)] bg-[color:var(--ink)]/80 pt-[env(safe-area-inset-top)] backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 md:px-6">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:px-6">
         <a href="/" className="flex shrink-0 items-baseline gap-2">
           <span className="wordmark text-[color:var(--cream)]">{PRODUCT_NAME}</span>
           <span className="geo-lockup hidden text-[color:var(--sea)] xl:inline">Seven coasts</span>
@@ -118,7 +118,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
           ))}
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
-          <JoinLink on={onJoin} compact className="hidden sm:inline-flex" />
+          <JoinLink on={onJoin} compact />
           <Sheet>
             <SheetTrigger
               render={
