@@ -9,7 +9,7 @@ import { faqJsonLd, HOME_FAQ, pageMeta } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = pageMeta({
-  title: "Get the morning",
+  title: "Join the list",
   description:
     "This morning in the inbox. Tell us the water. A Texas-only list does not get Andros or Seychelles.",
   path: "/join",
@@ -38,7 +38,7 @@ export default async function JoinPage({
       <header>
         <p className="kicker text-[color:var(--copper)]">The list · this morning · Saturday</p>
         <h1 className="page-title mt-3 text-[color:var(--cream)]">
-          Get the morning
+          Join the list
         </h1>
         <p className="mt-3 text-sm text-[color:var(--cream)]/65">
           Tell us the water. We’ll send the morning. Take a whole coast or only the subsections —

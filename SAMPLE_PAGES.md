@@ -126,7 +126,7 @@ Permit today, if the light is right. Oceanside, or Channel 5 current. Not a Texa
 
 (Same pattern for Andros, Ascension, San Juan, Alphonse — place name, the fish, when to go. No “desk.” No “hunt.” No “clock.”)
 
-Nav: All water · pick a water · This morning · The line · Saturday · Your book · Stay or drive · The season · Get the morning
+Nav: All water · pick a water · This morning · The line · Saturday · Your book · Stay or drive · The season · Join the list
 
 ---
 

@@ -9,7 +9,7 @@ export function SiteFooter() {
           href="/join"
           className="font-medium text-[color:var(--copper)] underline decoration-[color:var(--copper)]/40 underline-offset-2"
         >
-          Get the morning
+          Join the list
         </a>
         .
       </p>
