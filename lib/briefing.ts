@@ -39,7 +39,8 @@ async function computeBriefing(
   };
 }
 
-const cachedBriefing = unstable_cache(computeBriefing, ["field-briefing-v13"], {
+// v14 drops desks cached while the shared wind call came back empty.
+const cachedBriefing = unstable_cache(computeBriefing, ["field-briefing-v14"], {
   revalidate: 180,
 });
 
