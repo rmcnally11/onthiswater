@@ -9,11 +9,14 @@
     "lint": "eslint",
     "test:sister": "node --experimental-strip-types scripts/test-dock-posted.ts",
     "test:hab": "node --experimental-strip-types scripts/test-hab.ts",
-    "test:openmeteo": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-openmeteo.ts"
+    "test:openmeteo": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-openmeteo.ts",
+    "test:snapshot": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot.ts",
+    "test:store": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot-store.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/blob": "^2.3.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { GITHUB_REPO } from "@/lib/brand";
-import { getBriefing } from "@/lib/briefing";
-import { buildCalendarRange, getYoloDay } from "@/lib/calendar";
+import { getMorningSnapshot } from "@/lib/briefing";
+import { buildCalendarRange } from "@/lib/calendar";
 import { getArea } from "@/lib/data/areas";
 import { clockParts } from "@/lib/time";
 import {
@@ -26,8 +26,10 @@ export async function GET() {
   for (const desk of TWEET_DESKS) {
     const area = getArea(desk.areaId);
     try {
-      const briefing = await getBriefing(area.id);
-      const yolo = await getYoloDay(area, briefing.activity);
+      const { briefing, yolo } = await getMorningSnapshot(area.id);
+      if (briefing.kind === "today" && briefing.conditions.weather.windMph == null) {
+        throw new Error("Wind not in");
+      }
       mornings.push({
         desk: desk.desk,
         kicker: desk.kicker,
@@ -100,5 +102,7 @@ export async function GET() {
     rule: "Post text verbatim — the last line is the live site so readers can open the brief. Screenshot image only. Do not generate pictures. Skip any desk with skip=true.",
     mornings,
     calendars,
+  }, {
+    headers: { "Cache-Control": "private, no-store" },
   });
 }

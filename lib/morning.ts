@@ -1,16 +1,14 @@
 import type { Briefing, CalendarDay } from "@/lib/types";
 import { formatYmdLong } from "@/lib/time";
+import { windLabel } from "@/lib/wind";
 import { skyCopy } from "@/lib/wx";
 
 export function morningLine(briefing: Briefing, yolo?: CalendarDay | null) {
   const name = briefing.area.shortName;
   const score = briefing.overall.toFixed(1);
   const wind =
-    briefing.conditions.weather.windMph != null
-      ? `${Math.round(briefing.conditions.weather.windMph)} mph${
-          briefing.conditions.weather.windCardinal ? ` ${briefing.conditions.weather.windCardinal}` : ""
-        }`
-      : "no wind reading yet";
+    windLabel(briefing.conditions.weather.windMph, briefing.conditions.weather.windCardinal) ??
+    "no wind reading yet";
   const sky =
     briefing.conditions.weather.wx || briefing.conditions.weather.precipChance != null
       ? ` ${skyCopy(briefing.conditions.weather.wx, briefing.conditions.weather.precipChance, briefing.conditions.weather.sky)}.`

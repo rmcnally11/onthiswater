@@ -2,7 +2,8 @@ import type { Briefing, CalendarDay, TheaterId } from "@/lib/types";
 import { PRODUCT_NAME, siteOrigin } from "@/lib/brand";
 import { DESKS } from "@/lib/newsletter";
 import { theaterLabel } from "@/lib/data/theaters";
-import { skyCopy, skyWord } from "@/lib/wx";
+import { windLabel } from "@/lib/wind";
+import { skyCopy } from "@/lib/wx";
 
 export const ORIGIN = siteOrigin();
 
@@ -45,8 +46,7 @@ export function calendarHref(areaId: string, theater: string) {
 
 function windBit(briefing: Briefing) {
   const w = briefing.conditions.weather;
-  if (w.windMph == null) return "wind not in";
-  return `${Math.round(w.windMph)} mph${w.windCardinal ? ` ${w.windCardinal}` : ""}`;
+  return windLabel(w.windMph, w.windCardinal) ?? "wind not in";
 }
 
 function skyBit(briefing: Briefing) {
@@ -91,7 +91,7 @@ export function morningAlt(briefing: Briefing) {
   return [
     `${PRODUCT_NAME} ${place} weather card`,
     `${briefing.area.shortName} fishing score ${briefing.overall.toFixed(1)} of 10`,
-    w.windMph != null ? `wind ${Math.round(w.windMph)} mph ${w.windCardinal ?? ""}`.trim() : null,
+    windLabel(w.windMph, w.windCardinal) ? `wind ${windLabel(w.windMph, w.windCardinal)}` : null,
     skyCopy(w.wx, w.precipChance, w.sky),
     briefing.conditions.moon.name,
   ]

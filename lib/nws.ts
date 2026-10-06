@@ -98,8 +98,8 @@ export function nwsWindAt(periods: NwsPeriod[], at: Date) {
   return nwsDir(best);
 }
 
-export function nwsWindNow(periods: NwsPeriod[]) {
-  const now = Date.now();
+export function nwsWindNow(periods: NwsPeriod[], at = new Date()) {
+  const now = at.getTime();
   const p =
     periods.find((x) => new Date(x.startTime).getTime() >= now - 30 * 60000) ?? periods[0];
   if (!p) return null;
