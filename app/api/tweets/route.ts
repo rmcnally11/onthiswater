@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { GITHUB_REPO } from "@/lib/brand";
 import { getMorningSnapshot } from "@/lib/briefing";
-import { buildCalendarRange } from "@/lib/calendar";
+import { getCalendarSnapshot } from "@/lib/calendar";
 import { getArea } from "@/lib/data/areas";
-import { clockParts } from "@/lib/time";
 import {
   ORIGIN,
   TWEET_DESKS,
@@ -63,9 +62,8 @@ export async function GET() {
     }
 
     try {
-      const now = clockParts(new Date(), area.timezone);
-      const months = await buildCalendarRange(area, now.year, now.month, "all", 1);
-      const days = months[0]?.days ?? [];
+      const snap = await getCalendarSnapshot(area, "all");
+      const days = snap.months[0]?.days ?? [];
       calendars.push({
         desk: desk.desk,
         theater: desk.theater,

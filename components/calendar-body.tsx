@@ -1,7 +1,9 @@
-import { buildCalendarRange } from "@/lib/calendar";
+import { buildCalendarRange, getCalendarSnapshot } from "@/lib/calendar";
 import { AmazingChip, MonthGrid } from "@/components/month-grid";
 import { RhymeStrip } from "@/components/rhyme-strip";
 import { YoloBanner } from "@/components/yolo-banner";
+import { calendarSnapshotYolo } from "@/lib/snapshot-store";
+import { clockParts } from "@/lib/time";
 import type { ActivityId, Area } from "@/lib/types";
 
 export function CalendarSkeleton() {
@@ -40,16 +42,25 @@ export async function CalendarBody({
   year: number;
   month: number;
 }) {
+  const now = clockParts(new Date(), area.timezone);
+  const current = year === now.year && month === now.month;
   let months;
+  let yolo;
   try {
-    months = await buildCalendarRange(area, year, month, activity, 2);
+    if (current) {
+      const snap = await getCalendarSnapshot(area, activity);
+      months = snap.months;
+      yolo = calendarSnapshotYolo(snap);
+    } else {
+      months = await buildCalendarRange(area, year, month, activity, 2);
+      yolo = months.flatMap((m) => m.days).find((d) => d.yolo) ?? null;
+    }
   } catch (e) {
     const message = e instanceof Error ? e.message : "Calendar failed.";
     return <p className="text-rose-800">{message}</p>;
   }
 
   const amazing = months.flatMap((m) => m.days.filter((d) => d.amazing || d.yolo));
-  const yolo = months.flatMap((m) => m.days).find((d) => d.yolo) ?? null;
 
   return (
     <>

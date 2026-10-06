@@ -11,7 +11,8 @@
     "test:hab": "node --experimental-strip-types scripts/test-hab.ts",
     "test:openmeteo": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-openmeteo.ts",
     "test:snapshot": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot.ts",
-    "test:store": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot-store.ts"
+    "test:store": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot-store.ts",
+    "test:calendar": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-calendar-snapshot.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
