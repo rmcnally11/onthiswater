@@ -2,9 +2,10 @@ import { get, put, del } from "@vercel/blob";
 import type { Briefing, CalendarDay } from "@/lib/types";
 
 /**
- * One morning record per area, activity, local date, and local hour.
- * The card page, the card image (a shot of that page), /api/tweets, and
- * /api/briefing all read this record. It lives in Vercel Blob so separate
+ * One morning record per deployment environment, area, activity, local date,
+ * and local hour. Preview and development never read or write production's
+ * blobs. The card page, the card image (a shot of that page), /api/tweets,
+ * and /api/briefing all read this record. It lives in Vercel Blob so separate
  * serverless invocations and regions see the same bytes. The first writer
  * wins; everyone else re-reads that record instead of keeping their own compute.
  */
@@ -31,8 +32,20 @@ function isSnapshot(value: unknown): value is MorningSnapshot {
   return row.v === 1 && !!row.briefing && typeof row.briefing.overall === "number";
 }
 
-export function snapshotKey(areaId: string, activity: string, dateYmd: string, hourKey: string) {
-  return `morning/v1/${areaId}/${activity}/${dateYmd}/${hourKey}.json`;
+/** Vercel sets VERCEL_ENV to production, preview, or development. */
+export function snapshotEnv(raw = process.env.VERCEL_ENV) {
+  const env = (raw || "development").toLowerCase();
+  return /^[a-z0-9-]+$/.test(env) ? env : "development";
+}
+
+export function snapshotKey(
+  areaId: string,
+  activity: string,
+  dateYmd: string,
+  hourKey: string,
+  env = snapshotEnv(),
+) {
+  return `morning/v1/${snapshotEnv(env)}/${areaId}/${activity}/${dateYmd}/${hourKey}.json`;
 }
 
 export function memorySnapshotStore(): SnapshotStore {
