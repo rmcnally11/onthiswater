@@ -1,5 +1,4 @@
-import { getBriefing } from "@/lib/briefing";
-import { getYoloDay } from "@/lib/calendar";
+import { getMorningSnapshot } from "@/lib/briefing";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
 import { morningLine } from "@/lib/morning";
@@ -31,8 +30,9 @@ export default async function MorningCardPage({
   let briefing;
   let yolo = null;
   try {
-    briefing = await getBriefing(area.id);
-    yolo = await getYoloDay(area, briefing.activity);
+    const snap = await getMorningSnapshot(area.id);
+    briefing = snap.briefing;
+    yolo = snap.yolo;
   } catch {
     briefing = null;
   }

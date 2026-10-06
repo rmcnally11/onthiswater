@@ -1,9 +1,10 @@
-import { unstable_cache } from "next/cache";
-import type { ActivityId, Briefing } from "@/lib/types";
+import type { ActivityId, Briefing, CalendarDay } from "@/lib/types";
 import { getArea } from "@/lib/data/areas";
+import { getYoloDay } from "@/lib/calendar";
 import { loadConditions } from "@/lib/conditions";
 import { buildBriefing } from "@/lib/engine";
 import { loadOfficialLayers } from "@/lib/layers";
+import { readOrCreate, snapshotKey, snapshotStore, type MorningSnapshot } from "@/lib/snapshot-store";
 import { isYmd, snapshotHour, startOfDayInZone, ymdInZone } from "@/lib/time";
 
 const ACTIVITIES = new Set(["wade", "skiff", "kayak", "fly", "spin", "structure", "offshore", "all"]);
@@ -77,30 +78,70 @@ async function computeBriefing(
   throw new WindMiss(last!);
 }
 
-// v15 is one local hour. v14's 3-minute cache let the card and /api/tweets
-// recompute on either side of a refresh, and a quiet wind call was stored.
-const cachedBriefing = unstable_cache(computeBriefing, ["field-briefing-v15"], {
-  revalidate: 3600,
-});
+const inflight = new Map<string, Promise<MorningSnapshot>>();
 
-export async function getBriefing(
+async function computeSnapshot(
+  areaId: string,
+  activity: ActivityId | "all",
+  dateYmd: string,
+  hourKey: string,
+): Promise<MorningSnapshot> {
+  const area = getArea(areaId);
+  let briefing: Briefing;
+  try {
+    briefing = await computeBriefing(areaId, activity, dateYmd, hourKey);
+  } catch (error) {
+    if (error instanceof WindMiss) briefing = error.briefing;
+    else throw error;
+  }
+  let yolo: CalendarDay | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      yolo = (await getYoloDay(area, activity)) ?? null;
+      break;
+    } catch {
+      yolo = null;
+      if (attempt === 0) await sleep(300);
+    }
+  }
+  return { v: 1, briefing, yolo };
+}
+
+export async function getMorningSnapshot(
   areaId?: string | null,
   activityRaw?: string | null,
   dateRaw?: string | null,
-): Promise<Briefing> {
+): Promise<MorningSnapshot> {
   const area = getArea(areaId);
   const activity = parseActivity(activityRaw);
   const now = new Date();
   const today = ymdInZone(now, area.timezone);
   const dateYmd = parseBriefDate(dateRaw) ?? today;
   const hourKey = dateYmd === today ? snapshotHour(now, area.timezone).hour : "08";
-  try {
-    return await cachedBriefing(area.id, activity, dateYmd, hourKey);
-  } catch (error) {
-    if (error instanceof WindMiss) return error.briefing;
-    if (error instanceof Error && error.message === "Wind not in") {
-      return buildOnce(area.id, activity, dateYmd, hourKey);
-    }
-    throw error;
-  }
+  const key = snapshotKey(area.id, activity, dateYmd, hourKey);
+  const pending = inflight.get(key);
+  if (pending) return pending;
+
+  const at = instantFor(dateYmd, hourKey, area.timezone);
+  const retire = snapshotHour(new Date(at.getTime() - 48 * 3600000), area.timezone);
+  const retireKey = snapshotKey(area.id, activity, retire.ymd, retire.hour);
+  const work = readOrCreate(
+    snapshotStore(),
+    key,
+    () => computeSnapshot(area.id, activity, dateYmd, hourKey),
+    retireKey,
+  ).finally(() => {
+    if (inflight.get(key) === work) inflight.delete(key);
+  });
+  inflight.set(key, work);
+  return work;
+}
+
+export async function getBriefing(
+  areaId?: string | null,
+  activityRaw?: string | null,
+  dateRaw?: string | null,
+): Promise<Briefing> {
+  const snap = await getMorningSnapshot(areaId, activityRaw, dateRaw);
+  return snap.briefing;
 }
