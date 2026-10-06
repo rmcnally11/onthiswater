@@ -1,6 +1,6 @@
 import type { Briefing, CalendarDay, TheaterId } from "@/lib/types";
 import { PRODUCT_NAME, siteOrigin } from "@/lib/brand";
-import { DESKS } from "@/lib/newsletter";
+import { DESKS } from "@/lib/desks";
 import { theaterLabel } from "@/lib/data/theaters";
 import { windLabel } from "@/lib/wind";
 import { skyCopy } from "@/lib/wx";

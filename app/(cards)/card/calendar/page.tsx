@@ -1,7 +1,7 @@
-import { buildCalendarRange } from "@/lib/calendar";
+import { getCalendarSnapshot } from "@/lib/calendar";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
-import { clockParts } from "@/lib/time";
+import { calendarSnapshotYolo } from "@/lib/snapshot-store";
 import { MonthGrid } from "@/components/month-grid";
 import { YoloBanner } from "@/components/yolo-banner";
 import { Waterline } from "@/components/viz/waterline";
@@ -15,16 +15,16 @@ export default async function CalendarCardPage({
 }) {
   const q = await searchParams;
   const area = getArea(q.area);
-  const now = clockParts(new Date(), area.timezone);
-  let months;
+  let snap;
   try {
-    months = await buildCalendarRange(area, now.year, now.month, "all", 1);
+    snap = await getCalendarSnapshot(area, "all");
   } catch {
-    months = null;
+    snap = null;
   }
 
+  const months = snap?.months ?? null;
   const days = months?.[0]?.days ?? [];
-  const yolo = days.find((d) => d.yolo) ?? null;
+  const yolo = snap ? calendarSnapshotYolo(snap) : null;
 
   return (
     <article className="box-border w-[1200px] bg-[color:var(--ink)] p-8 text-[color:var(--cream)]">

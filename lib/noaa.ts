@@ -4,11 +4,11 @@ import { noaaDateSpan, parseNoaaGmt } from "@/lib/time";
 const APP = USER_AGENT;
 const BASE = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter";
 
-async function getJson(url: string) {
+async function getJson(url: string, timeoutMs = 2800) {
   const res = await fetch(url, {
     headers: { "User-Agent": APP },
     next: { revalidate: 300 },
-    signal: AbortSignal.timeout(2800),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   if (!res.ok) throw new Error(`NOAA ${res.status}`);
   return res.json();
@@ -20,7 +20,7 @@ function qs(params: Record<string, string>) {
   return u.toString();
 }
 
-export async function fetchHiLo(station: string, start: Date, days = 3) {
+export async function fetchHiLo(station: string, start: Date, days = 3, timeoutMs = 2800) {
   const { begin, end } = noaaDateSpan(new Date(start.getTime() - 86400000), days + 1);
   const json = await getJson(
     qs({
@@ -35,6 +35,7 @@ export async function fetchHiLo(station: string, start: Date, days = 3) {
       interval: "hilo",
       format: "json",
     }),
+    timeoutMs,
   );
   const rows = (json.predictions ?? []) as { t: string; v: string; type: "H" | "L" }[];
   return rows.map((r) => ({

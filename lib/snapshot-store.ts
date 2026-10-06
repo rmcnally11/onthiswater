@@ -15,10 +15,27 @@ export type MorningSnapshot = {
   yolo: CalendarDay | null;
 };
 
-export type SnapshotStore = {
-  read(key: string): Promise<MorningSnapshot | null>;
+/**
+ * Current month and the next one, in the area's timezone. /calendar, the
+ * calendar card, /api/tweets calendars, and the morning line's best dry day
+ * all read this record. A separate key from the morning snapshot.
+ */
+export type CalendarMonthSnapshot = {
+  year: number;
+  month: number;
+  label: string;
+  days: CalendarDay[];
+};
+
+export type CalendarSnapshot = {
+  v: 1;
+  months: CalendarMonthSnapshot[];
+};
+
+export type SnapshotStore<T = MorningSnapshot> = {
+  read(key: string): Promise<T | null>;
   /** Leave an existing record in place. */
-  create(key: string, value: MorningSnapshot): Promise<"created" | "exists">;
+  create(key: string, value: T): Promise<"created" | "exists">;
   retire?(key: string): Promise<void>;
 };
 
@@ -48,8 +65,18 @@ export function snapshotKey(
   return `morning/v1/${snapshotEnv(env)}/${areaId}/${activity}/${dateYmd}/${hourKey}.json`;
 }
 
-export function memorySnapshotStore(): SnapshotStore {
-  const rows = new Map<string, MorningSnapshot>();
+export function calendarSnapshotKey(
+  areaId: string,
+  activity: string,
+  dateYmd: string,
+  hourKey: string,
+  env = snapshotEnv(),
+) {
+  return `calendar/v1/${snapshotEnv(env)}/${areaId}/${activity}/${dateYmd}/${hourKey}.json`;
+}
+
+export function memorySnapshotStore<T = MorningSnapshot>(): SnapshotStore<T> {
+  const rows = new Map<string, T>();
   return {
     async read(key) {
       const hit = rows.get(key);
@@ -76,7 +103,7 @@ function blobReadOptions() {
   };
 }
 
-function blobSnapshotStore(): SnapshotStore {
+function blobJsonStore<T>(isValue: (value: unknown) => value is T): SnapshotStore<T> {
   return {
     async read(key) {
       const result = await get(key, blobReadOptions());
@@ -84,7 +111,7 @@ function blobSnapshotStore(): SnapshotStore {
       try {
         const text = await new Response(result.stream).text();
         const parsed: unknown = JSON.parse(text);
-        return isSnapshot(parsed) ? parsed : null;
+        return isValue(parsed) ? parsed : null;
       } catch {
         return null;
       }
@@ -112,7 +139,29 @@ function blobSnapshotStore(): SnapshotStore {
   };
 }
 
+function blobSnapshotStore(): SnapshotStore {
+  return blobJsonStore(isSnapshot);
+}
+
+function isCalendarMonth(value: unknown): value is CalendarMonthSnapshot {
+  if (!value || typeof value !== "object") return false;
+  const month = value as CalendarMonthSnapshot;
+  return (
+    typeof month.year === "number" &&
+    typeof month.month === "number" &&
+    typeof month.label === "string" &&
+    Array.isArray(month.days)
+  );
+}
+
+function isCalendarSnapshot(value: unknown): value is CalendarSnapshot {
+  if (!value || typeof value !== "object") return false;
+  const row = value as CalendarSnapshot;
+  return row.v === 1 && Array.isArray(row.months) && row.months.length >= 2 && row.months.every(isCalendarMonth);
+}
+
 let resolved: SnapshotStore | null = null;
+let calendarResolved: SnapshotStore<CalendarSnapshot> | null = null;
 
 export function snapshotStore(): SnapshotStore {
   if (process.env.VERCEL && !process.env.BLOB_READ_WRITE_TOKEN) {
@@ -122,6 +171,28 @@ export function snapshotStore(): SnapshotStore {
     resolved = process.env.BLOB_READ_WRITE_TOKEN ? blobSnapshotStore() : memorySnapshotStore();
   }
   return resolved;
+}
+
+export function calendarSnapshotStore(): SnapshotStore<CalendarSnapshot> {
+  if (process.env.VERCEL && !process.env.BLOB_READ_WRITE_TOKEN) {
+    throw new Error("Calendar snapshot store is not configured");
+  }
+  if (!calendarResolved) {
+    calendarResolved = process.env.BLOB_READ_WRITE_TOKEN
+      ? blobJsonStore(isCalendarSnapshot)
+      : memorySnapshotStore<CalendarSnapshot>();
+  }
+  return calendarResolved;
+}
+
+/** True when the current month has at least one day with a forecast wind. */
+export function calendarHasForecastWind(snap: CalendarSnapshot) {
+  return (snap.months[0]?.days ?? []).some((day) => day.windMph != null);
+}
+
+/** Best dry day is the current month's outlined day. The next month is not a candidate. */
+export function calendarSnapshotYolo(snap: CalendarSnapshot): CalendarDay | null {
+  return snap.months[0]?.days.find((day) => day.yolo) ?? null;
 }
 
 function sleep(ms: number) {
@@ -162,4 +233,32 @@ export async function readOrCreate(
     await sleep(40 * (attempt + 1));
   }
   throw new Error("Morning snapshot was not readable after write");
+}
+
+/**
+ * Same first-writer rule as the morning record. A current month with no
+ * forecast wind is returned and not stored, so a later caller can fill the hour.
+ */
+export async function readOrCreateCalendar(
+  store: SnapshotStore<CalendarSnapshot>,
+  key: string,
+  compute: () => Promise<CalendarSnapshot>,
+): Promise<CalendarSnapshot> {
+  const hit = await store.read(key);
+  if (hit) return hit;
+
+  const fresh = clone(await compute());
+  if (!calendarHasForecastWind(fresh)) {
+    const raced = await store.read(key);
+    return raced ?? fresh;
+  }
+
+  await store.create(key, fresh);
+
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const stored = await store.read(key);
+    if (stored) return stored;
+    await sleep(40 * (attempt + 1));
+  }
+  throw new Error("Calendar snapshot was not readable after write");
 }

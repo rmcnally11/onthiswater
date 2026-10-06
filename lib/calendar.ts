@@ -1,6 +1,14 @@
 import { unstable_cache } from "next/cache";
 import type { ActivityId, Area, CalendarDay } from "@/lib/types";
-import { clockParts, ymdInZone } from "@/lib/time";
+import { TIGHT_BUDGET, monthsForCalendarSnapshot, type CalendarBudget } from "@/lib/calendar-budget";
+import {
+  calendarSnapshotKey,
+  calendarSnapshotStore,
+  calendarSnapshotYolo,
+  readOrCreateCalendar,
+  type CalendarSnapshot,
+} from "@/lib/snapshot-store";
+import { clockParts, snapshotHour, ymdInZone } from "@/lib/time";
 import { moonGlyph, moonPhase, modeledHourlyTide } from "@/lib/moon";
 import { SPECIES } from "@/lib/data/species";
 import { getArea, usesModeledOcean } from "@/lib/data/areas";
@@ -119,14 +127,23 @@ function withBudget<T>(promise: Promise<T>, ms: number, label: string) {
   ]);
 }
 
-async function loadCalendarInputs(area: Area, start: Date, dayCount: number): Promise<CalendarInputs> {
+async function loadCalendarInputs(
+  area: Area,
+  start: Date,
+  dayCount: number,
+  budget: CalendarBudget = TIGHT_BUDGET,
+): Promise<CalendarInputs> {
   const [hiloSettled, windSettled] = await Promise.allSettled([
     area.noaaStation
-      ? withBudget(fetchHiLo(area.noaaStation, new Date(start.getTime() - 86400000), dayCount + 2), 2800, "NOAA hi/lo")
+      ? withBudget(
+          fetchHiLo(area.noaaStation, new Date(start.getTime() - 86400000), dayCount + 2, budget.noaaMs),
+          budget.noaaMs,
+          "NOAA hi/lo",
+        )
       : Promise.resolve([]),
     usesModeledOcean(area)
-      ? withBudget(fetchOpenMeteo(area.lat, area.lon), 2500, "Open-Meteo")
-      : withBudget(fetchNwsDayWinds(area.lat, area.lon), 2800, "NWS"),
+      ? withBudget(fetchOpenMeteo(area.lat, area.lon), budget.openMeteoMs, "Open-Meteo")
+      : withBudget(fetchNwsDayWinds(area.lat, area.lon), budget.nwsMs, "NWS"),
   ]);
 
   const hilo: HiLoRow[] =
@@ -184,7 +201,7 @@ async function loadCalendarInputs(area: Area, start: Date, dayCount: number): Pr
   if (windSettled.status === "fulfilled") ingestWind(windSettled.value);
   if (!windByDay.size) {
     try {
-      ingestWind(await withBudget(fetchOpenMeteo(area.lat, area.lon), 2500, "Open-Meteo fallback"));
+      ingestWind(await withBudget(fetchOpenMeteo(area.lat, area.lon), budget.fallbackMs, "Open-Meteo fallback"));
     } catch {
       // astronomical days stay unlabeled
     }
@@ -383,10 +400,11 @@ async function computeCalendarRange(
   month: number,
   activity: ActivityId | "all",
   count: number,
+  budget: CalendarBudget = TIGHT_BUDGET,
 ) {
   const area = getArea(areaId);
   const start = new Date(Date.UTC(year, month - 1, 1, 6, 0));
-  const inputs = await loadCalendarInputs(area, start, count * 32);
+  const inputs = await loadCalendarInputs(area, start, count * 32, budget);
   return monthsFromInputs(area, activity, year, month, count, inputs);
 }
 
@@ -404,8 +422,33 @@ export async function buildCalendarRange(
   return cachedCalendarRange(area.id, year, month, activity, count);
 }
 
-export async function getYoloDay(area: Area, activity: ActivityId | "all") {
+const calendarInflight = new Map<string, Promise<CalendarSnapshot>>();
+
+async function computeCalendarSnapshot(area: Area, activity: ActivityId | "all"): Promise<CalendarSnapshot> {
   const now = clockParts(new Date(), area.timezone);
-  const months = await buildCalendarRange(area, now.year, now.month, activity, 1);
-  return months[0]?.days.find((d) => d.yolo) ?? pickYolo(months[0]?.days ?? [], ymdInZone(new Date(), area.timezone));
+  const months = await monthsForCalendarSnapshot((budget) =>
+    computeCalendarRange(area.id, now.year, now.month, activity, 2, budget),
+  );
+  return { v: 1, months };
+}
+
+/** Current month and the next, shared by the page, the card, the feed, and getYoloDay. */
+export async function getCalendarSnapshot(area: Area, activity: ActivityId | "all"): Promise<CalendarSnapshot> {
+  const hour = snapshotHour(new Date(), area.timezone);
+  const key = calendarSnapshotKey(area.id, activity, hour.ymd, hour.hour);
+  const pending = calendarInflight.get(key);
+  if (pending) return pending;
+
+  const work = readOrCreateCalendar(calendarSnapshotStore(), key, () => computeCalendarSnapshot(area, activity)).finally(
+    () => {
+      if (calendarInflight.get(key) === work) calendarInflight.delete(key);
+    },
+  );
+  calendarInflight.set(key, work);
+  return work;
+}
+
+export async function getYoloDay(area: Area, activity: ActivityId | "all") {
+  const snap = await getCalendarSnapshot(area, activity);
+  return calendarSnapshotYolo(snap);
 }
