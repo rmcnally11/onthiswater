@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { memorySnapshotStore, readOrCreate, type MorningSnapshot } from "../lib/snapshot-store.ts";
+import { memorySnapshotStore, readOrCreate, snapshotKey, type MorningSnapshot } from "../lib/snapshot-store.ts";
 
 function snap(score: number, wind: number | null, yolo: string | null): MorningSnapshot {
   return {
@@ -63,5 +63,21 @@ assert.equal(good.briefing.overall, 8.1);
 assert.equal(late.briefing.overall, 8.1);
 assert.equal(late.briefing.conditions.weather.windMph, 5);
 assert.equal(late.yolo?.date, "2026-10-12");
+
+const previousEnv = process.env.VERCEL_ENV;
+process.env.VERCEL_ENV = "production";
+const prodKey = snapshotKey("hatteras", "all", "2026-10-06", "08");
+process.env.VERCEL_ENV = "preview";
+const previewKey = snapshotKey("hatteras", "all", "2026-10-06", "08");
+delete process.env.VERCEL_ENV;
+const localKey = snapshotKey("hatteras", "all", "2026-10-06", "08");
+if (previousEnv === undefined) delete process.env.VERCEL_ENV;
+else process.env.VERCEL_ENV = previousEnv;
+
+assert.equal(prodKey, "morning/v1/production/hatteras/all/2026-10-06/08.json");
+assert.equal(previewKey, "morning/v1/preview/hatteras/all/2026-10-06/08.json");
+assert.equal(localKey, "morning/v1/development/hatteras/all/2026-10-06/08.json");
+assert.notEqual(prodKey, previewKey);
+assert.equal(snapshotKey("hatteras", "all", "2026-10-06", "08", "preview weird"), "morning/v1/development/hatteras/all/2026-10-06/08.json");
 
 console.log("ok snapshot store");
