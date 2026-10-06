@@ -9,7 +9,7 @@ import { fetchSargassum } from "@/lib/sargassum";
 import { fetchSalinity } from "@/lib/salinity";
 import { loadTides } from "@/lib/tides";
 import { moonPhase } from "@/lib/moon";
-import { cardinalFromDeg, ymdInZone } from "@/lib/time";
+import { cardinalFromDeg, degreesFromCardinal, parseUtcStamp, ymdInZone } from "@/lib/time";
 import { coerceSky, skyFromWmo, skyPhraseFromWmo } from "@/lib/wx";
 import { tideGauge } from "@/lib/data/tide-gauges";
 import { usesModeledOcean } from "@/lib/data/areas";
@@ -50,7 +50,39 @@ function mergeSky(primary: WeatherNow, fallback: WeatherNow | null): WeatherNow 
   };
 }
 
-function openMeteoAt(
+function finite(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function atIndex(values: Array<number | null> | undefined, index: number): number | null {
+  if (!values || index < 0) return null;
+  return finite(values[index]);
+}
+
+/**
+ * Keep a live speed when we have one. Borrow direction (and speed, only when
+ * ours is missing) from the other feed so the compass is not blank.
+ */
+export function fillWind(primary: WeatherNow, fallback: WeatherNow | null): WeatherNow {
+  const speedFromFallback = primary.windMph == null && fallback?.windMph != null;
+  const next: WeatherNow = {
+    ...primary,
+    windMph: primary.windMph ?? fallback?.windMph ?? null,
+    windGustMph: speedFromFallback ? (fallback?.windGustMph ?? null) : primary.windGustMph,
+    windDirDeg: primary.windDirDeg ?? fallback?.windDirDeg ?? null,
+    windCardinal: primary.windCardinal ?? fallback?.windCardinal ?? null,
+  };
+  if (next.windDirDeg != null && Number.isFinite(next.windDirDeg) && !next.windCardinal) {
+    next.windCardinal = cardinalFromDeg(next.windDirDeg);
+  }
+  if ((next.windDirDeg == null || !Number.isFinite(next.windDirDeg)) && next.windCardinal) {
+    next.windDirDeg = degreesFromCardinal(next.windCardinal);
+  }
+  if (next.windDirDeg != null && !Number.isFinite(next.windDirDeg)) next.windDirDeg = null;
+  return next;
+}
+
+export function openMeteoAt(
   om: Awaited<ReturnType<typeof fetchOpenMeteo>>,
   at: Date,
 ): WeatherNow {
@@ -58,27 +90,31 @@ function openMeteoAt(
   let best = 0;
   let bestDelta = Infinity;
   om.hourly.time.forEach((t, i) => {
-    const delta = Math.abs(new Date(t).getTime() - target);
+    const delta = Math.abs(parseUtcStamp(t).getTime() - target);
     if (delta < bestDelta) {
       best = i;
       bestDelta = delta;
     }
   });
   const useHour = bestDelta < 18 * 3600000;
+  const hourlyWind = useHour ? atIndex(om.hourly.wind_speed_10m, best) : null;
+  const currentWind = finite(om.current.wind_speed_10m);
+  const windFromHour = hourlyWind != null;
   const precipChance = useHour ? (om.hourly.precipitation_probability[best] ?? null) : null;
   const precipIn = useHour ? (om.hourly.precipitation[best] ?? null) : (om.current.precipitation ?? null);
   const code = useHour ? om.hourly.weather_code[best] : om.current.weather_code;
   const hourlyP = om.hourly.pressure_msl;
   const pressureMb = useHour ? (hourlyP?.[best] ?? om.current.pressure_msl) : om.current.pressure_msl;
   const earlier = useHour && hourlyP && best >= 3 ? hourlyP[best - 3] : null;
-  return {
-    airF: useHour ? om.hourly.temperature_2m[best] : om.current.temperature_2m,
-    windMph: useHour ? om.hourly.wind_speed_10m[best] : om.current.wind_speed_10m,
-    windGustMph: useHour ? om.hourly.wind_gusts_10m[best] : om.current.wind_gusts_10m,
-    windDirDeg: useHour ? om.hourly.wind_direction_10m[best] : om.current.wind_direction_10m,
-    windCardinal: cardinalFromDeg(
-      useHour ? om.hourly.wind_direction_10m[best] : om.current.wind_direction_10m,
-    ),
+  const hourlyDir = windFromHour ? atIndex(om.hourly.wind_direction_10m, best) : null;
+  return fillWind({
+    airF: useHour ? finite(om.hourly.temperature_2m[best]) ?? finite(om.current.temperature_2m) : finite(om.current.temperature_2m),
+    windMph: hourlyWind ?? currentWind,
+    windGustMph: windFromHour
+      ? atIndex(om.hourly.wind_gusts_10m, best) ?? finite(om.current.wind_gusts_10m)
+      : finite(om.current.wind_gusts_10m),
+    windDirDeg: hourlyDir ?? finite(om.current.wind_direction_10m),
+    windCardinal: cardinalFromDeg(hourlyDir ?? finite(om.current.wind_direction_10m)),
     pressureMb: pressureMb ?? null,
     pressureTrendMb:
       pressureMb != null && earlier != null ? Number((pressureMb - earlier).toFixed(1)) : null,
@@ -90,7 +126,7 @@ function openMeteoAt(
     wx: coerceSky(skyFromWmo(code), precipChance),
     source: "open-meteo",
     fetchedAt: new Date().toISOString(),
-  };
+  }, null);
 }
 
 async function weatherFor(area: Area, at: Date, today: boolean): Promise<WeatherNow> {
@@ -104,10 +140,10 @@ async function weatherFor(area: Area, at: Date, today: boolean): Promise<Weather
     ]);
     const wind = noaaWind.status === "fulfilled" ? noaaWind.value : null;
     const nwsVal = nws.status === "fulfilled" ? nws.value : null;
-    const nwsNow = nwsVal ? nwsWindNow(nwsVal.periods) : null;
+    const nwsNow = nwsVal ? nwsWindNow(nwsVal.periods, at) : null;
     const omNow = om.status === "fulfilled" ? openMeteoAt(om.value, at) : null;
     if (wind?.speed != null) {
-      return mergeSky(
+      return fillWind(mergeSky(
         {
           airF: nwsNow?.airF ?? null,
           windMph: wind.speed,
@@ -126,10 +162,10 @@ async function weatherFor(area: Area, at: Date, today: boolean): Promise<Weather
           fetchedAt: new Date().toISOString(),
         },
         omNow,
-      );
+      ), omNow);
     }
     if (nwsNow) {
-      return mergeSky(
+      return fillWind(mergeSky(
         {
           airF: nwsNow.airF,
           windMph: nwsNow.windMph,
@@ -148,7 +184,7 @@ async function weatherFor(area: Area, at: Date, today: boolean): Promise<Weather
           fetchedAt: new Date().toISOString(),
         },
         omNow,
-      );
+      ), omNow);
     }
     if (omNow) return omNow;
   }
@@ -162,7 +198,7 @@ async function weatherFor(area: Area, at: Date, today: boolean): Promise<Weather
     const atHour = nwsVal ? nwsWindAt(nwsVal.periods, at) : null;
     const omNow = om.status === "fulfilled" ? openMeteoAt(om.value, at) : null;
     if (atHour?.windMph != null) {
-      return mergeSky(
+      return fillWind(mergeSky(
         {
           airF: atHour.airF,
           windMph: atHour.windMph,
@@ -181,7 +217,7 @@ async function weatherFor(area: Area, at: Date, today: boolean): Promise<Weather
           fetchedAt: new Date().toISOString(),
         },
         omNow,
-      );
+      ), omNow);
     }
     if (omNow) return omNow;
   }

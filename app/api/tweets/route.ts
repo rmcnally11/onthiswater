@@ -27,6 +27,9 @@ export async function GET() {
     const area = getArea(desk.areaId);
     try {
       const briefing = await getBriefing(area.id);
+      if (briefing.kind === "today" && briefing.conditions.weather.windMph == null) {
+        throw new Error("Wind not in");
+      }
       const yolo = await getYoloDay(area, briefing.activity);
       mornings.push({
         desk: desk.desk,

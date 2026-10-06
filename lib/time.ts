@@ -130,8 +130,31 @@ export function formatYmdLong(ymd: string, timeZone: string) {
   }).format(new Date(`${ymd}T16:00:00Z`));
 }
 
+const COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"] as const;
+
 export function cardinalFromDeg(deg: number | null) {
   if (deg == null || Number.isNaN(deg)) return null;
-  const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
-  return dirs[Math.round((((deg % 360) + 360) % 360) / 22.5) % 16];
+  return COMPASS[Math.round((((deg % 360) + 360) % 360) / 22.5) % 16];
+}
+
+export function degreesFromCardinal(cardinal: string | null | undefined) {
+  if (!cardinal) return null;
+  const i = COMPASS.indexOf(cardinal.toUpperCase() as (typeof COMPASS)[number]);
+  return i < 0 ? null : i * 22.5;
+}
+
+/** Open-Meteo stamps are UTC when the request says timezone=UTC, and they omit the Z. */
+export function parseUtcStamp(stamp: string) {
+  if (/[zZ]$|[+-]\d{2}:?\d{2}$/.test(stamp)) return new Date(stamp);
+  if (stamp.includes("T")) return new Date(`${stamp}Z`);
+  return new Date(`${stamp.replace(" ", "T")}Z`);
+}
+
+/** Top of the current local hour. Card and /api/tweets share this instant for the hour. */
+export function snapshotHour(now: Date, timeZone: string) {
+  const parts = clockParts(now, timeZone);
+  const ymd = `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
+  const hour = String(parts.hour).padStart(2, "0");
+  const at = new Date(startOfDayInZone(ymd, timeZone).getTime() + parts.hour * 3600000);
+  return { ymd, hour, at };
 }

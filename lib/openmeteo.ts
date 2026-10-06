@@ -92,20 +92,23 @@ function forecastUrl(points: Point[]) {
 
 async function requestForecast(points: Point[]): Promise<OpenMeteoForecast[]> {
   const url = forecastUrl(points);
-  let status = 0;
+  let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     if (attempt) await sleep(700 * attempt);
-    const res = await fetch(url, {
-      headers: { Accept: "application/json", "User-Agent": USER_AGENT },
-      next: { revalidate: 600 },
-      signal: AbortSignal.timeout(8000),
-    });
-    status = res.status;
-    if (res.status === 429 && attempt < 2) continue;
-    if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
-    return forecastsFromBody(await res.json(), points.length);
+    try {
+      const res = await fetch(url, {
+        headers: { Accept: "application/json", "User-Agent": USER_AGENT },
+        next: { revalidate: 600 },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (res.status === 429 && attempt < 2) continue;
+      if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
+      return forecastsFromBody(await res.json(), points.length);
+    } catch (error) {
+      lastError = error;
+    }
   }
-  throw new Error(`Open-Meteo ${status || "quiet"}`);
+  throw lastError instanceof Error ? lastError : new Error("Open-Meteo quiet");
 }
 
 async function runBatch(waiters: Waiter[]) {

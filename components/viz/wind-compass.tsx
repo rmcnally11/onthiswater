@@ -1,4 +1,5 @@
 import { cream, copper } from "@/lib/viz";
+import { resolveWindDegrees, windCompassCaption } from "@/lib/wind";
 import { cn } from "@/lib/utils";
 
 export function WindCompass({
@@ -16,8 +17,9 @@ export function WindCompass({
   size?: number;
   className?: string;
 }) {
-  const dir = degrees ?? 0;
-  const has = degrees != null;
+  const resolved = resolveWindDegrees(degrees, cardinal);
+  const dir = resolved ?? 0;
+  const has = resolved != null;
   const ticks = Array.from({ length: 12 }, (_, i) => i * 30);
 
   return (
@@ -71,8 +73,7 @@ export function WindCompass({
         </text>
       </svg>
       <p className="mt-1 text-center text-[11px] text-[color:var(--cream)]/70">
-        {has ? `From ${cardinal ?? `${Math.round(dir)}°`}` : "No wind reading"}
-        {gust != null ? ` · gust ${Math.round(gust)}` : ""}
+        {windCompassCaption(degrees, mph, cardinal, gust)}
       </p>
     </div>
   );
