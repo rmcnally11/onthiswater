@@ -24,7 +24,12 @@ export async function UpcomingLoader({
   area: Area;
   activity: ActivityId | "all";
 }) {
-  const days = await buildUpcoming(area, activity, ymdInZone(new Date(), area.timezone), 14);
+  let days: Awaited<ReturnType<typeof buildUpcoming>> = [];
+  try {
+    days = await buildUpcoming(area, activity, ymdInZone(new Date(), area.timezone), 14);
+  } catch {
+    days = [];
+  }
   const hrefBase = `/calendar?area=${area.id}&theater=${area.theater}${activity !== "all" ? `&activity=${activity}` : ""}`;
   return (
     <UpcomingStrip

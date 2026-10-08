@@ -1,3 +1,5 @@
+import { fetchExternal } from "@/lib/external-fetch";
+
 /** On This Water list — Costal Cavaliers workspace. IDs are public; the token is not. */
 export const AIRTABLE_BASE = "app3GRvkkpJdnVIKy";
 export const AIRTABLE_TABLE = "tblqoCAVvAvEFYMe6";
@@ -36,14 +38,16 @@ function asStrings(value: unknown) {
 async function airtable<T>(path: string, init?: RequestInit): Promise<T> {
   const key = token();
   if (!key) throw new Error("Airtable token is not set.");
-  const res = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}${path}`, {
-    ...init,
+  const res = await fetchExternal(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}${path}`, {
+    method: init?.method,
     headers: {
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),
     },
+    body: typeof init?.body === "string" ? init.body : undefined,
     cache: "no-store",
+    timeoutMs: 8000,
   });
   if (!res.ok) {
     const text = await res.text();

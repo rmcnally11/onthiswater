@@ -1,14 +1,14 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 import { noaaDateSpan, parseNoaaGmt } from "@/lib/time";
 
 const APP = USER_AGENT;
 const BASE = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter";
 
 async function getJson(url: string, timeoutMs = 2800) {
-  const res = await fetch(url, {
+  const res = await fetchExternal(url, {
     headers: { "User-Agent": APP },
-    next: { revalidate: 300 },
-    signal: AbortSignal.timeout(timeoutMs),
+    timeoutMs,
   });
   if (!res.ok) throw new Error(`NOAA ${res.status}`);
   return res.json();

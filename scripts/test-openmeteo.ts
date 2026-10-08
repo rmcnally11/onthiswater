@@ -29,8 +29,12 @@ globalThis.fetch = async (...args) => {
 const started = Date.now();
 const forecasts = await Promise.all(points.map(([lat, lon]) => fetchOpenMeteo(lat, lon)));
 const elapsed = Date.now() - started;
-globalThis.fetch = origFetch;
 assert.equal(calls, 1, `expected one Open-Meteo call, saw ${calls}`);
+
+const cachedCalls = calls;
+await fetchOpenMeteo(points[0][0], points[0][1]);
+assert.equal(calls, cachedCalls, "a fresh forecast should not refetch");
+globalThis.fetch = origFetch;
 
 for (const [i, forecast] of forecasts.entries()) {
   const wind = forecast.current.wind_speed_10m;

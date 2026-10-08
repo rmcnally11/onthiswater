@@ -119,12 +119,12 @@ function seasonalForArea(area: Area, month: number, activity: ActivityId | "all"
 }
 
 function withBudget<T>(promise: Promise<T>, ms: number, label: string) {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => {
-      setTimeout(() => reject(new Error(`${label} exceeded ${ms}ms`)), ms);
-    }),
-  ]);
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<T>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} exceeded ${ms}ms`)), ms);
+  });
+  promise.catch(() => {});
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
 async function loadCalendarInputs(

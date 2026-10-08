@@ -17,6 +17,7 @@ import { AREA_BY_ID, areasInTheater } from "@/lib/data/areas";
 import { theaterLabel, THEATER_META } from "@/lib/data/theaters";
 import { cn } from "@/lib/utils";
 import { breadcrumbJsonLd, reportJsonLd } from "@/lib/seo";
+import type { Briefing } from "@/lib/types";
 import { notFound } from "next/navigation";
 
 export async function MorningDesk({
@@ -36,16 +37,41 @@ export async function MorningDesk({
   const coast = areasInTheater(area.theater);
   const todayYmd = date ?? ymdInZone(new Date(), area.timezone);
   const tomorrowYmd = addDaysYmd(todayYmd, 1);
-  const [briefing, yolo, tomorrow, coastBriefs] = await Promise.all([
-    getBriefing(area.id, activity, date),
-    getYoloDay(area, activity),
-    date
-      ? Promise.resolve(null)
-      : getBriefing(area.id, activity, tomorrowYmd).catch(() => null),
-    Promise.allSettled(
-      coast.filter((a) => a.id !== area.id).map((a) => getBriefing(a.id, activity, date)),
-    ),
-  ]);
+  let briefing: Briefing | null = null;
+  let yolo = null;
+  let tomorrow: Briefing | null = null;
+  let coastBriefs: PromiseSettledResult<Briefing>[] = [];
+  let error: string | null = null;
+  try {
+    const loaded = await Promise.all([
+      getBriefing(area.id, activity, date),
+      getYoloDay(area, activity),
+      date
+        ? Promise.resolve(null)
+        : getBriefing(area.id, activity, tomorrowYmd).catch(() => null),
+      Promise.allSettled(
+        coast.filter((a) => a.id !== area.id).map((a) => getBriefing(a.id, activity, date)),
+      ),
+    ]);
+    briefing = loaded[0];
+    yolo = loaded[1];
+    tomorrow = loaded[2];
+    coastBriefs = loaded[3];
+  } catch (e) {
+    error = e instanceof Error ? e.message : "Could not build the briefing.";
+  }
+
+  if (error || !briefing) {
+    return (
+      <div className="mx-auto max-w-3xl">
+        <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
+          <p className="font-heading text-xl">The gauges did not answer.</p>
+          <p className="mt-2 text-sm opacity-80">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   const line = morningLine(briefing, yolo);
   const neighbors = coast
     .filter((a) => a.id !== area.id)
