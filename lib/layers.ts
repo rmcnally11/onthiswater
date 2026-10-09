@@ -1,4 +1,5 @@
 import type { Area, OfficialMark } from "@/lib/types";
+import { fetchExternal } from "@/lib/external-fetch";
 import { isKeysFlorida } from "@/lib/data/theaters";
 
 export type OfficialPoint = OfficialMark;
@@ -9,7 +10,7 @@ type ArcGisFeature = {
 };
 
 async function arcgisQuery(url: string) {
-  const res = await fetch(url, { next: { revalidate: 3600 } });
+  const res = await fetchExternal(url, { timeoutMs: 4000 });
   if (!res.ok) throw new Error(`GIS ${res.status}`);
   return res.json() as Promise<{ features?: ArcGisFeature[]; error?: { message: string } }>;
 }
@@ -841,12 +842,11 @@ export function accessNear(area: Area): OfficialPoint[] {
 async function firstOrEmpty<T>(promise: Promise<T[]>, timeoutMs?: number): Promise<T[]> {
   const safe = promise.catch(() => [] as T[]);
   if (!timeoutMs) return safe;
-  return Promise.race([
-    safe,
-    new Promise<T[]>((resolve) => {
-      setTimeout(() => resolve([]), timeoutMs);
-    }),
-  ]);
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<T[]>((resolve) => {
+    timer = setTimeout(() => resolve([]), timeoutMs);
+  });
+  return Promise.race([safe, timeout]).finally(() => clearTimeout(timer));
 }
 
 export async function loadOfficialLayers(

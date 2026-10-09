@@ -1,4 +1,5 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 import { buoyForArea, ndbcHref, type BuoyMeta } from "@/lib/data/buoys";
 import { cardinalFromDeg } from "@/lib/time";
 import type { BuoyNow } from "@/lib/types";
@@ -117,10 +118,9 @@ function trendFromRows(
 }
 
 async function fromLatestObs(id: string) {
-  const res = await fetch(LATEST, {
+  const res = await fetchExternal(LATEST, {
     headers: { "User-Agent": USER_AGENT, Accept: "text/plain" },
-    next: { revalidate: 600 },
-    signal: AbortSignal.timeout(7000),
+    timeoutMs: 7000,
   });
   if (!res.ok) return null;
   const text = await res.text();
@@ -134,10 +134,9 @@ async function fromLatestObs(id: string) {
 }
 
 async function fromRealtime(id: string) {
-  const res = await fetch(`https://www.ndbc.noaa.gov/data/realtime2/${encodeURIComponent(id)}.txt`, {
+  const res = await fetchExternal(`https://www.ndbc.noaa.gov/data/realtime2/${encodeURIComponent(id)}.txt`, {
     headers: { "User-Agent": USER_AGENT, Accept: "text/plain" },
-    next: { revalidate: 600 },
-    signal: AbortSignal.timeout(7000),
+    timeoutMs: 7000,
   });
   if (!res.ok) return null;
   const text = await res.text();

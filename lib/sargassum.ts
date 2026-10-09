@@ -1,4 +1,5 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 import type { Area, SargassumNow } from "@/lib/types";
 
 const SIR = "https://cwcgom.aoml.noaa.gov/SIR/";
@@ -16,25 +17,29 @@ function ymdUtc(offsetDays: number) {
 }
 
 async function latestSirDate() {
-  for (const off of [0, -1, -2, -3, -4]) {
-    const ymd = ymdUtc(off);
-    const res = await fetch(`https://cwcgom.aoml.noaa.gov/SIR/KMZ/sargassum_risk_${ymd}.kmz`, {
-      method: "HEAD",
-      headers: { "User-Agent": USER_AGENT },
-      next: { revalidate: 21600 },
-      signal: AbortSignal.timeout(4000),
-    });
-    if (res.ok) return `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}`;
-  }
-  return null;
+  const checks = await Promise.all(
+    [0, -1, -2, -3, -4].map(async (off) => {
+      const ymd = ymdUtc(off);
+      try {
+        const res = await fetchExternal(`https://cwcgom.aoml.noaa.gov/SIR/KMZ/sargassum_risk_${ymd}.kmz`, {
+          method: "HEAD",
+          headers: { "User-Agent": USER_AGENT },
+          timeoutMs: 4000,
+        });
+        return res.ok ? `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}` : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return checks.find((day) => day) ?? null;
 }
 
 async function afaiAt(lat: number, lon: number) {
   const url = `${AFAI}?AFAI[(last)][(${lat.toFixed(3)})][(${lon.toFixed(3)})]`;
-  const res = await fetch(url, {
+  const res = await fetchExternal(url, {
     headers: { Accept: "application/json", "User-Agent": USER_AGENT },
-    next: { revalidate: 21600 },
-    signal: AbortSignal.timeout(6000),
+    timeoutMs: 6000,
   });
   if (!res.ok) return null;
   const json = (await res.json()) as { table?: { rows?: Array<[string, number, number, number | null]> } };

@@ -1,14 +1,14 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 import { cardinalFromDeg } from "@/lib/time";
 import { coerceSky, skyFromText } from "@/lib/wx";
 
 const UA = USER_AGENT;
 
 export async function fetchNwsPoint(lat: number, lon: number) {
-  const res = await fetch(`https://api.weather.gov/points/${lat.toFixed(3)},${lon.toFixed(3)}`, {
+  const res = await fetchExternal(`https://api.weather.gov/points/${lat.toFixed(3)},${lon.toFixed(3)}`, {
     headers: { "User-Agent": UA, Accept: "application/geo+json" },
-    next: { revalidate: 1800 },
-    signal: AbortSignal.timeout(3500),
+    timeoutMs: 3500,
   });
   if (!res.ok) throw new Error(`NWS points ${res.status}`);
   return res.json();
@@ -25,10 +25,9 @@ export type NwsPeriod = {
 
 async function fetchNwsPeriods(url: string | undefined, label: string) {
   if (!url) return { periods: [] as NwsPeriod[], office: null as string | null };
-  const res = await fetch(url, {
+  const res = await fetchExternal(url, {
     headers: { "User-Agent": UA, Accept: "application/geo+json" },
-    next: { revalidate: 600 },
-    signal: AbortSignal.timeout(3500),
+    timeoutMs: 3500,
   });
   if (!res.ok) throw new Error(`NWS ${label} ${res.status}`);
   const json = await res.json();
@@ -116,12 +115,11 @@ const MARINE_OR_FLOOD =
   /small craft|gale|storm warning|hurricane|tropical|special marine|severe thunder|tornado|flood|coastal flood|rip current|extreme wind|storm surge/i;
 
 export async function fetchNwsAlerts(lat: number, lon: number): Promise<NwsAlert[]> {
-  const res = await fetch(
+  const res = await fetchExternal(
     `https://api.weather.gov/alerts/active?point=${lat.toFixed(3)},${lon.toFixed(3)}`,
     {
       headers: { "User-Agent": UA, Accept: "application/geo+json" },
-      next: { revalidate: 300 },
-      signal: AbortSignal.timeout(3500),
+      timeoutMs: 3500,
     },
   );
   if (!res.ok) throw new Error(`NWS alerts ${res.status}`);

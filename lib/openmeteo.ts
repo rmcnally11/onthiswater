@@ -1,4 +1,5 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 
 export type OpenMeteoForecast = {
   current: {
@@ -54,6 +55,28 @@ const pending: Waiter[] = [];
 let batchTimer: ReturnType<typeof setTimeout> | null = null;
 let batchChain: Promise<void> = Promise.resolve();
 
+/** Reuse a forecast on this server so a busy page does not refetch every render. */
+const FRESH_MS = 10 * 60 * 1000;
+/** A failed live call can still use this. Older than this, the section is omitted. */
+const LAST_GOOD_MS = 6 * 60 * 60 * 1000;
+
+type Slot = { at: number; forecast: OpenMeteoForecast };
+const memory = new Map<string, Slot>();
+
+function pointKey(lat: number, lon: number) {
+  return `${lat.toFixed(4)},${lon.toFixed(4)}`;
+}
+
+function readFresh(key: string, now: number) {
+  const slot = memory.get(key);
+  return slot && now - slot.at < FRESH_MS ? slot.forecast : null;
+}
+
+function readLastGood(key: string, now: number) {
+  const slot = memory.get(key);
+  return slot && now - slot.at < LAST_GOOD_MS ? slot.forecast : null;
+}
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -93,19 +116,21 @@ function forecastUrl(points: Point[]) {
 async function requestForecast(points: Point[]): Promise<OpenMeteoForecast[]> {
   const url = forecastUrl(points);
   let lastError: unknown;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    if (attempt) await sleep(700 * attempt);
+  for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const res = await fetch(url, {
+      const res = await fetchExternal(url, {
         headers: { Accept: "application/json", "User-Agent": USER_AGENT },
-        next: { revalidate: 600 },
-        signal: AbortSignal.timeout(8000),
+        timeoutMs: 8000,
       });
-      if (res.status === 429 && attempt < 2) continue;
+      if (res.status === 429 && attempt === 0) {
+        await sleep(700);
+        continue;
+      }
       if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
       return forecastsFromBody(await res.json(), points.length);
     } catch (error) {
       lastError = error;
+      break;
     }
   }
   throw lastError instanceof Error ? lastError : new Error("Open-Meteo quiet");
@@ -124,17 +149,36 @@ async function runBatch(waiters: Waiter[]) {
       groups[at].waiters.push(waiter);
     }
   }
+  const now = Date.now();
+  const misses: typeof groups = [];
+  for (const group of groups) {
+    const cached = readFresh(pointKey(group.lat, group.lon), now);
+    if (cached) {
+      for (const waiter of group.waiters) waiter.resolve(cached);
+    } else {
+      misses.push(group);
+    }
+  }
+  if (!misses.length) return;
+
+  const deliver = (group: (typeof groups)[number], forecast: OpenMeteoForecast | null, error: unknown) => {
+    if (forecast) {
+      memory.set(pointKey(group.lat, group.lon), { at: Date.now(), forecast });
+      for (const waiter of group.waiters) waiter.resolve(forecast);
+      return;
+    }
+    const last = readLastGood(pointKey(group.lat, group.lon), Date.now());
+    for (const waiter of group.waiters) {
+      if (last) waiter.resolve(last);
+      else waiter.reject(error ?? new Error("Open-Meteo missing this coast"));
+    }
+  };
+
   try {
-    const forecasts = await requestForecast(groups.map(({ lat, lon }) => ({ lat, lon })));
-    groups.forEach((group, i) => {
-      const forecast = forecasts[i];
-      for (const waiter of group.waiters) {
-        if (forecast) waiter.resolve(forecast);
-        else waiter.reject(new Error("Open-Meteo missing this coast"));
-      }
-    });
+    const forecasts = await requestForecast(misses.map(({ lat, lon }) => ({ lat, lon })));
+    misses.forEach((group, i) => deliver(group, forecasts[i] ?? null, new Error("Open-Meteo missing this coast")));
   } catch (error) {
-    for (const waiter of waiters) waiter.reject(error);
+    for (const group of misses) deliver(group, null, error);
   }
 }
 

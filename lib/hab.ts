@@ -1,4 +1,5 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 import type { Area, HabNow } from "@/lib/types";
 import {
   NCCOS_GULF_FORECAST,
@@ -54,10 +55,9 @@ async function fwcSamples(): Promise<FwcRow[]> {
   url.searchParams.set("returnGeometry", "false");
   url.searchParams.set("resultRecordCount", "2000");
   url.searchParams.set("f", "pjson");
-  const res = await fetch(url, {
+  const res = await fetchExternal(url, {
     headers: { Accept: "application/json", "User-Agent": USER_AGENT },
-    next: { revalidate: 21600 },
-    signal: AbortSignal.timeout(7000),
+    timeoutMs: 7000,
   });
   if (!res.ok) throw new Error(`FWC HAB ${res.status}`);
   const json = (await res.json()) as {
@@ -113,10 +113,9 @@ function fromFwc(area: Area, rows: FwcRow[]): HabNow {
 async function fromTpwd(area: Area): Promise<HabNow> {
   const nowYear = new Date().getUTCFullYear();
   try {
-    const res = await fetch(TPWD_STATUS, {
+    const res = await fetchExternal(TPWD_STATUS, {
       headers: { "User-Agent": USER_AGENT, Accept: "text/html" },
-      next: { revalidate: 21600 },
-      signal: AbortSignal.timeout(7000),
+      timeoutMs: 7000,
     });
     if (!res.ok) throw new Error(`TPWD HAB ${res.status}`);
     const html = await res.text();

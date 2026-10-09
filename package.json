@@ -10,6 +10,7 @@
     "test:sister": "node --experimental-strip-types scripts/test-dock-posted.ts",
     "test:hab": "node --experimental-strip-types scripts/test-hab.ts",
     "test:openmeteo": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-openmeteo.ts",
+    "test:upstream": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-upstream-timeout.ts",
     "test:snapshot": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot.ts",
     "test:store": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot-store.ts",
     "test:calendar": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-calendar-snapshot.ts"

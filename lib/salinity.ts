@@ -1,4 +1,5 @@
 import { USER_AGENT } from "@/lib/brand";
+import { fetchExternal } from "@/lib/external-fetch";
 import type { SalinityNow, TheaterId } from "@/lib/types";
 
 /** Live USGS 00480 wells that actually sit on these desks. River zeros are labeled as river. */
@@ -32,10 +33,9 @@ export async function fetchSalinity(areaId: string): Promise<SalinityNow | null>
   url.searchParams.set("format", "json");
   url.searchParams.set("sites", meta.site);
   url.searchParams.set("parameterCd", "00480");
-  const res = await fetch(url, {
+  const res = await fetchExternal(url, {
     headers: { Accept: "application/json", "User-Agent": USER_AGENT },
-    next: { revalidate: 1800 },
-    signal: AbortSignal.timeout(4000),
+    timeoutMs: 4000,
   });
   if (!res.ok) return null;
   const json = (await res.json()) as {

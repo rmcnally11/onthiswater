@@ -39,6 +39,18 @@ export function desksDue(at = new Date(), forceAll = false) {
   return AREAS.filter((area) => (forceAll ? true : localHour(area.timezone, at) === 5));
 }
 
+/** One quiet coast cannot hold the rest of the 5am run. */
+const DESK_DEADLINE_MS = 60_000;
+
+function withDeadline<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<T>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out`)), ms);
+  });
+  promise.catch(() => {});
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 async function writeOutbox(areaId: string, payload: unknown) {
   const dir = path.join(process.cwd(), "data", "outbox");
   await mkdir(dir, { recursive: true });
@@ -69,7 +81,11 @@ export async function dispatchMorning(opts?: { forceAll?: boolean; desk?: string
       const area = AREA_BY_ID[id];
       if (!area) return;
       try {
-        const [briefing, yolo] = await Promise.all([getBriefing(id), getYoloDay(area, "all")]);
+        const [briefing, yolo] = await withDeadline(
+          Promise.all([getBriefing(id), getYoloDay(area, "all")]),
+          DESK_DEADLINE_MS,
+          id,
+        );
         packs.set(id, { briefing, yolo });
       } catch {
         /* one quiet desk does not kill the digest */
