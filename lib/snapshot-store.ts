@@ -103,15 +103,39 @@ function blobReadOptions() {
   };
 }
 
+/**
+ * Per-instance memory in front of Blob. Keys are hour-scoped and first-writer
+ * wins, so a record never changes once read; caching it saves a Blob read on
+ * every later request in the same instance (the 429 source on 10/10/26).
+ */
+const MEMO_MAX = 500;
+const memo = new Map<string, unknown>();
+function remember(key: string, value: unknown) {
+  if (memo.size >= MEMO_MAX) {
+    const oldest = memo.keys().next().value;
+    if (oldest !== undefined) memo.delete(oldest);
+  }
+  memo.set(key, value);
+}
+
+/** True for a Blob rate-limit or quota error. */
+export function isBlobThrottle(error: unknown) {
+  const msg = error instanceof Error ? error.message : String(error ?? "");
+  return /429|too many requests|rate limit|quota/i.test(msg);
+}
+
 function blobJsonStore<T>(isValue: (value: unknown) => value is T): SnapshotStore<T> {
   return {
     async read(key) {
+      if (memo.has(key)) return clone(memo.get(key) as T);
       const result = await get(key, blobReadOptions());
       if (!result || result.statusCode !== 200 || !result.stream) return null;
       try {
         const text = await new Response(result.stream).text();
         const parsed: unknown = JSON.parse(text);
-        return isValue(parsed) ? parsed : null;
+        if (!isValue(parsed)) return null;
+        remember(key, parsed);
+        return clone(parsed);
       } catch {
         return null;
       }
@@ -134,6 +158,7 @@ function blobJsonStore<T>(isValue: (value: unknown) => value is T): SnapshotStor
       }
     },
     async retire(key) {
+      memo.delete(key);
       await del(key).catch(() => undefined);
     },
   };
@@ -215,20 +240,35 @@ export async function readOrCreate(
   compute: () => Promise<MorningSnapshot>,
   retireKey?: string,
 ): Promise<MorningSnapshot> {
-  const hit = await store.read(key);
+  let hit: MorningSnapshot | null;
+  try {
+    hit = await store.read(key);
+  } catch (error) {
+    if (!isBlobThrottle(error)) throw error;
+    // Blob is throttled: serve a fresh compute rather than skipping the desk.
+    return clone(await compute());
+  }
   if (hit) return hit;
 
   const fresh = clone(await compute());
   if (!windInSnapshot(fresh)) {
-    const raced = await store.read(key);
+    const raced = await store.read(key).catch(() => null);
     return raced ?? fresh;
   }
 
-  await store.create(key, fresh);
+  try {
+    await store.create(key, fresh);
+  } catch (error) {
+    if (isBlobThrottle(error)) return fresh;
+    throw error;
+  }
   if (retireKey && retireKey !== key) void store.retire?.(retireKey);
 
   for (let attempt = 0; attempt < 8; attempt++) {
-    const stored = await store.read(key);
+    const stored = await store.read(key).catch((error) => {
+      if (isBlobThrottle(error)) return fresh;
+      throw error;
+    });
     if (stored) return stored;
     await sleep(40 * (attempt + 1));
   }
@@ -244,19 +284,34 @@ export async function readOrCreateCalendar(
   key: string,
   compute: () => Promise<CalendarSnapshot>,
 ): Promise<CalendarSnapshot> {
-  const hit = await store.read(key);
+  let hit: CalendarSnapshot | null;
+  try {
+    hit = await store.read(key);
+  } catch (error) {
+    if (!isBlobThrottle(error)) throw error;
+    // Blob is throttled: serve a fresh compute rather than skipping the calendar.
+    return clone(await compute());
+  }
   if (hit) return hit;
 
   const fresh = clone(await compute());
   if (!calendarHasForecastWind(fresh)) {
-    const raced = await store.read(key);
+    const raced = await store.read(key).catch(() => null);
     return raced ?? fresh;
   }
 
-  await store.create(key, fresh);
+  try {
+    await store.create(key, fresh);
+  } catch (error) {
+    if (isBlobThrottle(error)) return fresh;
+    throw error;
+  }
 
   for (let attempt = 0; attempt < 8; attempt++) {
-    const stored = await store.read(key);
+    const stored = await store.read(key).catch((error) => {
+      if (isBlobThrottle(error)) return fresh;
+      throw error;
+    });
     if (stored) return stored;
     await sleep(40 * (attempt + 1));
   }
