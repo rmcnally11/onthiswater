@@ -1,6 +1,10 @@
 import type { Briefing, CalendarDay, TheaterId } from "@/lib/types";
 import { PRODUCT_NAME, siteOrigin } from "@/lib/brand";
+import { getMorningSnapshot } from "@/lib/briefing";
+import { getCalendarSnapshot } from "@/lib/calendar";
+import { COAST_DEADLINE_MS, withDeadline } from "@/lib/deadline";
 import { DESKS } from "@/lib/desks";
+import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
 import { windLabel } from "@/lib/wind";
 import { skyCopy } from "@/lib/wx";
@@ -119,6 +123,88 @@ export function calendarTweetText(
       : "";
   const line = `${shortName} fishing calendar — ${place}. ${yoloBit}${wetBit} Inshore forecast from ${PRODUCT_NAME}. Not a bite call.`;
   return `${line}\n${calendarHref(areaId, theater)}`;
+}
+
+export async function buildTweetFeed() {
+  const rows = await Promise.all(
+    TWEET_DESKS.map(async (desk) => {
+      const area = getArea(desk.areaId);
+      let morning;
+      try {
+        const { briefing, yolo } = await withDeadline(getMorningSnapshot(area.id), COAST_DEADLINE_MS, area.id);
+        if (briefing.kind === "today" && briefing.conditions.weather.windMph == null) {
+          throw new Error("Wind not in");
+        }
+        morning = {
+          desk: desk.desk,
+          kicker: desk.kicker,
+          theater: desk.theater,
+          areaId: desk.areaId,
+          shortName: briefing.area.shortName,
+          score: briefing.overall,
+          text: morningTweetText(briefing, yolo, desk.kicker),
+          image: morningCardUrl(area.id, area.theater),
+          alt: morningAlt(briefing),
+          href: deskHref(area.id, area.theater),
+          url: deskHref(area.id, area.theater),
+          skip: false as const,
+        };
+      } catch (error) {
+        morning = {
+          desk: desk.desk,
+          kicker: desk.kicker,
+          theater: desk.theater,
+          areaId: desk.areaId,
+          shortName: area.shortName,
+          score: null,
+          text: null,
+          image: morningCardUrl(area.id, area.theater),
+          alt: null,
+          href: deskHref(area.id, area.theater),
+          url: deskHref(area.id, area.theater),
+          skip: true as const,
+          error: error instanceof Error ? error.message : "Gauge quiet",
+        };
+      }
+
+      let calendar;
+      try {
+        const snap = await withDeadline(getCalendarSnapshot(area, "all"), COAST_DEADLINE_MS, `${area.id} calendar`);
+        const days = snap.months[0]?.days ?? [];
+        calendar = {
+          desk: desk.desk,
+          theater: desk.theater,
+          areaId: desk.areaId,
+          shortName: area.shortName,
+          text: calendarTweetText(area.shortName, area.id, area.theater, days),
+          image: calendarCardUrl(area.id, area.theater),
+          alt: calendarAlt(area.shortName, days, area.id),
+          href: calendarHref(area.id, area.theater),
+          url: calendarHref(area.id, area.theater),
+          skip: false as const,
+        };
+      } catch (error) {
+        calendar = {
+          desk: desk.desk,
+          theater: desk.theater,
+          areaId: desk.areaId,
+          shortName: area.shortName,
+          text: null,
+          image: calendarCardUrl(area.id, area.theater),
+          alt: null,
+          href: calendarHref(area.id, area.theater),
+          url: calendarHref(area.id, area.theater),
+          skip: true as const,
+          error: error instanceof Error ? error.message : "Calendar did not set",
+        };
+      }
+      return { morning, calendar };
+    }),
+  );
+  return {
+    mornings: rows.map((row) => row.morning),
+    calendars: rows.map((row) => row.calendar),
+  };
 }
 
 export function calendarAlt(shortName: string, days: CalendarDay[], areaId?: string) {
