@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import type { Briefing, TheaterId } from "@/lib/types";
 import { getBriefing } from "@/lib/briefing";
+import { COAST_DEADLINE_MS, withDeadline } from "@/lib/deadline";
 import { addDaysYmd, clockParts, isYmd, mostRecentSaturday } from "@/lib/time";
 import { SPECIES } from "@/lib/data/species";
 import {
@@ -111,7 +112,9 @@ export function weekWindow(now = new Date(), timeZone = "America/Chicago") {
 async function computeNewsletter(weekId: string): Promise<NewsletterIssue> {
   const now = isYmd(weekId) ? new Date(`${weekId}T16:00:00Z`) : new Date();
   const week = weekWindow(now);
-  const settled = await Promise.allSettled(DESKS.map((desk) => getBriefing(desk.areaId)));
+  const settled = await Promise.allSettled(
+    DESKS.map((desk) => withDeadline(getBriefing(desk.areaId), COAST_DEADLINE_MS, desk.areaId)),
+  );
 
   const desks: DeskIssue[] = DESKS.map((meta, i) => {
     const result = settled[i];
@@ -161,8 +164,11 @@ async function computeNewsletter(weekId: string): Promise<NewsletterIssue> {
   };
 }
 
-const cachedNewsletter = unstable_cache(computeNewsletter, ["field-letter-v3"], {
-  revalidate: 60 * 60 * 24 * 7,
+// Live gauges are filled in below. Do not background-revalidate this cache:
+// Next waits for that refetch before the response can finish, and a stale
+// letter used to rebuild every coast with no deadline.
+const cachedNewsletter = unstable_cache(computeNewsletter, ["field-letter-v4"], {
+  revalidate: false,
 });
 
 export async function getNewsletter(weekRaw?: string | null): Promise<NewsletterIssue> {
@@ -173,7 +179,9 @@ export async function getNewsletter(weekRaw?: string | null): Promise<Newsletter
 /** This week’s desks use the same live briefings as Today. Frozen Saturday issues stay the snapshot. */
 export async function hydrateLetterDesks(issue: NewsletterIssue): Promise<NewsletterIssue> {
   if (issue.frozen) return issue;
-  const settled = await Promise.allSettled(issue.desks.map((desk) => getBriefing(desk.areaId)));
+  const settled = await Promise.allSettled(
+    issue.desks.map((desk) => withDeadline(getBriefing(desk.areaId), COAST_DEADLINE_MS, desk.areaId)),
+  );
   const desks = issue.desks.map((desk, i) => {
     const result = settled[i];
     if (result.status === "fulfilled") {
@@ -234,7 +242,9 @@ export async function withCoastWaters(
   const have = new Map(filtered.desks.map((d) => [d.areaId, d]));
   const missing = waters.filter((a) => !have.has(a.id));
   const dateRaw = filtered.frozen ? filtered.weekId : null;
-  const settled = await Promise.allSettled(missing.map((a) => getBriefing(a.id, "all", dateRaw)));
+  const settled = await Promise.allSettled(
+    missing.map((a) => withDeadline(getBriefing(a.id, "all", dateRaw), COAST_DEADLINE_MS, a.id)),
+  );
 
   const desks: DeskIssue[] = waters.map((area) => {
     const existing = have.get(area.id);
@@ -273,7 +283,9 @@ export async function loadLetterTomorrows(issue: NewsletterIssue) {
     issue.desks.map(async (desk) => {
       if (!desk.briefing) return [desk.areaId, null] as const;
       const ymd = addDaysYmd(desk.briefing.forDate, 1);
-      const next = await getBriefing(desk.areaId, "all", ymd).catch(() => null);
+      const next = await withDeadline(getBriefing(desk.areaId, "all", ymd), COAST_DEADLINE_MS, desk.areaId).catch(
+        () => null,
+      );
       return [desk.areaId, next] as const;
     }),
   );
