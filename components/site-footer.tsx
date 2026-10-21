@@ -1,6 +1,13 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { dockPostedHomeHref } from "@/lib/dock-posted";
+import { letterChromeLegend } from "@/lib/letter-copy";
 
 export function SiteFooter() {
+  const legend =
+    letterChromeLegend(usePathname() ?? "") ??
+    "Scores are 1–10. They are not a bite. Not a chart you steer by.";
   return (
     <footer className="border-t border-[color:var(--line)] px-4 py-8 pb-[max(1.75rem,env(safe-area-inset-bottom))] text-center">
       <p className="text-sm text-[color:var(--cream)]/70">
@@ -24,7 +31,7 @@ export function SiteFooter() {
         . Tide and wind live here.
       </p>
       <p className="mt-3 text-xs text-[color:var(--cream)]/40">
-        Scores are 1–10. They are not a bite. Not a chart you steer by.
+        {legend}
         Verify TPWD, FWC, Bahamas, FKNMS, and NPS rules before you fish. Your book is yours, on this
         phone.
       </p>

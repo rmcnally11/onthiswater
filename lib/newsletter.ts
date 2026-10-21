@@ -15,17 +15,22 @@ import {
 import { AREAS } from "@/lib/data/areas";
 import { DESKS } from "@/lib/desks";
 import { isAllCoasts } from "@/lib/coasts";
+import { publishLetter } from "@/lib/letter-copy";
 
 export { DESKS };
+
+export function fieldLetterMonth(month: number) {
+  return LETTERS[month] ?? "";
+}
 
 const LETTERS: Record<number, string> = {
   1: "January is a gut month. Texas fish slide to holes and granite; a norther is a plan, not a cancellation. The Keys get the front that was yesterday’s Texas story, then a bluebird day that makes bones look easy. Andros winter is the single-bone season — fewer fish, bigger shoulders, longer leaders. Dress for the wind. Midday sun is legal. The gauges below are this week’s weather, not a promise.",
   2: "February still owes you a coat. Sheep and drum own the Texas rocks. Reds start to show on warm mud in the afternoon if you are patient. Keys permit are a maybe that becomes a fish when the front misses you. Bahamas is the last honest month of winter singles. Fly if the morning is glass. The spoon is what you came for when it is not.",
   3: "March is the coast waking up. Texas reds and trout both peak, water finally in the window, wind still the tax. Islamorada starts talking permit like it means it. Andros mixes winter singles with the first schools. This is the week people should have booked in November. The letter is late on purpose — go look at the desks.",
-  4: "April is why the rest of the year exists. Texas grass fills in. Keys tarpon show in the harbor and on the oceanside. Bahamas looks like the photograph. Fly when the day allows it. Carry the spinning rod because April wind has a sense of humor. Scores are 1–10. They are not bites.",
+  4: "April is why the rest of the year exists. Texas grass fills in. Keys tarpon show in the harbor and on the oceanside. Bahamas looks like the photograph. Fly when the day allows it. Carry the spinning rod because April wind has a sense of humor. The week below is wind, sky, and the water.",
   5: "May is still prime if you beat the heat. Texas first light, then deeper. Keys tarpon peak and the afternoon storm rewrites the flat. Andros west-side permit turn on. This is the grand-slam calendar month if you can stand the glare and the logistics. Jacks will find you. They do not own the headline.",
   6: "June is when the coast tells the truth about heat. Texas trout leave the flat at midday. SE Florida snook typically close for the spawn — catch-and-release is still fishing. Bahamas goes to summer schools of 3-pound bones. Early is not a vibe. It is the method.",
-  7: "July is a bathtub with a tide table. Night and first-light reds on the Texas coast. Keys snook still closed; a shower can switch a Key West flat on once it clears. Andros is a heat-management problem as much as a fish problem. If the score is a 9 at 2 p.m., believe the water temperature, not the number.",
+  7: "July is a bathtub with a tide table. Night and first-light reds on the Texas coast. Keys snook still closed; a shower can switch a Key West flat on once it clears. Andros is a heat-management problem as much as a fish problem. If the afternoon looks kind, believe the water temperature. Heat still owns the middle of the day.",
   8: "August is the short-day version of July, which is to say: still hot, still honest. Texas reds work the first moving water; trout stay deep. Keys bones at first light, thunder by two. Andros summer schools and west-side permit if it lays down. Flounder are a September story — do not force them. Fly in the morning. Shade at noon. The desks below are this week, live.",
   9: "September is the exhale. Texas reds peak again, trout come back up, jetty bulls start to show. Snook typically reopen on the SE calendar — verify FWC the morning you keep one. Bahamas still has bones and permit. The water loses a few degrees and the coast remembers why you live here.",
   10: "October is the best month many years. Texas reds, trout, and the flounder run to the Gulf — nights at the passes, measure every flatfish, the closure is coming. Keys backcountry gets its color back. Andros permit taper and bones start to look like winter. Book the day that has wind you can actually stand on.",
@@ -144,7 +149,7 @@ async function computeNewsletter(weekId: string): Promise<NewsletterIssue> {
     why: s.why,
   }));
 
-  return {
+  return publishLetter({
     weekId,
     weekLabel: week.weekLabel,
     weekNumber: week.weekNumber,
@@ -158,10 +163,10 @@ async function computeNewsletter(weekId: string): Promise<NewsletterIssue> {
     closures: closuresThisMonth(week.month, now),
     generatedAt: new Date().toISOString(),
     frozen: weekId !== letterWeekId(),
-  };
+  });
 }
 
-const cachedNewsletter = unstable_cache(computeNewsletter, ["field-letter-v3"], {
+const cachedNewsletter = unstable_cache(computeNewsletter, ["field-letter-v4"], {
   revalidate: 60 * 60 * 24 * 7,
 });
 
@@ -213,13 +218,13 @@ export function filterNewsletter(issue: NewsletterIssue, coasts: TheaterId[] | n
       theaters: s.theaters.filter((t) => coasts.includes(t)).map(theaterLabel).join(" · "),
       why: s.why,
     }));
-  return {
+  return publishLetter({
     ...issue,
     letter: letter || issue.letter,
     desks,
     peaks,
     closures: closuresForCoasts(issue.month, coasts),
-  };
+  });
 }
 
 /** Coast chip: every micro-area on those theaters. All coasts stays the letter desks. */
@@ -265,7 +270,7 @@ export async function withCoastWaters(
     };
   });
 
-  return { ...filtered, desks };
+  return publishLetter({ ...filtered, desks });
 }
 
 export async function loadLetterTomorrows(issue: NewsletterIssue) {

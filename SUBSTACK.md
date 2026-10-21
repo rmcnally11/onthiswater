@@ -49,9 +49,9 @@ If step 2 or 3 fails, or the JSON has `"error"`, or a desk says the gauge was qu
   13. South Carolina water — Myrtle Beach
   14. Azores water — Horta
   15. Azores water — São Miguel
-- For each desk, print only what the JSON gave you: kicker, headline, score, wind, sky / rain chance, water temp, tide, moon, window, in-play species, the two `why` lines, seasonal line. If a field is `null`, skip it. If `error` is set, write “Gauge quiet” and that error. Do not invent a score.
+- For each desk, print only what the JSON gave you: kicker, headline, `conditions` (wind, sky, and the water — words, not a number), wind, sky / rain chance, water temp, tide, moon, window, in-play species names, the two `why` lines, seasonal line. If a field is `null`, skip it. If `error` is set, write “Gauge quiet” and that error. Do not invent a number for the day. The Saturday letter does not print a desk number.
 - Then “In peak this month” from `peaks`. Then “Closed or closing” from `closures`.
-- Close with this sentence, verbatim: `Scores are 1–10. They are not bite guarantees. Not for navigation. Open the live brief.`
+- Close with the JSON `disclaimer`, then: `Open the live brief.`
 - Every desk must link with the `href` from the JSON. Those URLs already point at `https://onthiswater.com/?area=…&theater=…`. Do not change the query string. Do not link to a shortener, a Linktree, or a different domain.
 
 Allowed link hosts: `onthiswater.com` and `github.com/rmcnally11/onthiswater` only.
@@ -59,7 +59,7 @@ Allowed link hosts: `onthiswater.com` and `github.com/rmcnally11/onthiswater` on
 ### Hard doctrine — if you break one, delete the draft
 
 - Do not invent honey holes, GPS, or “secret” water.
-- Do not turn a 1–10 into a bite. “Galveston is an 8.4” is legal. “The redfish will eat” is not.
+- Do not say the fish will eat. “Galveston is a breeze under a clear sky” is legal. “The redfish will eat” is not. Do not put a desk number in the Saturday letter.
 - Jacks are incidental noise. They never own a headline.
 - Mahi, sail, tuna are bluewater. Do not put them on a flat or marsh unless the JSON in-play list already did.
 - Roosterfish is Pacific / Baja only. Never on Gulf water.

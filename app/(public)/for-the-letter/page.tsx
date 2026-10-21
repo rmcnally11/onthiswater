@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import { Waterline } from "@/components/viz/waterline";
 import { GITHUB_REPO, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
 import { DESKS, deskChoiceLabel } from "@/lib/desks";
+import { LETTER_DISCLAIMER } from "@/lib/letter-copy";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "For Saturday and Twitter bots",
   description:
-    "Substack and X agents may only reprint On This Water. Morning and calendar pictures are screenshots of this site.",
-};
+    "Substack and X agents may only reprint On This Water. The Saturday letter is wind, sky, and the water. Morning and calendar pictures are screenshots of this site.",
+  path: "/for-the-letter",
+  imageAlt: "Rules for reprinting the Saturday letter. Wind, sky, and the water.",
+});
 
 const ORIGIN = siteOrigin();
 
@@ -25,8 +29,9 @@ export default function ForTheLetterPage() {
           For Substack and Twitter bots
         </h1>
         <p className="mt-3 text-sm text-[color:var(--cream)]/65">
-          You may reprint {PRODUCT_NAME}. You may not invent weather, tides, scores, or water. If a
-          number is not on this site, it does not go in the letter.
+          You may reprint {PRODUCT_NAME}. You may not invent weather, tides, or water. If a
+          number is not on this site, it does not go in the letter. The Saturday letter prints wind, sky,
+          and the water.
         </p>
         <Waterline className="mt-4" />
       </header>
@@ -110,7 +115,13 @@ export default function ForTheLetterPage() {
         <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Hard doctrine</p>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>Print the month essay from the JSON <code>letter</code> field verbatim.</li>
-          <li>Scores are 1–10, not bite guarantees. Do not say the fish will eat.</li>
+          <li>
+            Describe each desk from <code>conditions</code> and <code>shareText</code> — wind, sky, and the
+            water. Do not print a number for the day. Do not say the fish will eat.
+          </li>
+          <li>
+            Close with the JSON <code>disclaimer</code>: {LETTER_DISCLAIMER}
+          </li>
           <li>No invented honey holes, GPS, or secret water.</li>
           <li>Jacks never headline. Roosterfish never on Gulf water. GT is Seychelles only.</li>
           <li>Mahi / sail / tuna / marlin / swordfish stay off the flat unless the JSON in-play list already put them there.</li>
@@ -130,7 +141,7 @@ export default function ForTheLetterPage() {
           <a className="underline" href="/card?area=galveston&amp;theater=texas">
             /card
           </a>{" "}
-          (score ring, wind compass, moon, tide curve, sky) — do not put that card URL in the tweet.
+          (wind compass, moon, tide curve, and sky) — do not put that card URL in the tweet.
           Calendar: one post per item in calendars[], last line is the live{" "}
           <a className="underline" href="/calendar?area=galveston&amp;theater=texas">
             /calendar
