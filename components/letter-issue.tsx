@@ -1,12 +1,9 @@
 import { incidentalNoise, recentLetterWeeks, type NewsletterIssue } from "@/lib/newsletter";
 import { theaterLabel } from "@/lib/data/fundamentals";
-import { ScorePip } from "@/components/score-pip";
-import { ScoreRing } from "@/components/viz/score-ring";
 import { Waterline } from "@/components/viz/waterline";
 import { Badge } from "@/components/ui/badge";
 import { RegsStamp } from "@/components/regs-stamp";
 import { FeedNotes } from "@/components/feed-notes";
-import { GoWhen } from "@/components/go-when";
 import { TideCurve } from "@/components/viz/tide-curve";
 import { MoonDisk } from "@/components/viz/moon-disk";
 import { WindCompass } from "@/components/viz/wind-compass";
@@ -17,45 +14,10 @@ import { THEATER_IDS, THEATER_META } from "@/lib/data/theaters";
 import { AREA_BY_ID, waterChipLabel } from "@/lib/data/areas";
 import { DESKS } from "@/lib/desks";
 import { coastEditionLabel, isAllCoasts } from "@/lib/coasts";
-import { scoreHex, scoreInk } from "@/lib/viz";
-import { pressureLine } from "@/lib/pressure";
+import { describeDesk, deskWords, forLetter, LETTER_LEGEND, letterTomorrowLine } from "@/lib/letter-copy";
 import { LongRecord } from "@/components/long-record";
 import { JoinStrip } from "@/components/join-strip";
 import { longRecordBay } from "@/lib/data/long-record";
-
-function tideLabel(desk: DeskIssue) {
-  const tides = desk.briefing?.conditions.tides;
-  if (!tides) return desk.seasonal;
-  const stage = tides.stage.replace("-", " ");
-  const anomaly =
-    tides.anomalyFt != null
-      ? `${tides.anomalyFt >= 0 ? "+" : ""}${tides.anomalyFt.toFixed(1)} ft vs the table`
-      : null;
-  return [stage, anomaly].filter(Boolean).join(" · ");
-}
-
-function weatherLine(desk: DeskIssue) {
-  const w = desk.briefing?.conditions.weather;
-  const water = desk.briefing?.conditions.waterTempF;
-  if (!w && water == null) return null;
-  const wind =
-    w?.windMph != null
-      ? `${Math.round(w.windMph)} mph${w.windCardinal ? ` ${w.windCardinal}` : ""}`
-      : "wind quiet";
-  const temp = water != null ? `${Math.round(water)}°F water` : null;
-  const sky =
-    w?.wx === "storm"
-      ? "thunderstorms"
-      : w?.wx === "rain"
-        ? w.precipChance != null
-          ? `${Math.round(w.precipChance)}% rain`
-          : "rain"
-        : w?.precipChance != null
-          ? `${Math.round(w.precipChance)}% rain`
-          : null;
-  const glass = w ? pressureLine(w) : null;
-  return [wind, sky, temp, glass].filter(Boolean).join(" · ");
-}
 
 function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | null }) {
   const briefing = desk.briefing;
@@ -73,10 +35,12 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
           <h2 className="mt-1 font-heading text-2xl text-[color:var(--cream)]">
             {briefing?.area ? waterChipLabel(briefing.area) : theaterLabel(desk.theater)}
           </h2>
-          <p className="text-xs text-[color:var(--cream)]/45">{desk.kicker}</p>
+          <p className="text-xs text-[color:var(--cream)]/45">{forLetter(desk.kicker)}</p>
         </div>
         {briefing ? (
-          <ScoreRing score={briefing.overall} size={88} label="Today" sub={briefing.confidence} />
+          <p className="max-w-[11rem] text-right text-xs leading-snug text-[color:var(--cream)]/70">
+            {describeDesk(briefing).split(". ").slice(0, 2).join(". ")}
+          </p>
         ) : (
           <Badge variant="secondary" className="bg-rose-50 text-rose-900">
             Gauge quiet
@@ -84,19 +48,19 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
         )}
       </div>
       {briefing ? (
-        <p className="mt-4 font-heading text-lg leading-snug text-[color:var(--cream)]">{briefing.headline}</p>
+        <p className="mt-4 font-heading text-lg leading-snug text-[color:var(--cream)]">
+          {forLetter(briefing.headline)}
+        </p>
       ) : (
-        <p className="mt-4 text-sm text-rose-900">{desk.error}</p>
+        <p className="mt-4 text-sm text-rose-900">{desk.error ? forLetter(desk.error) : "Gauge quiet."}</p>
       )}
-      <p className="mt-3 text-sm text-[color:var(--cream)]/70">{desk.seasonal}</p>
+      <p className="mt-3 text-sm text-[color:var(--cream)]/70">{forLetter(desk.seasonal)}</p>
       {briefing && c ? (
         <>
           <div className="mt-4">
             <FeedNotes area={briefing.area} conditions={c} />
           </div>
-          <p className="mt-3 text-sm text-[color:var(--cream)]/65">
-            {weatherLine(desk) ?? "Waiting on the station."} · {tideLabel(desk)}
-          </p>
+          <p className="mt-3 text-sm text-[color:var(--cream)]/65">{deskWords(briefing, desk.error)}</p>
           {window ? (
             <p className="mt-2 text-sm text-[color:var(--cream)]/70">
               <span className="text-[color:var(--copper)]">Window. </span>
@@ -130,23 +94,23 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
               stage={c.tides.stage}
               source={c.tides.source}
               station={briefing.area.noaaStation}
-              windows={briefing.when}
+              windows={briefing.when.map((window) => ({ start: window.start, end: window.end }))}
               height={140}
             />
           </div>
           {tomorrow && briefing.kind === "today" ? (
-            <div className="mt-4">
-              <GoWhen today={briefing} tomorrow={tomorrow} />
-            </div>
+            <p className="mt-4 text-sm text-[color:var(--cream)]/70">{letterTomorrowLine(briefing, tomorrow)}</p>
           ) : null}
         </>
       ) : null}
       {inPlay.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">
           {inPlay.map((s) => (
-            <span key={s.species.id} className="inline-flex items-center gap-1.5">
-              <ScorePip score={s.score} />
-              <span className="text-xs text-[color:var(--cream)]/70">{s.species.commonName}</span>
+            <span
+              key={s.species.id}
+              className="rounded-full border border-[color:var(--line)] px-2 py-0.5 text-xs text-[color:var(--cream)]/70"
+            >
+              {s.species.commonName}
             </span>
           ))}
         </div>
@@ -154,14 +118,16 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
       {c?.hab?.hot ? (
         <p className="mt-3 text-sm text-amber-900">
           <span className="text-[color:var(--copper)]">Red tide. </span>
-          {c.hab.level}
-          {c.hab.when ? ` · ${c.hab.when}` : ""}. {c.hab.where} Not a bite.
+          {forLetter(c.hab.level)}
+          {c.hab.when ? ` · ${forLetter(c.hab.when)}` : ""}. {forLetter(c.hab.where)} Not a bite.
         </p>
       ) : null}
       {(c?.hab?.hot
         ? (briefing?.why.filter((line) => !/K\. brevis|red tide|Karenia/i.test(line)) ?? [])
         : (briefing?.why ?? [])
       )
+        .map((line) => forLetter(line))
+        .filter(Boolean)
         .slice(0, 2)
         .map((line) => (
         <p key={line} className="mt-3 text-sm text-[color:var(--cream)]/60">
@@ -294,7 +260,6 @@ export function LetterIssue({
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {issue.desks.map((desk) => {
-              const score = desk.briefing?.overall;
               const name = desk.briefing?.area
                 ? waterChipLabel(desk.briefing.area)
                 : theaterLabel(desk.theater);
@@ -306,22 +271,10 @@ export function LetterIssue({
                 >
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-heading text-xl text-[color:var(--cream)]">{name}</p>
-                    <span className="inline-flex items-center gap-2">
-                      <WindMark mph={desk.briefing?.conditions.weather.windMph ?? null} />
-                      {score != null ? (
-                        <span
-                          className="inline-flex h-7 w-7 items-center justify-center rounded-full font-mono text-[11px] font-semibold"
-                          style={{ background: scoreHex(score), color: scoreInk(score) }}
-                        >
-                          {score.toFixed(0)}
-                        </span>
-                      ) : (
-                        <p className="text-xs text-[color:var(--cream)]/40">quiet</p>
-                      )}
-                    </span>
+                    <WindMark mph={desk.briefing?.conditions.weather.windMph ?? null} />
                   </div>
                   <p className="mt-1 line-clamp-2 text-sm text-[color:var(--cream)]/65">
-                    {desk.briefing?.headline ?? desk.error ?? desk.kicker}
+                    {desk.briefing ? deskWords(desk.briefing, desk.error) : forLetter(desk.error ?? desk.kicker)}
                   </p>
                 </a>
               );
@@ -331,12 +284,12 @@ export function LetterIssue({
       ) : null}
 
       <article className="mx-auto max-w-3xl">
-        <p className="font-heading text-2xl leading-snug text-[color:var(--cream)] md:text-3xl">{issue.letter}</p>
+        <p className="font-heading text-2xl leading-snug text-[color:var(--cream)] md:text-3xl">{forLetter(issue.letter)}</p>
         <p className="mt-4 text-sm text-[color:var(--cream)]/50">
           {all
             ? "Drawn from Galveston, Venice, Islamorada, Andros, Ascension, San Juan, and Alphonse — one water per coast. Open a coast chip for every water on that coast — Texas is Sabine through Lower Laguna, not Galveston only."
             : `This edition is ${edition} only — ${waterNames}. Saturday still writes from ${letterDeskNames || "those waters"}. Coasts you did not ask for stay off this letter.`}{" "}
-          Scores are 1–10. They are not bite guarantees.{" "}
+          {LETTER_LEGEND}{" "}
           <a href={seasonHref} className="text-[color:var(--sea)] underline underline-offset-4">
             The season this month
           </a>
@@ -381,7 +334,7 @@ export function LetterIssue({
       <section className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
         <article className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5">
           <p className="kicker text-[color:var(--copper)]">
-            Box score · {issue.monthName}
+            The month · {issue.monthName}
           </p>
           <h2 className="mt-1 font-heading text-2xl text-[color:var(--cream)]">In peak this month</h2>
           {issue.peaks.length === 0 ? (
@@ -396,9 +349,9 @@ export function LetterIssue({
             <ul className="mt-4 space-y-3">
               {issue.peaks.map((p) => (
                 <li key={p.name}>
-                  <p className="font-heading text-lg text-[color:var(--cream)]">{p.name}</p>
-                  <p className="text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/40">{p.theaters}</p>
-                  <p className="mt-1 text-sm text-[color:var(--cream)]/65">{p.why}</p>
+                  <p className="font-heading text-lg text-[color:var(--cream)]">{forLetter(p.name)}</p>
+                  <p className="text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/40">{forLetter(p.theaters)}</p>
+                  <p className="mt-1 text-sm text-[color:var(--cream)]/65">{forLetter(p.why)}</p>
                 </li>
               ))}
             </ul>
@@ -418,8 +371,8 @@ export function LetterIssue({
             <ul className="mt-4 space-y-4">
               {issue.closures.map((c) => (
                 <li key={c.title}>
-                  <p className="font-heading text-lg text-[color:var(--copper)]">{c.title}</p>
-                  <p className="mt-1 text-sm text-[color:var(--cream)]/70">{c.body}</p>
+                  <p className="font-heading text-lg text-[color:var(--copper)]">{forLetter(c.title)}</p>
+                  <p className="mt-1 text-sm text-[color:var(--cream)]/70">{forLetter(c.body)}</p>
                 </li>
               ))}
             </ul>

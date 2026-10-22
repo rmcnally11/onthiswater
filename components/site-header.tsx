@@ -16,6 +16,7 @@ import { Waterline } from "@/components/viz/waterline";
 import { JoinLink } from "@/components/join-link";
 import { getArea, neighborArea } from "@/lib/data/areas";
 import { PRODUCT_LINE, PRODUCT_NAME } from "@/lib/brand";
+import { letterNavCopy } from "@/lib/letter-copy";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -93,7 +94,11 @@ function HeaderWithWater() {
 function HeaderBar({ links }: { links: NavItem[] }) {
   const pathname = usePathname();
   const onJoin = activePath(pathname, "/join");
-  const barLinks = links.filter((l) => l.bar);
+  const shown = links.map((l) => {
+    const copy = letterNavCopy(pathname, l.label, l.dek);
+    return { ...l, label: copy.label, dek: copy.dek };
+  });
+  const barLinks = shown.filter((l) => l.bar);
 
   return (
     <header className="sticky top-0 z-30 border-b border-[color:var(--line)] bg-[color:var(--ink)]/80 pt-[env(safe-area-inset-top)] backdrop-blur-md">
@@ -155,7 +160,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
                 </JoinLink>
               </div>
               <nav className="flex flex-1 flex-col overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
-                {links.map((l) => {
+                {shown.map((l) => {
                   const on = activePath(pathname, l.href.split("?")[0] ?? l.href);
                   return (
                     <a
