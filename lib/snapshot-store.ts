@@ -1,4 +1,5 @@
 import { get, put, del } from "@vercel/blob";
+import { DeadlineError, withAbortDeadline } from "@/lib/deadline";
 import type { Briefing, CalendarDay } from "@/lib/types";
 
 /**
@@ -93,14 +94,11 @@ export function memorySnapshotStore<T = MorningSnapshot>(): SnapshotStore<T> {
   };
 }
 
-function blobReadOptions() {
-  return {
-    access: "private" as const,
-    useCache: false,
-    // A fresh signal skips Next's per-request fetch dedupe if the SDK ever
-    // calls the patched global fetch. @vercel/blob currently uses undici.
-    abortSignal: new AbortController().signal,
-  };
+/** Undici's default header timeout is 300s. Blob must not be allowed to use it. */
+const BLOB_MS = 4_000;
+
+function blobCall<T>(run: (signal: AbortSignal) => Promise<T>) {
+  return withAbortDeadline(BLOB_MS, run);
 }
 
 /**
@@ -118,48 +116,60 @@ function remember(key: string, value: unknown) {
   memo.set(key, value);
 }
 
-/** True for a Blob rate-limit or quota error. */
+/** True for a Blob rate-limit, quota error, or a deadline we gave up on. */
 export function isBlobThrottle(error: unknown) {
+  if (error instanceof DeadlineError) return true;
+  const name = error && typeof error === "object" && "name" in error ? String(error.name) : "";
+  if (name === "AbortError" || name === "TimeoutError") return true;
   const msg = error instanceof Error ? error.message : String(error ?? "");
-  return /429|too many requests|rate limit|quota/i.test(msg);
+  return /429|too many requests|rate limit|quota|timed out/i.test(msg);
 }
 
 function blobJsonStore<T>(isValue: (value: unknown) => value is T): SnapshotStore<T> {
   return {
     async read(key) {
       if (memo.has(key)) return clone(memo.get(key) as T);
-      const result = await get(key, blobReadOptions());
-      if (!result || result.statusCode !== 200 || !result.stream) return null;
+      // One signal covers the headers and the body. Aborting it cancels a stalled download.
+      const text = await blobCall(async (signal) => {
+        const result = await get(key, { access: "private", useCache: false, abortSignal: signal });
+        if (!result || result.statusCode !== 200 || !result.stream) return null;
+        return new Response(result.stream).text();
+      });
+      if (!text) return null;
       try {
-        const text = await new Response(result.stream).text();
         const parsed: unknown = JSON.parse(text);
         if (!isValue(parsed)) return null;
         remember(key, parsed);
         return clone(parsed);
-      } catch {
+      } catch (error) {
+        if (isBlobThrottle(error)) throw error;
         return null;
       }
     },
     async create(key, value) {
       try {
-        await put(key, JSON.stringify(value), {
-          access: "private",
-          addRandomSuffix: false,
-          allowOverwrite: false,
-          contentType: "application/json",
-          cacheControlMaxAge: 60 * 60 * 24,
-          abortSignal: new AbortController().signal,
-        });
+        await blobCall((signal) =>
+          put(key, JSON.stringify(value), {
+            access: "private",
+            addRandomSuffix: false,
+            allowOverwrite: false,
+            contentType: "application/json",
+            cacheControlMaxAge: 60 * 60 * 24,
+            abortSignal: signal,
+          }),
+        );
         return "created";
       } catch (error) {
-        const stored = await get(key, blobReadOptions()).catch(() => null);
+        const stored = await blobCall((signal) =>
+          get(key, { access: "private", useCache: false, abortSignal: signal }),
+        ).catch(() => null);
         if (stored && stored.statusCode === 200) return "exists";
         throw error;
       }
     },
     async retire(key) {
       memo.delete(key);
-      await del(key).catch(() => undefined);
+      await blobCall((signal) => del(key, { abortSignal: signal })).catch(() => undefined);
     },
   };
 }

@@ -423,6 +423,9 @@ export async function buildCalendarRange(
 }
 
 const calendarInflight = new Map<string, Promise<CalendarSnapshot>>();
+/** Same instance, same hour. A no-wind month is not stored in Blob, so the letter's second pass would score it again. */
+const calendarRecent = new Map<string, { at: number; snap: CalendarSnapshot }>();
+const CALENDAR_RECENT_MS = 60_000;
 
 async function computeCalendarSnapshot(area: Area, activity: ActivityId | "all"): Promise<CalendarSnapshot> {
   const now = clockParts(new Date(), area.timezone);
@@ -436,14 +439,19 @@ async function computeCalendarSnapshot(area: Area, activity: ActivityId | "all")
 export async function getCalendarSnapshot(area: Area, activity: ActivityId | "all"): Promise<CalendarSnapshot> {
   const hour = snapshotHour(new Date(), area.timezone);
   const key = calendarSnapshotKey(area.id, activity, hour.ymd, hour.hour);
+  const recent = calendarRecent.get(key);
+  if (recent && Date.now() - recent.at < CALENDAR_RECENT_MS) return recent.snap;
   const pending = calendarInflight.get(key);
   if (pending) return pending;
 
-  const work = readOrCreateCalendar(calendarSnapshotStore(), key, () => computeCalendarSnapshot(area, activity)).finally(
-    () => {
+  const work = readOrCreateCalendar(calendarSnapshotStore(), key, () => computeCalendarSnapshot(area, activity))
+    .then((snap) => {
+      calendarRecent.set(key, { at: Date.now(), snap });
+      return snap;
+    })
+    .finally(() => {
       if (calendarInflight.get(key) === work) calendarInflight.delete(key);
-    },
-  );
+    });
   calendarInflight.set(key, work);
   return work;
 }
