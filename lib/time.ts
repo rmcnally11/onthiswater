@@ -21,28 +21,44 @@ export function parseNoaaGmt(stamp: string): Date {
   return new Date(Date.UTC(y, m - 1, d, hh, mm));
 }
 
+const formatters = new Map<string, Intl.DateTimeFormat>();
+
+function optionsKey(opts: Intl.DateTimeFormatOptions) {
+  return Object.keys(opts)
+    .sort()
+    .map((key) => `${key}:${JSON.stringify(opts[key as keyof Intl.DateTimeFormatOptions])}`)
+    .join("|");
+}
+
+function cachedFormatter(timeZone: string, opts: Intl.DateTimeFormatOptions) {
+  const key = `${timeZone}\0${optionsKey(opts)}`;
+  const existing = formatters.get(key);
+  if (existing) return existing;
+  const created = new Intl.DateTimeFormat("en-US", { timeZone, ...opts });
+  formatters.set(key, created);
+  return created;
+}
+
+const CLOCK_PARTS: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+  weekday: "short",
+};
+
 export function formatInZone(
   date: Date,
   timeZone: string,
   opts: Intl.DateTimeFormatOptions = {},
 ) {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    ...opts,
-  }).format(date);
+  return cachedFormatter(timeZone, opts).format(date);
 }
 
 export function clockParts(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-    weekday: "short",
-  }).formatToParts(date);
+  const parts = cachedFormatter(timeZone, CLOCK_PARTS).formatToParts(date);
   const get = (type: string) =>
     parts.find((p) => p.type === type)?.value ?? "";
   return {
@@ -61,7 +77,8 @@ export function ymdInZone(date: Date, timeZone: string) {
 }
 
 export function hourInZone(date: Date, timeZone: string) {
-  return clockParts(date, timeZone).hour + clockParts(date, timeZone).minute / 60;
+  const parts = clockParts(date, timeZone);
+  return parts.hour + parts.minute / 60;
 }
 
 export function startOfDayInZone(ymd: string, timeZone: string) {
@@ -122,12 +139,11 @@ export function addDaysYmd(ymd: string, days: number) {
 }
 
 export function formatYmdLong(ymd: string, timeZone: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone,
+  return formatInZone(new Date(`${ymd}T16:00:00Z`), timeZone, {
     weekday: "long",
     month: "long",
     day: "numeric",
-  }).format(new Date(`${ymd}T16:00:00Z`));
+  });
 }
 
 const COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"] as const;
