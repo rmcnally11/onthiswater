@@ -10,6 +10,7 @@ import {
 } from "@/lib/coasts";
 import { THEATER_IDS } from "@/lib/data/theaters";
 import { COAST_HUB_BY_SLUG } from "@/lib/coast-hubs";
+import { bookRequestStatus } from "@/lib/safe-decode";
 import { isYmd } from "@/lib/time";
 
 function rememberWater(request: NextRequest, res: NextResponse) {
@@ -68,7 +69,14 @@ function morningQueryRedirect(request: NextRequest) {
 }
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
+  if (bookRequestStatus(pathname, search) === "not-found") {
+    const dest = request.nextUrl.clone();
+    dest.pathname = "/__not-found";
+    dest.search = "";
+    return NextResponse.rewrite(dest);
+  }
+
   if (pathname === "/subscribers" || pathname.startsWith("/subscribers/")) {
     const home = request.nextUrl.clone();
     home.pathname = "/";
