@@ -13,6 +13,7 @@ import { copper, gold, scoreHex, scoreInk } from "@/lib/viz";
 import { feedNotes } from "@/lib/feeds";
 import { windWord } from "@/lib/wind";
 import { pressureLine } from "@/lib/pressure";
+import { deskWords, forLetter, LETTER_LEGEND, letterImageAlt } from "@/lib/letter-copy";
 import {
   MONTH_NAMES,
   MONTH_THEATER,
@@ -151,12 +152,14 @@ function fuelMailHtml(briefing: Briefing) {
   return `Posted fuel on that coast — <a href="${escapeHtml(next.href)}" style="color:${copper}">${escapeHtml(next.label)}</a>`;
 }
 
-function tideImage(briefing: Briefing, opts?: { origin?: string; bleed?: boolean }) {
+function tideImage(briefing: Briefing, opts?: { origin?: string; bleed?: boolean; alt?: string }) {
   const src = tideChartUrl(briefing.area.id, mailOrigin(opts?.origin), briefing.forDate);
   const tides = briefing.conditions.tides;
-  const alt = `${briefing.area.shortName} tide · ${tides.stage.replace("-", " ")}${
-    tides.predictedNow != null ? ` · ${tides.predictedNow.toFixed(2)} ft` : ""
-  }`;
+  const alt =
+    opts?.alt ??
+    `${briefing.area.shortName} tide · ${tides.stage.replace("-", " ")}${
+      tides.predictedNow != null ? ` · ${tides.predictedNow.toFixed(2)} ft` : ""
+    }`;
   const href = hrefs(briefing, opts?.origin).brief;
   const radius = opts?.bleed ? "0" : "14px";
   const bottom = opts?.bleed ? "0" : "14px";
@@ -395,36 +398,39 @@ export function letterSubject(_issue: NewsletterIssue, _coasts: TheaterId[] | nu
 
 export function letterEmailText(issue: NewsletterIssue, coasts: TheaterId[] | null) {
   const edition = coastEditionLabel(coasts);
-  const parts = [`Saturday on your water · ${edition}`, issue.rangeLabel, "", issue.letter, ""];
+  const parts = [`Saturday on your water · ${edition}`, issue.rangeLabel, "", forLetter(issue.letter), ""];
   for (const desk of issue.desks) {
     const name = desk.briefing?.area.shortName ?? desk.desk;
-    const score = desk.briefing ? desk.briefing.overall.toFixed(1) : "quiet";
     parts.push(
-      `${desk.desk.toUpperCase()} · ${name} · ${score}`,
-      desk.briefing?.headline ?? desk.error ?? desk.kicker,
-      desk.briefing
-        ? `${windWord(desk.briefing.conditions.weather.windMph)} · ${desk.briefing.when[0]?.label ?? "no window"}${
-            pressureLine(desk.briefing.conditions.weather)
-              ? ` · ${pressureLine(desk.briefing.conditions.weather)}`
-              : ""
-          }`
-        : "",
-      desk.seasonal,
+      `${desk.desk.toUpperCase()} · ${name}`,
+      desk.briefing ? forLetter(desk.briefing.headline) : forLetter(desk.error ?? desk.kicker),
+      deskWords(desk.briefing, desk.error),
+      desk.briefing?.when[0]?.label ? forLetter(desk.briefing.when[0].label) : "",
+      forLetter(desk.seasonal),
       "",
     );
   }
   if (issue.peaks.length) {
-    parts.push("IN PEAK", ...issue.peaks.map((p) => `• ${p.name} (${p.theaters}) — ${p.why}`), "");
+    parts.push(
+      "IN PEAK",
+      ...issue.peaks.map((p) => `• ${forLetter(p.name)} (${forLetter(p.theaters)}) — ${forLetter(p.why)}`),
+      "",
+    );
   }
   if (issue.closures.length) {
-    parts.push("CLOSED OR CLOSING", ...issue.closures.map((c) => `• ${c.title} — ${c.body}`), "");
+    parts.push(
+      "CLOSED OR CLOSING",
+      ...issue.closures.map((c) => `• ${forLetter(c.title)} — ${forLetter(c.body)}`),
+      "",
+    );
   }
   const qs = coasts?.length && coasts.length < 7 ? `?coasts=${coasts.join(",")}` : "";
   parts.push(
     `Read the letter: ${ORIGIN}/newsletter${qs}`,
     `Season: ${ORIGIN}/fundamentals${qs ? `?theater=${coasts![0]}` : ""}`,
     "",
-    "This edition is the water you elected. Coasts you did not pick stay off this letter. Scores are 1–10, not a bite.",
+    "This edition is the water you elected. Coasts you did not pick stay off this letter.",
+    LETTER_LEGEND,
   );
   return parts.join("\n");
 }
@@ -435,18 +441,17 @@ export function letterEmailHtml(issue: NewsletterIssue, coasts: TheaterId[] | nu
   const desks = issue.desks
     .map((desk) => {
       const name = desk.briefing?.area.shortName ?? desk.desk.replace(" desk", "");
-      const head = desk.briefing?.headline ?? desk.error ?? desk.kicker;
-      const score = desk.briefing?.overall;
-      const w = desk.briefing?.conditions.weather;
-      const wind = windWord(w?.windMph ?? null);
-      const sky = w ? skyCopy(w.wx, w.precipChance, w.sky) : "sky n/a";
+      const head = forLetter(desk.briefing?.headline ?? desk.error ?? desk.kicker);
+      const conditions = deskWords(desk.briefing, desk.error);
       const window = desk.briefing?.when[0];
       const feeds = desk.briefing
         ? feedNotes(desk.briefing.area, desk.briefing.conditions)
             .map((n) => n.label)
             .join(" · ")
         : "Gauge quiet";
-      const chart = desk.briefing ? tideImage(desk.briefing, { bleed: true }) : "";
+      const chart = desk.briefing
+        ? tideImage(desk.briefing, { bleed: true, alt: letterImageAlt(desk.briefing) })
+        : "";
       return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 14px;background:${PAGE};border:1px solid ${LINE};border-radius:18px">
         ${chart ? `<tr><td style="padding:0;font-size:0;line-height:0">${chart}</td></tr>` : ""}
         <tr>
@@ -458,17 +463,14 @@ export function letterEmailHtml(issue: NewsletterIssue, coasts: TheaterId[] | nu
                   <p style="margin:8px 0 0;font-size:22px;line-height:1.25;color:${NAVY};font-family:Georgia,'Times New Roman',serif">${escapeHtml(name)}</p>
                   <p style="margin:8px 0 0;font-size:15px;line-height:1.45;color:${MUTED}">${escapeHtml(head)}</p>
                   <p style="margin:8px 0 0;font-size:12px;color:${MUTED};font-family:ui-sans-serif,system-ui,-apple-system,sans-serif">${escapeHtml(feeds)}</p>
-                  <p style="margin:8px 0 0;font-size:13px;color:${NAVY};font-family:ui-sans-serif,system-ui,-apple-system,sans-serif">${escapeHtml(wind)} · ${escapeHtml(sky)}${
-                    w && pressureLine(w) ? ` · ${escapeHtml(pressureLine(w)!)}` : ""
-                  }</p>
+                  <p style="margin:8px 0 0;font-size:13px;color:${NAVY};font-family:ui-sans-serif,system-ui,-apple-system,sans-serif">${escapeHtml(conditions)}</p>
                   ${
                     window
-                      ? `<p style="margin:8px 0 0;font-size:13px;color:${MUTED}">Window · ${escapeHtml(window.label)}${window.why ? ` — ${escapeHtml(window.why)}` : ""}</p>`
+                      ? `<p style="margin:8px 0 0;font-size:13px;color:${MUTED}">Window · ${escapeHtml(forLetter(window.label))}${window.why ? ` — ${escapeHtml(forLetter(window.why))}` : ""}</p>`
                       : ""
                   }
-                  <p style="margin:8px 0 0;font-size:13px;color:${MUTED}">${escapeHtml(desk.seasonal)}</p>
+                  <p style="margin:8px 0 0;font-size:13px;color:${MUTED}">${escapeHtml(forLetter(desk.seasonal))}</p>
                 </td>
-                <td valign="top" align="right" width="100" style="width:100px;padding-left:10px">${score != null ? scoreDisc(score) : ""}</td>
               </tr>
             </table>
           </td>
@@ -480,7 +482,7 @@ export function letterEmailHtml(issue: NewsletterIssue, coasts: TheaterId[] | nu
     ? `${sectionTitle("In peak")}${issue.peaks
         .map(
           (p) =>
-            `<p style="margin:0 0 10px;font-size:15px;line-height:1.45"><strong style="color:${NAVY}">${escapeHtml(p.name)}</strong> · ${escapeHtml(p.theaters)}<br/><span style="color:${MUTED}">${escapeHtml(p.why)}</span></p>`,
+            `<p style="margin:0 0 10px;font-size:15px;line-height:1.45"><strong style="color:${NAVY}">${escapeHtml(forLetter(p.name))}</strong> · ${escapeHtml(forLetter(p.theaters))}<br/><span style="color:${MUTED}">${escapeHtml(forLetter(p.why))}</span></p>`,
         )
         .join("")}`
     : "";
@@ -488,7 +490,7 @@ export function letterEmailHtml(issue: NewsletterIssue, coasts: TheaterId[] | nu
     ? `${sectionTitle("Closed or closing")}${issue.closures
         .map(
           (c) =>
-            `<p style="margin:0 0 10px;font-size:15px;line-height:1.45"><strong style="color:${copper}">${escapeHtml(c.title)}</strong><br/><span style="color:${MUTED}">${escapeHtml(c.body)}</span></p>`,
+            `<p style="margin:0 0 10px;font-size:15px;line-height:1.45"><strong style="color:${copper}">${escapeHtml(forLetter(c.title))}</strong><br/><span style="color:${MUTED}">${escapeHtml(forLetter(c.body))}</span></p>`,
         )
         .join("")}`
     : "";
@@ -498,15 +500,16 @@ export function letterEmailHtml(issue: NewsletterIssue, coasts: TheaterId[] | nu
     ${kicker(`Saturday on your water · ${edition}`)}
     ${heading(`${issue.monthName} on your water`)}
     ${dek(issue.rangeLabel)}
-    <p style="margin:16px 0 0;font-size:16px;line-height:1.55;color:${NAVY}">${escapeHtml(issue.letter)}</p>
+    <p style="margin:16px 0 0;font-size:16px;line-height:1.55;color:${NAVY}">${escapeHtml(forLetter(issue.letter))}</p>
     ${sectionTitle("This week")}
     ${desks}
     ${peaks}
     ${closures}
     <p style="margin:20px 0 0">${btn(`${ORIGIN}/newsletter${qs}`, "Open the letter")}</p>
     <p style="margin:18px 0 0;font-size:13px;line-height:1.5;color:${MUTED};font-family:ui-sans-serif,system-ui,-apple-system,sans-serif">
-      This edition is the water you elected. Scores are 1–10, not a bite.
+      This edition is the water you elected.
     </p>`,
+    legend: LETTER_LEGEND,
   });
 }
 

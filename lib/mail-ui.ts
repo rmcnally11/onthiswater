@@ -90,10 +90,12 @@ export function brandBar() {
   </table>`;
 }
 
-export function emailDoc(opts: { preheader?: string; hero?: string; brand?: boolean; body: string }) {
+export function emailDoc(opts: { preheader?: string; hero?: string; brand?: boolean; body: string; legend?: string }) {
   const pre = opts.preheader
     ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(opts.preheader)}</div>`
     : "";
+  const legend =
+    opts.legend ?? "Scores are 1–10. They are not a bite. Not a chart you steer by.";
   const showBrand = opts.brand ?? !opts.hero;
   const topPad = opts.hero || !showBrand ? "18px 18px 40px" : "28px 18px 40px";
   return `<!doctype html>
@@ -114,7 +116,6 @@ export function emailDoc(opts: { preheader?: string; hero?: string; brand?: bool
     .fb-wrap{width:100%!important;max-width:100%!important}
     .fb-pad{padding:18px 14px 28px!important}
     .fb-h1{font-size:26px!important;line-height:1.22!important}
-    .fb-score{font-size:28px!important}
     .fb-btn{display:block!important;width:100%!important;box-sizing:border-box!important;text-align:center!important}
     .fb-tide{display:block!important;padding:3px 0!important}
     .fb-cal td{font-size:11px!important;padding:4px 1px!important;line-height:1.15!important}
@@ -135,7 +136,7 @@ ${pre}
             ${opts.body}
             ${waterline()}
             <p style="margin:0;font-size:12px;line-height:1.5;color:${MUTED};font-family:ui-sans-serif,system-ui,-apple-system,sans-serif">
-              Scores are 1–10. They are not a bite. Not a chart you steer by.
+              ${escapeHtml(legend)}
               <a href="${ORIGIN}" style="color:${sea}">Open the live brief</a>
             </p>
           </td>

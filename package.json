@@ -14,7 +14,8 @@
     "test:routes": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-route-hang.ts",
     "test:snapshot": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot.ts",
     "test:store": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot-store.ts",
-    "test:calendar": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-calendar-snapshot.ts"
+    "test:calendar": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-calendar-snapshot.ts",
+    "test:letter": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-letter-no-scores.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

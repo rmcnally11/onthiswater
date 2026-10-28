@@ -4,6 +4,7 @@ import { isYmd } from "@/lib/time";
 import { readCoastsPref } from "@/lib/prefs";
 import { resolveElectedCoasts } from "@/lib/coasts";
 import type { Metadata } from "next";
+import { letterWeekMeta } from "@/lib/letter-copy";
 import { pageMeta } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -15,10 +16,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { week } = await params;
   const date = isYmd(week) ? week : "this Saturday";
+  const meta = letterWeekMeta(date);
   return pageMeta({
-    title: `Saturday ${date}`,
-    description: `Saturday on the coasts you asked for. ${date}. A Texas list does not carry Seychelles.`,
+    title: meta.title,
+    description: meta.description,
     path: `/newsletter/${isYmd(week) ? week : ""}`.replace(/\/$/, ""),
+    imageAlt: meta.imageAlt,
   });
 }
 
