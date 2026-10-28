@@ -1,7 +1,7 @@
 import { getBriefing } from "@/lib/briefing";
 import { buildCalendarRange, getYoloDay } from "@/lib/calendar";
 import { AREA_BY_ID } from "@/lib/data/areas";
-import { filterNewsletter, getNewsletter, hydrateLetterDesks } from "@/lib/newsletter";
+import { filterNewsletter, letterForDesks } from "@/lib/newsletter";
 import { clockParts } from "@/lib/time";
 import {
   buildSeasonIssue,
@@ -21,8 +21,7 @@ import {
 } from "@/lib/mail";
 import { sendResend } from "@/lib/send";
 import type { Area, Briefing, CalendarDay, TheaterId } from "@/lib/types";
-import type { Cadence } from "@/lib/coasts";
-import { coastsForDesks } from "@/lib/coasts";
+import { coastsForDesks, isAllCoasts, type Cadence } from "@/lib/coasts";
 
 export type SampleMail = {
   kind: "daily" | "weekly" | "calendar" | "seasonal";
@@ -63,19 +62,34 @@ async function loadDeskPack(areaIds: string[]) {
   return { mornings, calendars };
 }
 
+/** Desks the welcome may fetch. Coast filter happens before any gauge or calendar call. */
+export function welcomeDeskIds(opts?: {
+  areaId?: string;
+  desks?: string[];
+  coasts?: TheaterId[] | null;
+}) {
+  const requested = opts?.desks?.length ? opts.desks : [opts?.areaId ?? "galveston"];
+  const unique = [...new Set(requested.map((id) => id.trim()).filter((id) => AREA_BY_ID[id]))];
+  if (!opts?.coasts || isAllCoasts(opts.coasts)) return unique;
+  const coasts = new Set(opts.coasts);
+  return unique.filter((id) => coasts.has(AREA_BY_ID[id].theater));
+}
+
 export async function buildSampleEmails(opts?: {
   areaId?: string;
   desks?: string[];
   coasts?: TheaterId[];
   origin?: string;
 }): Promise<SampleMail[]> {
-  const desks = opts?.desks?.length ? opts.desks : [opts?.areaId ?? "galveston"];
+  const desks = welcomeDeskIds(opts);
   const coasts = opts?.coasts ?? coastsForDesks(desks);
-  const [{ mornings, calendars }, rawIssue] = await Promise.all([loadDeskPack(desks), getNewsletter()]);
-  const issue = await hydrateLetterDesks(rawIssue);
+  const [{ mornings, calendars }, rawLetter] = await Promise.all([
+    loadDeskPack(desks),
+    letterForDesks(desks),
+  ]);
   if (!mornings.length) throw new Error("No desks answered.");
   if (!calendars.length) throw new Error("Calendar did not set.");
-  const letter = filterNewsletter(issue, coasts);
+  const letter = filterNewsletter(rawLetter, coasts);
   const season = buildSeasonIssue(coasts);
 
   return [
@@ -132,14 +146,25 @@ export async function sendWelcomeEmails(
   const samples = (await buildSampleEmails({ desks: opts.desks, coasts })).filter((s) => wanted.has(s.kind));
   const results = [];
   for (const sample of samples) {
-    const remote = await sendResend([to], sample.subject, sample.html, sample.text);
-    results.push({
-      kind: sample.kind,
-      subject: sample.subject,
-      sent: remote.sent,
-      id: remote.id,
-      why: remote.why,
-    });
+    try {
+      const remote = await sendResend([to], sample.subject, sample.html, sample.text);
+      results.push({
+        kind: sample.kind,
+        subject: sample.subject,
+        sent: remote.sent,
+        id: remote.id,
+        why: remote.why,
+      });
+    } catch (error) {
+      console.error("Welcome mail did not send.", error);
+      results.push({
+        kind: sample.kind,
+        subject: sample.subject,
+        sent: false,
+        id: null,
+        why: error instanceof Error ? error.message : "Welcome mail did not send.",
+      });
+    }
   }
   return { to, results };
 }
