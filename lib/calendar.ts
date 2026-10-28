@@ -30,13 +30,28 @@ function parseStamp(stamp: string) {
 
 type HiLoRow = { time: string; height: number; type: "H" | "L"; at: Date };
 
+type TidePoint = { time: string; height: number };
+
 type CalendarInputs = {
-  hourly: { time: string; height: number }[];
+  hourly: TidePoint[];
   hilo: HiLoRow[];
+  hourlyByDay: Map<string, TidePoint[]>;
+  hiloByDay: Map<string, HiLoRow[]>;
   windByDay: Map<string, number>;
   popByDay: Map<string, number>;
   wxByDay: Map<string, SkyKind>;
 };
+
+function bucketByDay<T>(rows: T[], ymdOf: (row: T) => string) {
+  const buckets = new Map<string, T[]>();
+  for (const row of rows) {
+    const ymd = ymdOf(row);
+    const list = buckets.get(ymd);
+    if (list) list.push(row);
+    else buckets.set(ymd, [row]);
+  }
+  return buckets;
+}
 
 function rangeScoreFor(area: Area, range: number) {
   if (area.tideCharacter === "sight-skinny") {
@@ -62,8 +77,7 @@ function deriveHiLo(hourly: { time: string; height: number }[]): HiLoRow[] {
   return out;
 }
 
-function dayTideQuality(hourly: { time: string; height: number }[], hilo: HiLoRow[], ymd: string, area: Area) {
-  const dayPts = hourly.filter((h) => ymdInZone(parseStamp(h.time), area.timezone) === ymd);
+function dayTideQuality(dayPts: TidePoint[], extremes: HiLoRow[], area: Area) {
   if (dayPts.length >= 4) {
     const heights = dayPts.map((p) => p.height);
     const range = Math.max(...heights) - Math.min(...heights);
@@ -79,7 +93,6 @@ function dayTideQuality(hourly: { time: string; height: number }[], hilo: HiLoRo
     return { score: 0.55 * rangeScoreFor(area, range) + 0.45 * clamp(bestMove / 0.15, 0.3, 1), range, bestHour };
   }
 
-  const extremes = hilo.filter((h) => ymdInZone(h.at, area.timezone) === ymd);
   if (extremes.length < 2) return { score: 0.45, range: area.meanRangeFt, bestHour: null as number | null };
   const heights = extremes.map((p) => p.height);
   const range = Math.max(...heights) - Math.min(...heights);
@@ -151,7 +164,7 @@ async function loadCalendarInputs(
       ? hiloSettled.value.map((h) => ({ ...h, at: h.at ?? parseStamp(h.time) }))
       : [];
 
-  let hourly: { time: string; height: number }[] = [];
+  let hourly: TidePoint[] = [];
   if (!hilo.length) {
     hourly = modeledHourlyTide(
       new Date(start.getTime() - 12 * 3600000),
@@ -207,14 +220,22 @@ async function loadCalendarInputs(
     }
   }
 
-  return { hourly, hilo: resolvedHiLo, windByDay, popByDay, wxByDay };
+  return {
+    hourly,
+    hilo: resolvedHiLo,
+    hourlyByDay: bucketByDay(hourly, (point) => ymdInZone(parseStamp(point.time), area.timezone)),
+    hiloByDay: bucketByDay(resolvedHiLo, (point) => ymdInZone(point.at, area.timezone)),
+    windByDay,
+    popByDay,
+    wxByDay,
+  };
 }
 
 function scoreDay(area: Area, activity: ActivityId | "all", ymd: string, inputs: CalendarInputs): CalendarDay {
   const [year, month] = [Number(ymd.slice(0, 4)), Number(ymd.slice(5, 7))];
   const noon = new Date(Date.UTC(year, month - 1, Number(ymd.slice(8, 10)), 16, 0));
   const moon = moonPhase(noon);
-  const tide = dayTideQuality(inputs.hourly, inputs.hilo, ymd, area);
+  const tide = dayTideQuality(inputs.hourlyByDay.get(ymd) ?? [], inputs.hiloByDay.get(ymd) ?? [], area);
   const season = seasonalForArea(area, month, activity);
   const wind = inputs.windByDay.get(ymd) ?? null;
   const windScore = activityWindPenalty(activity, wind);
@@ -247,9 +268,7 @@ function scoreDay(area: Area, activity: ActivityId | "all", ymd: string, inputs:
     10,
   );
   const todayYmd = ymdInZone(new Date(), area.timezone);
-  const tides = inputs.hilo
-    .filter((t) => ymdInZone(t.at, area.timezone) === ymd)
-    .map((t) => {
+  const tides = (inputs.hiloByDay.get(ymd) ?? []).map((t) => {
       const p = clockParts(t.at, area.timezone);
       const h12 = ((p.hour + 11) % 12) + 1;
       return {

@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { airtableConfigured, listAirtableSubscribers, type ListSource } from "@/lib/airtable-list";
 import { addSubscriber, parseDesks, validEmail, validName, validPostal } from "@/lib/subscribers";
 import { sendWelcomeEmails } from "@/lib/samples";
+import { enqueueWelcome, subscribeNote } from "@/lib/welcome-queue";
 import {
   COASTS_COOKIE,
   coastsCookieOptions,
@@ -11,6 +12,9 @@ import {
 } from "@/lib/coasts";
 
 const SOURCES = new Set<ListSource>(["Brief", "Letter", "Morning", "Operator"]);
+
+/** Background welcome has to finish inside this invocation. One desk is well under it; the old full fleet was not. */
+export const maxDuration = 300;
 
 export async function GET() {
   if (!airtableConfigured()) {
@@ -72,32 +76,20 @@ export async function POST(request: NextRequest) {
   try {
     const result = await addSubscriber(email, desks, source, cadence, { name, zip });
     const coasts = coastsForDesks(result.subscriber.desks);
-    let welcome: Awaited<ReturnType<typeof sendWelcomeEmails>> | null = null;
-    let welcomeError: string | null = null;
-    try {
-      welcome = await sendWelcomeEmails(result.subscriber.email, {
+    enqueueWelcome(after, () =>
+      sendWelcomeEmails(result.subscriber.email, {
         desks: result.subscriber.desks,
         cadence: result.subscriber.cadence,
-      });
-    } catch (error) {
-      welcomeError = error instanceof Error ? error.message : "Welcome mail did not send.";
-    }
-    const sentNow = welcome?.results.some((r) => r.sent) ?? false;
-    const needsDomain = Boolean(welcomeError?.includes("verify a domain"));
-    const note = sentNow
-      ? `You're on the list for ${coasts.join(", ")}. Tonight’s water is on the way.`
-      : needsDomain
-        ? "You're on the Airtable list. Mail to anyone but the operator still needs a verified domain on Resend."
-        : result.via === "local"
-          ? "Saved on this machine only. Production still needs AIRTABLE_API_KEY on Vercel — see AIRTABLE.md."
-          : `You're on the On This Water list for ${coasts.join(", ")}.`;
+      }).then(() => undefined),
+    );
+    const note = subscribeNote(coasts, result.via);
     const res = NextResponse.json({
       ok: true,
       desks: result.subscriber.desks,
       cadence: result.subscriber.cadence,
       coasts,
       via: result.via,
-      sentNow,
+      sentNow: false,
       note,
     });
     res.cookies.set(COASTS_COOKIE, encodeCoasts(coasts), coastsCookieOptions());

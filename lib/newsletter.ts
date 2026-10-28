@@ -212,6 +212,58 @@ function deskMetaForArea(areaId: string) {
   };
 }
 
+/**
+ * Saturday copy for a welcome, with live gauges for these desks only.
+ * The newsletter and the Saturday cron keep getNewsletter, which still covers every desk.
+ */
+export async function letterForDesks(areaIds: string[]): Promise<NewsletterIssue> {
+  const ids = [...new Set(areaIds.filter((id) => AREAS.some((area) => area.id === id)))];
+  const now = new Date();
+  const week = weekWindow(now);
+  const settled = await Promise.allSettled(
+    ids.map((id) => withDeadline(getBriefing(id), COAST_DEADLINE_MS, id)),
+  );
+  const desks: DeskIssue[] = ids.map((id, i) => {
+    const area = AREAS.find((candidate) => candidate.id === id)!;
+    const meta = deskMetaForArea(id);
+    const result = settled[i];
+    const base = {
+      theater: area.theater,
+      areaId: id,
+      desk: meta.desk,
+      kicker: meta.kicker,
+      seasonal: MONTH_THEATER[week.month][area.theater],
+    };
+    if (result?.status === "fulfilled") return { ...base, briefing: result.value, error: null };
+    const reason = result?.status === "rejected" ? result.reason : null;
+    return {
+      ...base,
+      briefing: null,
+      error: reason instanceof Error ? reason.message : "The gauge did not answer.",
+    };
+  });
+
+  return publishLetter({
+    weekId: letterWeekId(now),
+    weekLabel: week.weekLabel,
+    weekNumber: week.weekNumber,
+    year: week.year,
+    month: week.month,
+    monthName: MONTH_NAMES[week.month - 1],
+    rangeLabel: week.rangeLabel,
+    letter: LETTERS[week.month] ?? "",
+    desks,
+    peaks: peaksThisMonth(week.month).map((s) => ({
+      name: s.commonName,
+      theaters: s.theaters.map(theaterLabel).join(" · "),
+      why: s.why,
+    })),
+    closures: closuresThisMonth(week.month, now),
+    generatedAt: now.toISOString(),
+    frozen: false,
+  });
+}
+
 export function filterNewsletter(issue: NewsletterIssue, coasts: TheaterId[] | null): NewsletterIssue {
   if (isAllCoasts(coasts) || !coasts) return issue;
   const desks = issue.desks.filter((d) => coasts.includes(d.theater));
