@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runDispatch } from "@/lib/dispatch";
+import { DispatchError, redact, runDispatch } from "@/lib/dispatch";
 
 function authorized(request: NextRequest) {
   const secret = process.env.CRON_SECRET?.trim();
@@ -18,14 +18,22 @@ export async function GET(request: NextRequest) {
   const calendar = request.nextUrl.searchParams.get("calendar") === "1";
   const seasonal = request.nextUrl.searchParams.get("seasonal") === "1";
   const desk = request.nextUrl.searchParams.get("desk") ?? undefined;
-  const result = await runDispatch({
-    forceAll: force || undefined,
-    desk,
-    weekly: weekly || undefined,
-    calendar: calendar || undefined,
-    seasonal: seasonal || undefined,
-  });
-  return NextResponse.json(result);
+  try {
+    const result = await runDispatch({
+      forceAll: force || undefined,
+      desk,
+      weekly: weekly || undefined,
+      calendar: calendar || undefined,
+      seasonal: seasonal || undefined,
+    });
+    return NextResponse.json(result);
+  } catch (error) {
+    if (error instanceof DispatchError) {
+      return NextResponse.json({ error: error.message, stage: error.stage }, { status: 502 });
+    }
+    const message = redact(error instanceof Error ? error.message : "Dispatch failed.");
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export const POST = GET;

@@ -1,3 +1,5 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+
 /** One coast. Long enough for a slow gauge, far inside the 300s function limit. */
 export const COAST_DEADLINE_MS = 45_000;
 
@@ -6,6 +8,26 @@ export class DeadlineError extends Error {
     super(`${label} timed out after ${ms}ms`);
     this.name = "DeadlineError";
   }
+}
+
+/** Let timers run. A long synchronous stretch postpones every deadline. */
+export function yieldToEventLoop() {
+  return new Promise<void>((resolve) => {
+    setImmediate(resolve);
+  });
+}
+
+const deskClock = new AsyncLocalStorage<{ ends: number; ms: number; label: string }>();
+
+/** Parallel desks each see their own clock. The page has no clock and does not stop early. */
+export function runWithinDeadline<T>(ms: number, label: string, run: () => Promise<T>): Promise<T> {
+  return deskClock.run({ ends: Date.now() + ms, ms, label }, run);
+}
+
+/** Stop a day loop that would otherwise keep the CPU after the desk clock runs out. */
+export function throwIfDeadlinePassed() {
+  const clock = deskClock.getStore();
+  if (clock && Date.now() >= clock.ends) throw new DeadlineError(clock.label, clock.ms);
 }
 
 /** Stop waiting. The inner promise is observed so a late rejection is not a runtime error. */

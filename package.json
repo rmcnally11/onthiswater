@@ -18,7 +18,8 @@
     "test:letter": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-letter-no-scores.ts",
     "test:subscribe": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-subscribe-returns.ts",
     "test:time": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-time-format.ts",
-    "test:decode": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-safe-decode.ts"
+    "test:decode": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-safe-decode.ts",
+    "test:dispatch": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-dispatch.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
