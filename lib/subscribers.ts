@@ -150,7 +150,7 @@ function mergeSubscriber(prev: Subscriber | undefined, next: Subscriber): Subscr
   };
 }
 
-export async function listSubscribers(): Promise<Subscriber[]> {
+export async function listSubscribers(opts?: { strict?: boolean }): Promise<Subscriber[]> {
   const byEmail = new Map<string, Subscriber>();
   let airtable: Subscriber[] = [];
   if (airtableConfigured()) {
@@ -163,7 +163,8 @@ export async function listSubscribers(): Promise<Subscriber[]> {
         cadence: parseCadence(s.cadence),
         createdAt: s.joined || "airtable",
       }));
-    } catch {
+    } catch (error) {
+      if (opts?.strict) throw error;
       airtable = [];
     }
   }

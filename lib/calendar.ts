@@ -8,6 +8,7 @@ import {
   readOrCreateCalendar,
   type CalendarSnapshot,
 } from "@/lib/snapshot-store";
+import { throwIfDeadlinePassed, yieldToEventLoop } from "@/lib/deadline";
 import { clockParts, snapshotHour, ymdInZone } from "@/lib/time";
 import { moonGlyph, moonPhase, modeledHourlyTide } from "@/lib/moon";
 import { SPECIES } from "@/lib/data/species";
@@ -339,7 +340,7 @@ function daysInMonth(year: number, month: number) {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
-function monthsFromInputs(
+async function monthsFromInputs(
   area: Area,
   activity: ActivityId | "all",
   year: number,
@@ -354,7 +355,9 @@ function monthsFromInputs(
     const m = d.getUTCMonth() + 1;
     const days: CalendarDay[] = [];
     for (let day = 1; day <= daysInMonth(y, m); day++) {
+      throwIfDeadlinePassed();
       days.push(scoreDay(area, activity, `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`, inputs));
+      await yieldToEventLoop();
     }
     const fromYmd = ymdInZone(new Date(), area.timezone);
     months.push({
@@ -375,7 +378,7 @@ export async function buildCalendar(
 ): Promise<CalendarDay[]> {
   const start = new Date(Date.UTC(year, month - 1, 1, 6, 0));
   const inputs = await loadCalendarInputs(area, start, daysInMonth(year, month));
-  return monthsFromInputs(area, activity, year, month, 1, inputs)[0].days;
+  return (await monthsFromInputs(area, activity, year, month, 1, inputs))[0].days;
 }
 
 export function upcomingDays(months: { days: CalendarDay[] }[], fromYmd: string, count = 14) {
@@ -394,7 +397,9 @@ async function computeUpcoming(areaId: string, activity: ActivityId | "all", fro
     const y = cursor.getUTCFullYear();
     const m = cursor.getUTCMonth() + 1;
     const d = cursor.getUTCDate();
+    throwIfDeadlinePassed();
     days.push(scoreDay(area, activity, `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`, inputs));
+    await yieldToEventLoop();
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
   return markYolo(days, fromYmd);
