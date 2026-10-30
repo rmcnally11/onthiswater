@@ -72,10 +72,10 @@ function TideSpark({ day }: { day: CalendarDay }) {
 function ScoreDot({ score }: { score: number }) {
   return (
     <span
-      className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-semibold sm:h-7 sm:w-7 sm:text-[11px]"
+      className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold sm:h-7 sm:min-w-7 sm:text-[11px]"
       style={{ background: scoreHex(score), color: scoreInk(score) }}
     >
-      {score.toFixed(0)}
+      {score.toFixed(1)}
     </span>
   );
 }
@@ -89,6 +89,7 @@ export function MonthGrid({
   areaId,
   theater,
   activity,
+  hideScores,
 }: {
   year: number;
   month: number;
@@ -98,6 +99,7 @@ export function MonthGrid({
   areaId: string;
   theater: string;
   activity: string;
+  hideScores?: boolean;
 }) {
   const { book, ready, unlocked } = useBook();
   const catches = ready && unlocked ? book.catches : [];
@@ -144,7 +146,11 @@ export function MonthGrid({
             <a
               key={day.date}
               href={briefHref({ areaId, theater, activity, date: day.date })}
-              title={`${day.date} · ${day.score} · ${day.moon.name} · ${day.drivers.join(" · ")}`}
+              title={
+                hideScores
+                  ? `${day.date} · ${day.moon.name} · ${day.drivers.join(" · ")}`
+                  : `${day.date} · ${day.score} · ${day.moon.name} · ${day.drivers.join(" · ")}`
+              }
               className={cn(
                 "flex min-h-[6.8rem] flex-col rounded-2xl border bg-[color:var(--ink)] p-1.5 sm:min-h-[8rem] sm:p-2",
                 day.yolo
@@ -163,7 +169,7 @@ export function MonthGrid({
             >
               <div className="flex items-start justify-between gap-1">
                 <span className="font-heading text-sm leading-none text-[color:var(--cream)] sm:text-base">{n}</span>
-                <ScoreDot score={day.score} />
+                {hideScores ? null : <ScoreDot score={day.score} />}
               </div>
               <div className="mt-1 flex items-center justify-between gap-1">
                 <MoonDisk
@@ -210,12 +216,14 @@ export function AmazingChip({
   theater,
   activity,
   timezone,
+  hideScores,
 }: {
   day: CalendarDay;
   areaId: string;
   theater: string;
   activity: string;
   timezone: string;
+  hideScores?: boolean;
 }) {
   return (
     <li>
@@ -245,7 +253,7 @@ export function AmazingChip({
             {day.windMph != null ? ` · ${Math.round(day.windMph)} mph` : ""}
           </p>
         </div>
-        <ScoreDot score={day.score} />
+        {hideScores ? null : <ScoreDot score={day.score} />}
       </a>
     </li>
   );

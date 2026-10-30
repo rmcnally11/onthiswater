@@ -3,11 +3,11 @@ import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
 import { morningLine } from "@/lib/morning";
 import { skyCopy } from "@/lib/wx";
-import { ScoreRing } from "@/components/viz/score-ring";
 import { WindCompass } from "@/components/viz/wind-compass";
 import { MoonDisk } from "@/components/viz/moon-disk";
 import { TideCurve } from "@/components/viz/tide-curve";
 import { Waterline } from "@/components/viz/waterline";
+import type { Briefing, CalendarDay } from "@/lib/types";
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
 
@@ -20,33 +20,17 @@ export const metadata: Metadata = pageMeta({
   index: false,
 });
 
-export default async function MorningCardPage({
-  searchParams,
+export function MorningCard({
+  area,
+  briefing,
+  yolo,
 }: {
-  searchParams: Promise<{ area?: string; theater?: string }>;
+  area: ReturnType<typeof getArea>;
+  briefing: Briefing;
+  yolo: CalendarDay | null;
 }) {
-  const q = await searchParams;
-  const area = getArea(q.area);
-  let briefing;
-  let yolo = null;
-  try {
-    const snap = await getMorningSnapshot(area.id);
-    briefing = snap.briefing;
-    yolo = snap.yolo;
-  } catch {
-    briefing = null;
-  }
-
-  if (!briefing) {
-    return (
-      <div className="flex h-[675px] w-[1200px] items-center justify-center bg-[color:var(--ink)]">
-        <p className="font-heading text-3xl text-rose-900">Gauge quiet · {area.shortName}</p>
-      </div>
-    );
-  }
-
   const w = briefing.conditions.weather;
-  const line = morningLine(briefing, yolo);
+  const line = morningLine(briefing, yolo, { noScore: true });
 
   return (
     <article className="box-border flex h-[675px] w-[1200px] flex-col bg-[color:var(--ink)] p-8">
@@ -58,12 +42,6 @@ export default async function MorningCardPage({
           <h1 className="mt-1 font-heading text-5xl text-[color:var(--cream)]">{area.shortName}</h1>
           <p className="mt-2 max-w-3xl font-heading text-2xl leading-snug text-[color:var(--cream)]/80">{line}</p>
         </div>
-        <ScoreRing
-          score={briefing.overall}
-          size={132}
-          label={briefing.kind === "today" ? "Today" : "Day"}
-          sub={briefing.confidence}
-        />
       </header>
       <Waterline className="my-4" />
       <div className="grid flex-1 grid-cols-[160px_160px_1fr_200px] items-center gap-4">
@@ -102,4 +80,32 @@ export default async function MorningCardPage({
       </div>
     </article>
   );
+}
+
+export default async function MorningCardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ area?: string; theater?: string; h?: string }>;
+}) {
+  const q = await searchParams;
+  const area = getArea(q.area);
+  let briefing;
+  let yolo = null;
+  try {
+    const snap = await getMorningSnapshot(area.id, undefined, undefined, q.h);
+    briefing = snap.briefing;
+    yolo = snap.yolo;
+  } catch {
+    briefing = null;
+  }
+
+  if (!briefing) {
+    return (
+      <div className="flex h-[675px] w-[1200px] items-center justify-center bg-[color:var(--ink)]">
+        <p className="font-heading text-3xl text-rose-900">Gauge quiet · {area.shortName}</p>
+      </div>
+    );
+  }
+
+  return <MorningCard area={area} briefing={briefing} yolo={yolo} />;
 }

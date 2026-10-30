@@ -3,9 +3,13 @@ import { formatYmdLong } from "@/lib/time";
 import { windLabel } from "@/lib/wind";
 import { skyCopy } from "@/lib/wx";
 
-export function morningLine(briefing: Briefing, yolo?: CalendarDay | null) {
+export function morningLine(
+  briefing: Briefing,
+  yolo?: CalendarDay | null,
+  options?: { noScore?: boolean },
+) {
   const name = briefing.area.shortName;
-  const score = briefing.overall.toFixed(1);
+  const score = options?.noScore ? "" : ` ${briefing.overall.toFixed(1)}`;
   const wind =
     windLabel(briefing.conditions.weather.windMph, briefing.conditions.weather.windCardinal) ??
     "no wind reading yet";
@@ -22,11 +26,12 @@ export function morningLine(briefing: Briefing, yolo?: CalendarDay | null) {
     yolo && !yolo.date.startsWith("x")
       ? ` Best dry day is ${formatYmdLong(yolo.date, briefing.area.timezone)}.`
       : "";
+  const legend = options?.noScore ? "" : " Scores are 1–10, not a bite.";
   if (briefing.kind === "forecast") {
-    return `${name} ${score} on ${formatYmdLong(briefing.forDate, briefing.area.timezone)}. ${wind}.${sky}${vs}${yoloBit} Scores are 1–10, not a bite.`;
+    return `${name}${score} on ${formatYmdLong(briefing.forDate, briefing.area.timezone)}. ${wind}.${sky}${vs}${yoloBit}${legend}`;
   }
   if (briefing.kind === "astronomical") {
-    return `${name} ${score} on ${formatYmdLong(briefing.forDate, briefing.area.timezone)} — tide, moon, and season only. No wind forecast that far out.${yoloBit} Scores are 1–10, not a bite.`;
+    return `${name}${score} on ${formatYmdLong(briefing.forDate, briefing.area.timezone)} — tide, moon, and season only. No wind forecast that far out.${yoloBit}${legend}`;
   }
-  return `${name} ${score} this morning. ${wind}.${sky}${vs}${yoloBit} Scores are 1–10, not a bite.`;
+  return `${name}${score} this morning. ${wind}.${sky}${vs}${yoloBit}${legend}`;
 }
