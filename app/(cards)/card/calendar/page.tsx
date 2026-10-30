@@ -1,30 +1,24 @@
 import { getCalendarSnapshot } from "@/lib/calendar";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
-import { calendarSnapshotYolo } from "@/lib/snapshot-store";
+import { calendarSnapshotYolo, type CalendarMonthSnapshot } from "@/lib/snapshot-store";
 import { MonthGrid } from "@/components/month-grid";
 import { YoloBanner } from "@/components/yolo-banner";
 import { Waterline } from "@/components/viz/waterline";
+import type { CalendarDay } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-export default async function CalendarCardPage({
-  searchParams,
+export function CalendarCard({
+  area,
+  months,
+  yolo,
 }: {
-  searchParams: Promise<{ area?: string; theater?: string }>;
+  area: ReturnType<typeof getArea>;
+  months: CalendarMonthSnapshot[] | null;
+  yolo: CalendarDay | null;
 }) {
-  const q = await searchParams;
-  const area = getArea(q.area);
-  let snap;
-  try {
-    snap = await getCalendarSnapshot(area, "all");
-  } catch {
-    snap = null;
-  }
-
-  const months = snap?.months ?? null;
   const days = months?.[0]?.days ?? [];
-  const yolo = snap ? calendarSnapshotYolo(snap) : null;
 
   return (
     <article className="box-border w-[1200px] bg-[color:var(--ink)] p-8 text-[color:var(--cream)]">
@@ -50,6 +44,7 @@ export default async function CalendarCardPage({
             theater={area.theater}
             activity="all"
             timezone={area.timezone}
+            hideScore
           />
         </div>
       ) : null}
@@ -62,10 +57,31 @@ export default async function CalendarCardPage({
           areaId={area.id}
           theater={area.theater}
           activity="all"
+          hideScores
         />
       ) : (
         <p className="py-16 text-center font-heading text-2xl text-rose-900">Calendar did not set.</p>
       )}
     </article>
   );
+}
+
+export default async function CalendarCardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ area?: string; theater?: string }>;
+}) {
+  const q = await searchParams;
+  const area = getArea(q.area);
+  let snap;
+  try {
+    snap = await getCalendarSnapshot(area, "all");
+  } catch {
+    snap = null;
+  }
+
+  const months = snap?.months ?? null;
+  const yolo = snap ? calendarSnapshotYolo(snap) : null;
+
+  return <CalendarCard area={area} months={months} yolo={yolo} />;
 }

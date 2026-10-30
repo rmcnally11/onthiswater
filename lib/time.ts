@@ -174,3 +174,21 @@ export function snapshotHour(now: Date, timeZone: string) {
   const at = new Date(startOfDayInZone(ymd, timeZone).getTime() + parts.hour * 3600000);
   return { ymd, hour, at };
 }
+
+/** `<ymd>-<HH>` pin so a later /card?h= reads the same hour /api/tweets stored. */
+export function snapshotHourStamp(now: Date, timeZone: string) {
+  const hour = snapshotHour(now, timeZone);
+  return `${hour.ymd}-${hour.hour}`;
+}
+
+export function parseHourStamp(raw?: string | null): { ymd: string; hour: string } | null {
+  if (!raw) return null;
+  const match = /^(\d{4}-\d{2}-\d{2})-(\d{2})$/.exec(raw);
+  if (!match) return null;
+  const ymd = match[1];
+  const hour = match[2];
+  if (!isYmd(ymd)) return null;
+  const n = Number(hour);
+  if (!Number.isInteger(n) || n < 0 || n > 23) return null;
+  return { ymd, hour };
+}

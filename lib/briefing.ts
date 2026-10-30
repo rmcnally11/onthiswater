@@ -5,7 +5,7 @@ import { loadConditions } from "@/lib/conditions";
 import { buildBriefing } from "@/lib/engine";
 import { loadOfficialLayers } from "@/lib/layers";
 import { readOrCreate, snapshotKey, snapshotStore, type MorningSnapshot } from "@/lib/snapshot-store";
-import { isYmd, snapshotHour, startOfDayInZone, ymdInZone } from "@/lib/time";
+import { isYmd, parseHourStamp, snapshotHour, startOfDayInZone, ymdInZone } from "@/lib/time";
 
 const ACTIVITIES = new Set(["wade", "skiff", "kayak", "fly", "spin", "structure", "offshore", "all"]);
 
@@ -107,18 +107,41 @@ async function computeSnapshot(
   return { v: 1, briefing, yolo };
 }
 
+/** Hour the card and /api/tweets share. `hourRaw` is `<ymd>-<HH>` from `?h=`. */
+export function resolveMorningHour(
+  areaId?: string | null,
+  activityRaw?: string | null,
+  dateRaw?: string | null,
+  hourRaw?: string | null,
+  now = new Date(),
+) {
+  const area = getArea(areaId);
+  const activity = parseActivity(activityRaw);
+  const today = ymdInZone(now, area.timezone);
+  const stamped = parseHourStamp(hourRaw);
+  const dateYmd = stamped?.ymd ?? parseBriefDate(dateRaw) ?? today;
+  const hourKey = stamped?.hour ?? (dateYmd === today ? snapshotHour(now, area.timezone).hour : "08");
+  return {
+    area,
+    activity,
+    dateYmd,
+    hourKey,
+    key: snapshotKey(area.id, activity, dateYmd, hourKey),
+  };
+}
+
 export async function getMorningSnapshot(
   areaId?: string | null,
   activityRaw?: string | null,
   dateRaw?: string | null,
+  hourRaw?: string | null,
 ): Promise<MorningSnapshot> {
-  const area = getArea(areaId);
-  const activity = parseActivity(activityRaw);
-  const now = new Date();
-  const today = ymdInZone(now, area.timezone);
-  const dateYmd = parseBriefDate(dateRaw) ?? today;
-  const hourKey = dateYmd === today ? snapshotHour(now, area.timezone).hour : "08";
-  const key = snapshotKey(area.id, activity, dateYmd, hourKey);
+  const { area, activity, dateYmd, hourKey, key } = resolveMorningHour(
+    areaId,
+    activityRaw,
+    dateRaw,
+    hourRaw,
+  );
   const pending = inflight.get(key);
   if (pending) return pending;
 

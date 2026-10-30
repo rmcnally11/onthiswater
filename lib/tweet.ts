@@ -6,6 +6,7 @@ import { COAST_DEADLINE_MS, withDeadline } from "@/lib/deadline";
 import { DESKS } from "@/lib/desks";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
+import { snapshotHourStamp } from "@/lib/time";
 import { windLabel } from "@/lib/wind";
 import { skyCopy } from "@/lib/wx";
 
@@ -42,6 +43,11 @@ export function morningCardUrl(areaId: string, theater: string) {
 
 export function calendarCardUrl(areaId: string, theater: string) {
   return `${ORIGIN}/card/calendar?area=${areaId}&theater=${theater}`;
+}
+
+/** Pin a card image to the snapshot hour so a later screenshot reads that record. */
+export function withHourStamp(url: string, stamp: string) {
+  return `${url}&h=${stamp}`;
 }
 
 export function calendarHref(areaId: string, theater: string) {
@@ -129,9 +135,14 @@ export async function buildTweetFeed() {
   const rows = await Promise.all(
     TWEET_DESKS.map(async (desk) => {
       const area = getArea(desk.areaId);
+      const stamp = snapshotHourStamp(new Date(), area.timezone);
       let morning;
       try {
-        const { briefing, yolo } = await withDeadline(getMorningSnapshot(area.id), COAST_DEADLINE_MS, area.id);
+        const { briefing, yolo } = await withDeadline(
+          getMorningSnapshot(area.id, undefined, undefined, stamp),
+          COAST_DEADLINE_MS,
+          area.id,
+        );
         if (briefing.kind === "today" && briefing.conditions.weather.windMph == null) {
           throw new Error("Wind not in");
         }
@@ -143,7 +154,7 @@ export async function buildTweetFeed() {
           shortName: briefing.area.shortName,
           score: briefing.overall,
           text: morningTweetText(briefing, yolo, desk.kicker),
-          image: morningCardUrl(area.id, area.theater),
+          image: withHourStamp(morningCardUrl(area.id, area.theater), stamp),
           alt: morningAlt(briefing),
           href: deskHref(area.id, area.theater),
           url: deskHref(area.id, area.theater),
@@ -158,7 +169,7 @@ export async function buildTweetFeed() {
           shortName: area.shortName,
           score: null,
           text: null,
-          image: morningCardUrl(area.id, area.theater),
+          image: withHourStamp(morningCardUrl(area.id, area.theater), stamp),
           alt: null,
           href: deskHref(area.id, area.theater),
           url: deskHref(area.id, area.theater),
@@ -177,7 +188,7 @@ export async function buildTweetFeed() {
           areaId: desk.areaId,
           shortName: area.shortName,
           text: calendarTweetText(area.shortName, area.id, area.theater, days),
-          image: calendarCardUrl(area.id, area.theater),
+          image: withHourStamp(calendarCardUrl(area.id, area.theater), stamp),
           alt: calendarAlt(area.shortName, days, area.id),
           href: calendarHref(area.id, area.theater),
           url: calendarHref(area.id, area.theater),
@@ -190,7 +201,7 @@ export async function buildTweetFeed() {
           areaId: desk.areaId,
           shortName: area.shortName,
           text: null,
-          image: calendarCardUrl(area.id, area.theater),
+          image: withHourStamp(calendarCardUrl(area.id, area.theater), stamp),
           alt: null,
           href: calendarHref(area.id, area.theater),
           url: calendarHref(area.id, area.theater),

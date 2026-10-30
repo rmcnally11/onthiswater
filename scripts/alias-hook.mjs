@@ -1,6 +1,14 @@
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 export async function resolve(specifier, context, nextResolve) {
   if (specifier.startsWith("@/")) {
-    const url = new URL(`../${specifier.slice(2)}.ts`, import.meta.url);
+    const rel = specifier.slice(2);
+    let url = new URL(`../${rel}.ts`, import.meta.url);
+    if (!existsSync(fileURLToPath(url))) {
+      const tsx = new URL(`../${rel}.tsx`, import.meta.url);
+      if (existsSync(fileURLToPath(tsx))) url = tsx;
+    }
     return nextResolve(url.href, context);
   }
   // Node's type stripper does not apply Next's extensionless package entry.

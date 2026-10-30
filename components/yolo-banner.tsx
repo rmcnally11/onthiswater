@@ -10,12 +10,14 @@ export function YoloBanner({
   theater,
   activity,
   timezone,
+  hideScore,
 }: {
   day: CalendarDay;
   areaId: string;
   theater: string;
   activity: string;
   timezone: string;
+  hideScore?: boolean;
 }) {
   return (
     <a
@@ -38,12 +40,14 @@ export function YoloBanner({
           {day.amazing ? " — and it is a book-it dry day." : "."} {day.drivers.join(" · ")}
         </p>
       </div>
-      <span
-        className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-full font-mono text-lg font-semibold sm:flex"
-        style={{ background: scoreHex(day.score), color: scoreInk(day.score) }}
-      >
-        {day.score.toFixed(1)}
-      </span>
+      {hideScore ? null : (
+        <span
+          className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-full font-mono text-lg font-semibold sm:flex"
+          style={{ background: scoreHex(day.score), color: scoreInk(day.score) }}
+        >
+          {day.score.toFixed(1)}
+        </span>
+      )}
     </a>
   );
 }
