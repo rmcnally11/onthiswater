@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useId, useMemo, useState, type ReactNode } from "react";
 import type { SpeciesId } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,16 +26,29 @@ import { cn } from "@/lib/utils";
 
 function Field({
   label,
+  htmlFor,
   children,
 }: {
   label: string;
+  htmlFor: string;
   children: ReactNode;
 }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--cream)]/50">{label}</Label>
+      <Label htmlFor={htmlFor} className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--cream)]/75">
+        {label}
+      </Label>
       {children}
     </div>
+  );
+}
+
+function ChoiceField({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <fieldset className="space-y-1.5">
+      <legend className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--cream)]/75">{label}</legend>
+      {children}
+    </fieldset>
   );
 }
 
@@ -47,6 +60,7 @@ export function LogCatchForm({
   onSaved?: () => void;
 }) {
   const { book, addCatch } = useBook();
+  const fieldId = useId();
   const theaterFish = speciesForTheater(context.theater);
   const fish = useMemo(() => {
     const seen = new Set<string>();
@@ -113,7 +127,7 @@ export function LogCatchForm({
         save();
       }}
     >
-      <p className="text-sm text-[color:var(--cream)]/60">
+      <p className="text-sm text-[color:var(--cream)]/75">
         {book.handle ? `${book.handle} · ` : ""}
         {snap.shortName} · {snap.score.toFixed(1)} · wind{" "}
         {snap.windMph != null ? `${Math.round(snap.windMph)} mph` : "not in"}
@@ -121,36 +135,39 @@ export function LogCatchForm({
         {" · "}
         {snap.moonName}
       </p>
-      <Field label="Who">
+      <ChoiceField label="Who">
         <div className="flex flex-wrap gap-1.5">
           {fish.map((s) => (
             <button
               key={s.id}
               type="button"
+              aria-pressed={speciesId === s.id}
               onClick={() => setSpeciesId(s.id)}
               className={cn(
                 "min-h-10 rounded-full border px-3 text-sm",
                 speciesId === s.id
                   ? "border-[color:var(--copper)] bg-[color:var(--copper)]/15 text-[color:var(--cream)]"
-                  : "border-[color:var(--line)] text-[color:var(--cream)]/70",
+                  : "border-[color:var(--line)] text-[color:var(--cream)]/75",
               )}
             >
               {s.commonName}
             </button>
           ))}
         </div>
-      </Field>
+      </ChoiceField>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="How many">
+        <Field label="How many" htmlFor={`${fieldId}-count`}>
           <Input
+            id={`${fieldId}-count`}
             inputMode="numeric"
             value={count}
             onChange={(e) => setCount(e.target.value)}
             className="h-11 border-[color:var(--line)] text-[color:var(--cream)]"
           />
         </Field>
-        <Field label="Inches (optional)">
+        <Field label="Inches (optional)" htmlFor={`${fieldId}-inches`}>
           <Input
+            id={`${fieldId}-inches`}
             inputMode="decimal"
             value={inches}
             onChange={(e) => setInches(e.target.value)}
@@ -159,7 +176,7 @@ export function LogCatchForm({
           />
         </Field>
       </div>
-      <Field label="Fate">
+      <ChoiceField label="Fate">
         <div className="flex flex-wrap gap-1.5">
           {(
             [
@@ -171,40 +188,43 @@ export function LogCatchForm({
             <button
               key={id}
               type="button"
+              aria-pressed={fate === id}
               onClick={() => setFate(id)}
               className={cn(
                 "min-h-10 rounded-full border px-3 text-sm",
                 fate === id
                   ? "border-[color:var(--sea)] bg-[color:var(--sea)]/15 text-[color:var(--cream)]"
-                  : "border-[color:var(--line)] text-[color:var(--cream)]/70",
+                  : "border-[color:var(--line)] text-[color:var(--cream)]/75",
               )}
             >
               {label}
             </button>
           ))}
         </div>
-      </Field>
-      <Field label="Where you already know">
+      </ChoiceField>
+      <Field label="Where you already know" htmlFor={`${fieldId}-water`}>
         <Input
+          id={`${fieldId}-water`}
           value={waterNote}
           onChange={(e) => setWaterNote(e.target.value)}
           placeholder="A name you use — not a GPS"
           className="h-11 border-[color:var(--line)] text-[color:var(--cream)]"
         />
       </Field>
-      <Field label="What it felt like">
+      <Field label="What it felt like" htmlFor={`${fieldId}-notes`}>
         <textarea
+          id={`${fieldId}-notes`}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="Optional. Keep it short."
-          className="w-full rounded-lg border border-[color:var(--line)] bg-transparent px-2.5 py-2 text-sm text-[color:var(--cream)] outline-none placeholder:text-[color:var(--cream)]/35"
+          className="w-full rounded-lg border border-[color:var(--line)] bg-transparent px-2.5 py-2 text-sm text-[color:var(--cream)] outline-none placeholder:text-[color:var(--cream)]/70"
         />
       </Field>
       <Button type="submit" className="min-h-12 w-full bg-[color:var(--copper)] text-[color:var(--ink)] hover:bg-[color:var(--copper)]/90">
         Put it in the book
       </Button>
-      <p className="text-xs text-[color:var(--cream)]/40">
+      <p className="text-xs text-[color:var(--cream)]/75">
         No pin. No honey hole. The snapshot is wind, sky, moon, tide, glass, and the 1–10 from this
         morning.
       </p>

@@ -10,7 +10,7 @@ export function SiteFooter() {
     "Scores are 1–10. They are not a bite. Not a chart you steer by.";
   return (
     <footer className="border-t border-[color:var(--line)] px-4 py-8 pb-[max(1.75rem,env(safe-area-inset-bottom))] text-center">
-      <p className="text-sm text-[color:var(--cream)]/70">
+      <p className="text-sm text-[color:var(--cream)]/80">
         Want this morning in the inbox?{" "}
         <a
           href="/join"
@@ -20,7 +20,7 @@ export function SiteFooter() {
         </a>
         .
       </p>
-      <p data-testid="dock-posted-credit" className="mt-3 text-xs text-[color:var(--cream)]/40">
+      <p data-testid="dock-posted-credit" className="mt-3 text-xs text-[color:var(--cream)]/75">
         What they posted on the pump —{" "}
         <a
           href={dockPostedHomeHref()}
@@ -30,7 +30,7 @@ export function SiteFooter() {
         </a>
         . Tide and wind live here.
       </p>
-      <p className="mt-3 text-xs text-[color:var(--cream)]/40">
+      <p className="mt-3 text-xs text-[color:var(--cream)]/75">
         {legend}
         Verify TPWD, FWC, Bahamas, FKNMS, and NPS rules before you fish. Your book is yours, on this
         phone.

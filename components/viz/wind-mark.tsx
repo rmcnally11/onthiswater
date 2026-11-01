@@ -4,7 +4,7 @@ import { windLevel } from "@/lib/wind";
 export function WindMark({ mph, className }: { mph: number | null; className?: string }) {
   if (mph == null) {
     return (
-      <span className={cn("text-[9px] uppercase tracking-wide text-[color:var(--cream)]/28", className)}>—</span>
+      <span className={cn("text-[9px] uppercase tracking-wide text-[color:var(--cream)]/75", className)}>—</span>
     );
   }
   const level = windLevel(mph);
@@ -15,6 +15,8 @@ export function WindMark({ mph, className }: { mph: number | null; className?: s
       width="18"
       height="14"
       viewBox="0 0 18 14"
+      role="img"
+      focusable="false"
       aria-label={`${Math.round(mph)} mph`}
       className={cn(
         blow

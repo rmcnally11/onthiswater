@@ -20,7 +20,7 @@ export function ScoreRing({
   const hex = scoreHex(score);
   return (
     <div className={cn("flex flex-col items-center", className)}>
-      <svg width={size} height={size} viewBox="0 0 100 100" aria-label={`Score ${score.toFixed(1)} of 10`}>
+      <svg width={size} height={size} viewBox="0 0 100 100" role="img" focusable="false" aria-label={`Score ${score.toFixed(1)} of 10`}>
         <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(11,31,51,0.12)" strokeWidth="8" />
         <circle
           cx="50"
@@ -44,14 +44,14 @@ export function ScoreRing({
         >
           {score.toFixed(1)}
         </text>
-        <text x="50" y="64" textAnchor="middle" fill="rgba(11,31,51,0.45)" fontSize="8" letterSpacing="1.4">
+        <text x="50" y="64" textAnchor="middle" fill="rgba(11,31,51,0.75)" fontSize="8" letterSpacing="1.4">
           OF 10
         </text>
       </svg>
       {label ? (
-        <p className="mt-[-6px] text-[10px] uppercase tracking-[0.18em] text-[color:var(--cream)]/50">{label}</p>
+        <p className="mt-[-6px] text-[10px] uppercase tracking-[0.18em] text-[color:var(--cream)]/75">{label}</p>
       ) : null}
-      {sub ? <p className="text-[11px] text-[color:var(--cream)]/45">{sub}</p> : null}
+      {sub ? <p className="text-[11px] text-[color:var(--cream)]/75">{sub}</p> : null}
     </div>
   );
 }

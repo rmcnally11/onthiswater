@@ -96,9 +96,9 @@ export default async function CalendarPage({
       <Suspense fallback={<CalendarSkeleton />}>
         <CalendarBody area={area} activity={activity} year={year} month={month} />
       </Suspense>
-      <div className="flex flex-wrap items-center gap-3 text-xs text-[color:var(--cream)]/55">
+      <div className="flex flex-wrap items-center gap-3 text-xs text-[color:var(--cream)]/75">
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#e23b3b] font-mono text-[9px] text-white">2</span>
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#e23b3b] font-mono text-[9px] text-[#140404]">2</span>
           stay / structure
         </span>
         <span className="inline-flex items-center gap-1.5">
