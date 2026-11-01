@@ -130,9 +130,9 @@ Bahamas, Mexico, Seychelles, and the Azores tides are a modeled lunar tide, labe
 | [TPWD Outdoor Annual](https://tpwd.texas.gov/regulations/outdoor-annual/) | Texas bag/season |
 | [TPWD Coastal Fisheries](https://tpwd.texas.gov/landwater/water/habitats/coastal/) / [BCO-DMO 828794](https://www.bco-dmo.org/dataset/828794) | Gill-net counts by Texas bay (1982–2019 public file). 45 overnight sets per bay per spring and fall. TPWD still samples twice a year; this file does not update after 2019 until they send a new extract (`cfish@tpwd.texas.gov`). Not a live feed. Not a honey-hole map. Rebuild: `python3 scripts/build-tpwd-gill-net.py`. |
 | [TPWD creel](https://tpwd.texas.gov/fishboat/fish/didyouknow/coastal/creel.phtml) / [Collins et al. 2026](https://doi.org/10.1371/journal.pone.0344688) | Dock counts: observed harvest on parties that said they were fishing for redfish, trout, or snapper (1991–2023). Public ramps and wet slips, 10:00–18:00. Not expanded landings, not discards, not every boat at the ramp. TPWD still interviews year-round; this extract does not update with the tide. Rebuild: `python3 scripts/build-tpwd-creel.py`. |
-| [TPWD launches](https://tpwd.texas.gov/fishboat/boat/launch/) | Public ramps |
-| [Texas GLO beach access](https://www.glo.texas.gov/coast/coastal-management/beach-access) | Drive-on beaches, county 2WD/4WD plans |
-| [NPS Padre Island](https://www.nps.gov/pais/planyourvisit/beach-driving.htm) | PINS driving / camping |
+| [TPWD launches](https://tpwd.texas.gov/fishboat/boat/where/) | Public ramps |
+| [Texas GLO beach access](https://www.glo.texas.gov/coastal/protecting-coast/open-beaches) | Drive-on beaches, county 2WD/4WD plans |
+| [NPS Padre Island](https://www.nps.gov/pais/planyourvisit/drivingdownisland.htm) | PINS driving / camping |
 | [FWC](https://myfwc.com/fishing/saltwater/recreational/) | Florida bonefish, permit, snook, redfish |
 | [LDWF recreational saltwater](https://www.wlf.louisiana.gov/page/recreational-saltwater-finfish) | Louisiana bag, slot, and flounder season |
 | [CONAPESCA](https://www.gob.mx/conapesca) | Mexico recreational license and harvest rules |

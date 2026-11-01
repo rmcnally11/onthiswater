@@ -84,14 +84,14 @@ export default function MethodPage() {
           </li>
           <li>
             Texas GLO Beach & Bay Access from{" "}
-            <a className="underline" href="https://www.glo.texas.gov/coast/coastal-management/beach-access">
+            <a className="underline" href="https://www.glo.texas.gov/coastal/protecting-coast/open-beaches">
               glo.texas.gov
             </a>
             . Hub item is cited; a public REST query was not open without their token.
           </li>
           <li>
             NPS Padre Island driving/camping closures —{" "}
-            <a className="underline" href="https://www.nps.gov/pais/planyourvisit/beach-driving.htm">
+            <a className="underline" href="https://www.nps.gov/pais/planyourvisit/drivingdownisland.htm">
               nps.gov/pais
             </a>
             . We cite the rule; the park API needs a key.

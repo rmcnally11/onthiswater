@@ -37,7 +37,7 @@ export default function ForTheLetterPage() {
       </header>
 
       <section className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5 text-sm leading-relaxed text-[color:var(--cream)]/80">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Allowed origins</p>
+        <h2 className="kicker text-[color:var(--copper)]">Allowed origins</h2>
         <ul className="mt-3 list-disc space-y-1 pl-5">
           <li>
             <a className="underline decoration-[color:var(--copper)]/40" href={ORIGIN}>
@@ -61,7 +61,7 @@ export default function ForTheLetterPage() {
       </section>
 
       <section>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Fetch order</p>
+        <h2 className="kicker text-[color:var(--copper)]">Fetch order</h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-[color:var(--cream)]/80">
           <li>
             This page —{" "}
@@ -94,7 +94,7 @@ export default function ForTheLetterPage() {
       </section>
 
       <section>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Letter desks only</p>
+        <h2 className="kicker text-[color:var(--copper)]">Letter desks only</h2>
         <ul className="mt-3 space-y-2 text-sm">
           {DESK_HREFS.map(([label, href]) => (
             <li key={href}>
@@ -112,7 +112,7 @@ export default function ForTheLetterPage() {
       </section>
 
       <section className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5 text-sm text-[color:var(--cream)]/80">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Hard doctrine</p>
+        <h2 className="kicker text-[color:var(--copper)]">Hard doctrine</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>Print the month essay from the JSON <code>letter</code> field verbatim.</li>
           <li>
@@ -133,21 +133,21 @@ export default function ForTheLetterPage() {
       </section>
 
       <section className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5 text-sm text-[color:var(--cream)]/80">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">Twitter / X</p>
+        <h2 className="kicker text-[color:var(--copper)]">Twitter / X</h2>
         <p className="mt-3">
           Morning: one post per letter water, text from <code>/api/tweets</code> mornings[]
           verbatim — the last line is the live desk so a reader of the tweet lands on this site
           (same as JSON <code>url</code> / <code>href</code>). Picture = screenshot of{" "}
-          <a className="underline" href="/card?area=galveston&amp;theater=texas">
+          <a className="underline" href="/card?area=galveston&theater=texas">
             /card
           </a>{" "}
           (wind compass, moon, tide curve, and sky) — do not put that card URL in the tweet.
           Calendar: one post per item in calendars[], last line is the live{" "}
-          <a className="underline" href="/calendar?area=galveston&amp;theater=texas">
+          <a className="underline" href="/calendar?area=galveston&theater=texas">
             /calendar
           </a>
           , picture = screenshot of{" "}
-          <a className="underline" href="/card/calendar?area=galveston&amp;theater=texas">
+          <a className="underline" href="/card/calendar?area=galveston&theater=texas">
             /card/calendar
           </a>{" "}
           (the month grid on this site). No AI images. No other weather sites. Skip any desk with
