@@ -22,6 +22,7 @@ import {
 } from "@/lib/mail";
 import { listSubscribers, type Subscriber } from "@/lib/subscribers";
 import { airtableConfigured } from "@/lib/airtable-list";
+import { scaledExternalMs, UpstreamTimeout } from "@/lib/external-fetch";
 import { coastsForDesks, type Cadence } from "@/lib/coasts";
 import { filterNewsletter, getNewsletter, hydrateLetterDesks } from "@/lib/newsletter";
 import {
@@ -36,6 +37,11 @@ import type { Area, Briefing, CalendarDay } from "@/lib/types";
 
 /** Whole cron, including Sunday's calendar, stays inside the 300s limit. */
 export const DISPATCH_BUDGET_MS = 200_000;
+
+/** One Airtable list read. Three of these, plus the pauses below, still fit the cron budget. */
+export const SUBSCRIBER_READ_TIMEOUT_MS = 20_000;
+export const SUBSCRIBER_READ_ATTEMPTS = 3;
+export const SUBSCRIBER_READ_BACKOFF_MS = [2_000, 5_000] as const;
 
 const ZONE = "America/Chicago";
 const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
@@ -130,30 +136,58 @@ async function writeOutbox(name: string, payload: unknown) {
   return file;
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function airtableStatus(error: unknown) {
+  if (!(error instanceof Error)) return null;
+  const match = /^Airtable (\d{3})\b/.exec(error.message);
+  return match ? Number(match[1]) : null;
+}
+
+function subscriberReadRetryable(error: unknown) {
+  if (error instanceof UpstreamTimeout) return true;
+  if (
+    error instanceof Error &&
+    (error.name === "TimeoutError" || error.name === "AbortError" || /timed out/i.test(error.message))
+  ) {
+    return true;
+  }
+  const status = airtableStatus(error);
+  return status === 429 || (status != null && status >= 500);
+}
+
 async function loadDispatchSubscribers(given?: Subscriber[]) {
   if (given) return given;
-  const started = Date.now();
-  try {
-    const subscribers = await listSubscribers({ strict: true });
-    logDispatch({
-      stage: "subscribers",
-      ok: true,
-      count: subscribers.length,
-      ms: Date.now() - started,
-      airtable: airtableConfigured(),
-    });
-    return subscribers;
-  } catch (error) {
-    logDispatch({
-      stage: "subscribers",
-      ok: false,
-      count: 0,
-      ms: Date.now() - started,
-      airtable: true,
-      error: redact(error instanceof Error ? error.message : "Subscriber read failed"),
-    });
-    throw new DispatchError("Subscriber list could not be read. No mail was sent.");
+  for (let attempt = 1; attempt <= SUBSCRIBER_READ_ATTEMPTS; attempt++) {
+    const started = Date.now();
+    try {
+      const subscribers = await listSubscribers({ strict: true, timeoutMs: SUBSCRIBER_READ_TIMEOUT_MS });
+      logDispatch({
+        stage: "subscribers",
+        ok: true,
+        attempt,
+        count: subscribers.length,
+        ms: Date.now() - started,
+        airtable: airtableConfigured(),
+      });
+      return subscribers;
+    } catch (error) {
+      logDispatch({
+        stage: "subscribers",
+        ok: false,
+        attempt,
+        count: 0,
+        ms: Date.now() - started,
+        airtable: true,
+        error: redact(error instanceof Error ? error.message : "Subscriber read failed"),
+      });
+      if (attempt >= SUBSCRIBER_READ_ATTEMPTS || !subscriberReadRetryable(error)) break;
+      await sleep(scaledExternalMs(SUBSCRIBER_READ_BACKOFF_MS[attempt - 1]));
+    }
   }
+  throw new DispatchError("Subscriber list could not be read. No mail was sent.");
 }
 
 async function deliver(cadence: Cadence, at: Date, pieces: Piece[]): Promise<DispatchRow[]> {

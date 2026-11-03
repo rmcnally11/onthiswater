@@ -35,7 +35,9 @@ function asStrings(value: unknown) {
   return Array.isArray(value) ? value.map(String) : [];
 }
 
-async function airtable<T>(path: string, init?: RequestInit): Promise<T> {
+const AIRTABLE_TIMEOUT_MS = 8_000;
+
+async function airtable<T>(path: string, init?: RequestInit & { timeoutMs?: number }): Promise<T> {
   const key = token();
   if (!key) throw new Error("Airtable token is not set.");
   const res = await fetchExternal(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}${path}`, {
@@ -47,7 +49,7 @@ async function airtable<T>(path: string, init?: RequestInit): Promise<T> {
     },
     body: typeof init?.body === "string" ? init.body : undefined,
     cache: "no-store",
-    timeoutMs: 8000,
+    timeoutMs: init?.timeoutMs ?? AIRTABLE_TIMEOUT_MS,
   });
   if (!res.ok) {
     const text = await res.text();
@@ -77,13 +79,16 @@ export async function upsertAirtableSubscriber(input: {
     })}`,
   );
   const existing = found.records[0];
+  const existingStatus = asString(existing?.fields[AIRTABLE_FIELDS.status]);
+  const excluded = existingStatus === "Excluded";
   const fields: Record<string, unknown> = {
     [AIRTABLE_FIELDS.email]: input.email,
     [AIRTABLE_FIELDS.desks]: input.desks,
-    [AIRTABLE_FIELDS.status]:
-      asString(existing?.fields[AIRTABLE_FIELDS.status]) === "Unsubscribed"
+    [AIRTABLE_FIELDS.status]: excluded
+      ? "Excluded"
+      : existingStatus === "Unsubscribed" || !existingStatus
         ? "Active"
-        : (asString(existing?.fields[AIRTABLE_FIELDS.status]) || "Active"),
+        : existingStatus,
     [AIRTABLE_FIELDS.source]: asString(existing?.fields[AIRTABLE_FIELDS.source]) || input.source,
     [AIRTABLE_FIELDS.joined]:
       asString(existing?.fields[AIRTABLE_FIELDS.joined]) || new Date().toISOString().slice(0, 10),
@@ -97,16 +102,16 @@ export async function upsertAirtableSubscriber(input: {
   if (input.zip?.trim()) fields[AIRTABLE_FIELDS.zip] = input.zip.trim();
   if (existing) {
     await airtable(`/${existing.id}`, { method: "PATCH", body: JSON.stringify({ fields, typecast: true }) });
-    return { id: existing.id, created: false };
+    return { id: existing.id, created: false, excluded };
   }
   const created = await airtable<{ id: string }>("", {
     method: "POST",
     body: JSON.stringify({ fields, typecast: true }),
   });
-  return { id: created.id, created: true };
+  return { id: created.id, created: true, excluded: false };
 }
 
-export async function listAirtableSubscribers() {
+export async function listAirtableSubscribers(opts?: { timeoutMs?: number }) {
   const out: Array<{
     name: string;
     email: string;
@@ -125,7 +130,9 @@ export async function listAirtableSubscribers() {
       returnFieldsByFieldId: "true",
     });
     if (offset) qs.set("offset", offset);
-    const page = await airtable<{ records: AirtableRecord[]; offset?: string }>(`?${qs}`);
+    const page = await airtable<{ records: AirtableRecord[]; offset?: string }>(`?${qs}`, {
+      timeoutMs: opts?.timeoutMs,
+    });
     for (const rec of page.records) {
       const email = asString(rec.fields[AIRTABLE_FIELDS.email]).trim().toLowerCase();
       if (!email) continue;

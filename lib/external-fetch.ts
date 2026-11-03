@@ -19,6 +19,11 @@ function scaled(ms: number) {
   return Math.max(50, Math.round(ms * timeoutScale));
 }
 
+/** Same clock as fetch deadlines. Production scale is 1. */
+export function scaledExternalMs(ms: number) {
+  return scaled(ms);
+}
+
 function agentFor(ms: number) {
   const existing = agents.get(ms);
   if (existing) return existing;
