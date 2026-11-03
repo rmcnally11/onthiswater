@@ -122,7 +122,7 @@ export async function addSubscriber(
     // Vercel filesystem is ephemeral — Airtable is the list that survives.
   }
   if (airtableConfigured()) {
-    await upsertAirtableSubscriber({
+    const saved = await upsertAirtableSubscriber({
       email: sub.email,
       desks: sub.desks,
       source,
@@ -130,12 +130,13 @@ export async function addSubscriber(
       name: sub.name,
       zip: sub.zip,
     });
-    return { subscriber: sub, persisted: true, via: "airtable" as const };
+    return { subscriber: sub, persisted: true, via: "airtable" as const, excluded: saved.excluded };
   }
   return {
     subscriber: sub,
     persisted: Boolean(process.env.SUBSCRIBER_EMAILS),
     via: "local" as const,
+    excluded: false,
   };
 }
 
@@ -150,12 +151,12 @@ function mergeSubscriber(prev: Subscriber | undefined, next: Subscriber): Subscr
   };
 }
 
-export async function listSubscribers(opts?: { strict?: boolean }): Promise<Subscriber[]> {
+export async function listSubscribers(opts?: { strict?: boolean; timeoutMs?: number }): Promise<Subscriber[]> {
   const byEmail = new Map<string, Subscriber>();
   let airtable: Subscriber[] = [];
   if (airtableConfigured()) {
     try {
-      airtable = (await listAirtableSubscribers()).map((s) => ({
+      airtable = (await listAirtableSubscribers({ timeoutMs: opts?.timeoutMs })).map((s) => ({
         name: s.name,
         email: s.email,
         zip: s.zip,
