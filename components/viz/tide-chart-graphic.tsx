@@ -44,6 +44,7 @@ export function TideChartGraphic({
       viewBox={`0 0 ${width} ${height}`}
       className={fit === "fluid" ? "h-auto w-full" : undefined}
       role="img"
+      focusable="false"
       aria-label="Tide curve"
     >
       <defs>

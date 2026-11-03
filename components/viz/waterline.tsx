@@ -5,6 +5,7 @@ export function Waterline({ className = "" }: { className?: string }) {
       className={`waterline-svg pointer-events-none h-10 w-full opacity-70 ${className}`}
       preserveAspectRatio="none"
       aria-hidden
+      focusable="false"
     >
       <path
         className="waterline-a"

@@ -29,7 +29,7 @@ export function MoonDisk({
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
-      <svg width={size} height={size} viewBox="0 0 80 80" aria-label={name ?? "Moon"}>
+      <svg width={size} height={size} viewBox="0 0 80 80" role="img" focusable="false" aria-label={name ?? "Moon"}>
         <defs>
           <clipPath id={`${id}-clip`}>
             <circle cx="40" cy="40" r="28" />
