@@ -600,8 +600,7 @@ const ACCESS: OfficialPoint[] = [
     lat: 29.277,
     lon: -89.355,
     kind: "access",
-    source: "Plaquemines Parish / LDWF ramp directory",
-    sourceUrl: "https://www.wlf.louisiana.gov/page/boat-ramps",
+    source: "Plaquemines Parish / LDWF",
     detail: "Birdfoot door. South and Southwest Pass are the run. Confirm which ramps are open after a blow.",
   },
   {
@@ -621,7 +620,6 @@ const ACCESS: OfficialPoint[] = [
     lon: -93.34,
     kind: "access",
     source: "Cameron Parish / LDWF",
-    sourceUrl: "https://www.wlf.louisiana.gov/page/boat-ramps",
     detail: "SW Louisiana beach. Parish rules shift. Calcasieu Pass is the next throat east.",
   },
   {
