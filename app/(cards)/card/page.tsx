@@ -9,16 +9,26 @@ import { TideCurve } from "@/components/viz/tide-curve";
 import { Waterline } from "@/components/viz/waterline";
 import type { Briefing, CalendarDay } from "@/lib/types";
 import type { Metadata } from "next";
-import { pageMeta } from "@/lib/seo";
+import { ogImageForArea, pageMeta } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = pageMeta({
-  title: "Morning card",
-  description: "Share card for this morning.",
-  path: "/card",
-  index: false,
-});
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ area?: string; theater?: string; h?: string }>;
+}): Promise<Metadata> {
+  const q = await searchParams;
+  const area = getArea(q.area);
+  return pageMeta({
+    title: "Morning card",
+    description: "Share card for this morning.",
+    path: "/card",
+    image: ogImageForArea(area.id),
+    imageAlt: `${area.shortName} tide`,
+    index: false,
+  });
+}
 
 export function MorningCard({
   area,

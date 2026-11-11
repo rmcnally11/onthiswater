@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { PRODUCT_DOMAIN } from "@/lib/brand";
-import { HOME_DESCRIPTION, HOME_TITLE, ogImageForArea } from "@/lib/seo";
+import { SITE_URL } from "@/lib/brand";
+import { absoluteSiteUrl, HOME_DESCRIPTION, HOME_TITLE, ogImageForArea } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,26 +30,29 @@ export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
+const homeUrl = `${SITE_URL}/`;
+const homeImage = absoluteSiteUrl(ogImageForArea("galveston"));
+
 export const metadata: Metadata = {
-  metadataBase: new URL(`https://${PRODUCT_DOMAIN}`),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: HOME_TITLE,
     template: "%s — On This Water",
   },
   description: HOME_DESCRIPTION,
-  alternates: { canonical: `https://${PRODUCT_DOMAIN}/` },
+  alternates: { canonical: homeUrl },
   openGraph: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    url: `https://${PRODUCT_DOMAIN}`,
+    url: homeUrl,
     siteName: "On This Water",
-    images: [{ url: ogImageForArea("galveston"), width: 1200, height: 520, alt: "Galveston tide" }],
+    images: [{ url: homeImage, width: 1200, height: 520, alt: "Galveston tide" }],
   },
   twitter: {
     card: "summary_large_image",
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: [ogImageForArea("galveston")],
+    images: [homeImage],
   },
 };
 
