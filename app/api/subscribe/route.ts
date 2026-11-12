@@ -76,12 +76,14 @@ export async function POST(request: NextRequest) {
   try {
     const result = await addSubscriber(email, desks, source, cadence, { name, zip });
     const coasts = coastsForDesks(result.subscriber.desks);
-    enqueueWelcome(after, () =>
-      sendWelcomeEmails(result.subscriber.email, {
-        desks: result.subscriber.desks,
-        cadence: result.subscriber.cadence,
-      }).then(() => undefined),
-    );
+    if (!result.excluded) {
+      enqueueWelcome(after, () =>
+        sendWelcomeEmails(result.subscriber.email, {
+          desks: result.subscriber.desks,
+          cadence: result.subscriber.cadence,
+        }).then(() => undefined),
+      );
+    }
     const note = subscribeNote(coasts, result.via);
     const res = NextResponse.json({
       ok: true,

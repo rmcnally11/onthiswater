@@ -1,5 +1,7 @@
 # On This Water
 
+Cloud agents: read [CURSOR_LESSONS.md](./CURSOR_LESSONS.md) before changing this repo.
+
 Inshore and offshore conditions for the **Texas coast**, **Louisiana**, **Florida** (Keys, Boca Grande, Jupiter), the **Bahamas**, **Mexico** (Yucatan flats + Baja), **Puerto Rico**, the **Seychelles**, **North Carolina**, **South Carolina**, and the **Azores**. The brief tells you **where**, **when**, and **why** fish should be on a given piece of water — and which species are actually in play.
 
 GitHub: [rmcnally11/onthiswater](https://github.com/rmcnally11/onthiswater). Live site: [onthiswater.com](https://onthiswater.com) (Vercel project `onthiswater`). Substack bots: [SUBSTACK.md](./SUBSTACK.md). Twitter / X bots: [TWITTER.md](./TWITTER.md) (morning and calendar screenshots of `/card`). Live rules: [/for-the-letter](https://onthiswater.com/for-the-letter). Your three My Maps are imported as cream pins:

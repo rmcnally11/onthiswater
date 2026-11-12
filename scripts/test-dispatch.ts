@@ -13,6 +13,9 @@ import {
   dispatchSeasonal,
   redact,
   runDispatch,
+  SUBSCRIBER_READ_ATTEMPTS,
+  SUBSCRIBER_READ_BACKOFF_MS,
+  SUBSCRIBER_READ_TIMEOUT_MS,
 } from "@/lib/dispatch";
 import { setExternalTimeoutScaleForTests } from "@/lib/external-fetch";
 import {
@@ -47,8 +50,13 @@ function assertLogsHaveNoAddress() {
 type Call = { url: string; idempotencyKey: string | null; body: unknown };
 const calls: Call[] = [];
 
-function installFetch(opts?: { airtableStatus?: number }) {
+function installFetch(opts?: {
+  airtableStatus?: number;
+  airtableReplies?: Array<{ status: number; body?: string }>;
+  hangAirtable?: boolean;
+}) {
   calls.length = 0;
+  const replies = opts?.airtableReplies ? [...opts.airtableReplies] : null;
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
     const headers = new Headers(init?.headers);
@@ -62,7 +70,11 @@ function installFetch(opts?: { airtableStatus?: number }) {
     }
     calls.push({ url, idempotencyKey: headers.get("Idempotency-Key"), body });
     if (url.includes("api.airtable.com")) {
-      return new Response("airtable unavailable", { status: opts?.airtableStatus ?? 500 });
+      if (opts?.hangAirtable) return new Promise<Response>(() => {});
+      const reply = replies?.shift();
+      const status = reply?.status ?? opts?.airtableStatus ?? 500;
+      const payload = reply?.body ?? (status >= 200 && status < 300 ? '{"records":[]}' : "airtable unavailable");
+      return new Response(payload, { status, headers: { "Content-Type": "application/json" } });
     }
     if (url.includes("api.resend.com/emails/batch")) {
       return new Response(JSON.stringify({ data: [{ id: `email_${calls.length}` }] }), {
@@ -170,9 +182,40 @@ assert.deepEqual(
   batchMessages.map((message) => message.idempotencyKey).sort(),
 );
 
+assert.equal(SUBSCRIBER_READ_TIMEOUT_MS, 20_000);
+assert.equal(SUBSCRIBER_READ_ATTEMPTS, 3);
+assert.deepEqual(SUBSCRIBER_READ_BACKOFF_MS, [2_000, 5_000]);
+
+setExternalTimeoutScaleForTests(0.05);
 process.env.AIRTABLE_API_KEY = "pat_test_not_real";
 process.env.RESEND_API_KEY = "re_test_not_real";
 process.env.SUBSCRIBER_EMAILS = "owner@example.com";
+
+function subscriberEvents(from: number) {
+  return logs.slice(from).flatMap((line) => {
+    try {
+      const event = JSON.parse(line) as {
+        stage?: string;
+        ok?: boolean;
+        attempt?: number;
+        count?: number;
+        ms?: number;
+        airtable?: boolean;
+        error?: string;
+      };
+      return event.stage === "subscribers" ? [event] : [];
+    } catch {
+      return [];
+    }
+  });
+}
+
+function airtableCalls() {
+  return calls.filter((call) => call.url.includes("api.airtable.com"));
+}
+
+const failedReadAt = logs.length;
+const failedReadStarted = Date.now();
 installFetch({ airtableStatus: 500 });
 await assert.rejects(() => runDispatch({ at: new Date("2026-10-08T15:00:00Z") }), (error: unknown) => {
   assert.ok(error instanceof DispatchError);
@@ -180,25 +223,112 @@ await assert.rejects(() => runDispatch({ at: new Date("2026-10-08T15:00:00Z") })
   assert.match(error.message, /No mail was sent/);
   return true;
 });
+assert.ok(Date.now() - failedReadStarted < 1_500, "subscriber retries should use the test clock");
+assert.equal(airtableCalls().length, SUBSCRIBER_READ_ATTEMPTS);
+const failedAttempts = subscriberEvents(failedReadAt);
+assert.deepEqual(
+  failedAttempts.map((event) => event.attempt),
+  [1, 2, 3],
+);
+assert.equal(
+  failedAttempts.every((event) => event.ok === false && event.count === 0 && event.airtable === true && event.ms != null),
+  true,
+);
+assert.match(failedAttempts[0]?.error ?? "", /Airtable 500/);
 assert.equal(
   calls.some((call) => call.url.includes("api.resend.com")),
   false,
   "an Airtable read failure must not send",
 );
+const routeLogAt = logs.length;
+installFetch({ airtableStatus: 500 });
 const routeResponse = await GET(new NextRequest("http://localhost/api/cron/dispatch"));
 assert.equal(routeResponse.status, 502);
 const routeBody = (await routeResponse.json()) as { error?: string; stage?: string };
 assert.equal(routeBody.stage, "subscribers");
 assert.match(routeBody.error ?? "", /No mail was sent/);
 assert.equal(routeBody.error?.includes("@"), false);
+assert.equal(airtableCalls().length, SUBSCRIBER_READ_ATTEMPTS);
+assert.deepEqual(
+  subscriberEvents(routeLogAt).map((event) => event.attempt),
+  [1, 2, 3],
+);
 assert.equal(
   calls.some((call) => call.url.includes("api.resend.com")),
   false,
   "the route must not send after a failed subscriber read",
 );
+
+const clientErrorAt = logs.length;
+installFetch({ airtableStatus: 400 });
+await assert.rejects(() => runDispatch({ at: new Date("2026-10-08T15:00:00Z") }), (error: unknown) => {
+  assert.ok(error instanceof DispatchError);
+  assert.match(error.message, /No mail was sent/);
+  return true;
+});
+assert.equal(airtableCalls().length, 1, "a 400 subscriber read must not retry");
+assert.deepEqual(
+  subscriberEvents(clientErrorAt).map((event) => event.attempt),
+  [1],
+);
+assert.equal(
+  calls.some((call) => call.url.includes("api.resend.com")),
+  false,
+);
+
+installFetch({ airtableStatus: 429 });
+await assert.rejects(() => runDispatch({ at: new Date("2026-10-08T15:00:00Z") }));
+assert.equal(airtableCalls().length, SUBSCRIBER_READ_ATTEMPTS, "a 429 subscriber read retries");
+assert.equal(
+  calls.some((call) => call.url.includes("api.resend.com")),
+  false,
+);
+
+delete process.env.SUBSCRIBER_EMAILS;
+const recoveredAt = logs.length;
+installFetch({
+  airtableReplies: [
+    { status: 500, body: "airtable unavailable" },
+    { status: 200, body: '{"records":[]}' },
+  ],
+});
+const recovered = await runDispatch({ at: new Date("2026-10-08T15:00:00Z") });
+assert.equal(airtableCalls().length, 2);
+assert.deepEqual(
+  subscriberEvents(recoveredAt).map((event) => [event.attempt, event.ok]),
+  [
+    [1, false],
+    [2, true],
+  ],
+);
+assert.equal(recovered.results.some((row) => row.sent), false);
+assert.equal(
+  calls.some((call) => call.url.includes("api.resend.com")),
+  false,
+  "a recovered empty list must not send",
+);
+
+const timeoutAt = logs.length;
+const timeoutStarted = Date.now();
+installFetch({ hangAirtable: true });
+await assert.rejects(() => runDispatch({ at: new Date("2026-10-08T15:00:00Z") }), (error: unknown) => {
+  assert.ok(error instanceof DispatchError);
+  assert.match(error.message, /No mail was sent/);
+  return true;
+});
+const timeoutAttempts = subscriberEvents(timeoutAt);
+assert.equal(timeoutAttempts.length, SUBSCRIBER_READ_ATTEMPTS);
+assert.match(timeoutAttempts[0]?.error ?? "", /upstream timed out after 1000ms/);
+assert.ok(Date.now() - timeoutStarted < 8_000, `subscriber timeouts took ${Date.now() - timeoutStarted}ms`);
+assert.equal(
+  calls.some((call) => call.url.includes("api.resend.com")),
+  false,
+  "a timed out subscriber read must not send",
+);
+
 delete process.env.AIRTABLE_API_KEY;
 delete process.env.AIRTABLE_TOKEN;
-delete process.env.SUBSCRIBER_EMAILS;
+delete process.env.RESEND_API_KEY;
 
 const subscribers: Subscriber[] = [
   {
