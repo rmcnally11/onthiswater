@@ -263,6 +263,9 @@ const cardSource = readFileSync(new URL("../app/(cards)/card/page.tsx", import.m
 assert.doesNotMatch(cardSource, /ScoreRing|of 10|OF 10|Scores are 1/);
 assert.match(cardSource, /noScore:\s*true/);
 assert.match(cardSource, /getMorningSnapshot\(area\.id, undefined, undefined, q\.h\)/);
+assert.match(cardSource, /generateMetadata/);
+assert.match(cardSource, /ogImageForArea\(area\.id\)/);
+assert.doesNotMatch(cardSource, /export const metadata/);
 
 const calendarSource = readFileSync(new URL("../app/(cards)/card/calendar/page.tsx", import.meta.url), "utf8");
 assert.match(calendarSource, /hideScores/);

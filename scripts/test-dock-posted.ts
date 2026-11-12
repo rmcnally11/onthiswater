@@ -74,11 +74,18 @@ assert.doesNotMatch(mail, /\/run\?corridor/);
 
 const robots = readFileSync(path.join(root, "app/robots.ts"), "utf8");
 assert.match(robots, /sitemap\.xml/);
-assert.match(robots, /siteOrigin/);
+assert.match(robots, /SITE_URL/);
+assert.match(robots, /\/api\/og\//);
+assert.doesNotMatch(robots, /https:\/\/onthiswater\.com/);
 
 const sitemap = readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
 assert.match(sitemap, /morning\/\$\{area/);
+assert.match(sitemap, /SITE_URL/);
+assert.match(sitemap, /SITE_BUILD_TIME/);
+assert.match(sitemap, /contentLastMod/);
 assert.doesNotMatch(sitemap, /vercel\.app/);
+assert.doesNotMatch(sitemap, /https:\/\/onthiswater\.com/);
+assert.doesNotMatch(sitemap, /const lastMod = new Date\(\)/);
 
 const desks = readFileSync(path.join(root, "lib/desks.ts"), "utf8");
 for (const id of [

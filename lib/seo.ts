@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PRODUCT_DOMAIN, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
+import { PRODUCT_NAME, SITE_URL } from "@/lib/brand";
 
 export const HOME_TITLE =
   "On This Water — tide and wind this morning, Texas to the Azores";
@@ -16,10 +16,26 @@ export function ogImageForArea(areaId: string) {
   return `/api/og/tide?area=${encodeURIComponent(areaId)}`;
 }
 
+/** Absolute https://www.onthiswater.com URL. Relative paths are joined; apex or http hosts are rewritten. */
+export function absoluteSiteUrl(path: string) {
+  if (!path || path === "/") return `${SITE_URL}/`;
+  if (/^https?:\/\//i.test(path)) {
+    const url = new URL(path);
+    const host = url.hostname.toLowerCase();
+    if (host === "onthiswater.com" || host === "www.onthiswater.com") {
+      url.protocol = "https:";
+      url.hostname = "www.onthiswater.com";
+      url.port = "";
+      return url.toString();
+    }
+    return path;
+  }
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${SITE_URL}${normalized}`;
+}
+
 export function canonicalUrl(path: string) {
-  const origin = siteOrigin();
-  if (!path || path === "/") return `${origin}/`;
-  return `${origin}${path.startsWith("/") ? path : `/${path}`}`;
+  return absoluteSiteUrl(path);
 }
 
 export function pageMeta(opts: {
@@ -32,7 +48,7 @@ export function pageMeta(opts: {
   index?: boolean;
 }): Metadata {
   const url = canonicalUrl(opts.path);
-  const image = opts.image ?? ogImageForArea("galveston");
+  const image = absoluteSiteUrl(opts.image ?? ogImageForArea("galveston"));
   const title = opts.absoluteTitle ? { absolute: opts.title } : opts.title;
   return {
     title,
@@ -78,7 +94,7 @@ export function webAppJsonLd() {
     operatingSystem: "Web",
     description: HOME_DESCRIPTION,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    publisher: { "@type": "Organization", name: PRODUCT_NAME, url: `https://${PRODUCT_DOMAIN}` },
+    publisher: { "@type": "Organization", name: PRODUCT_NAME, url: SITE_URL },
   };
 }
 
