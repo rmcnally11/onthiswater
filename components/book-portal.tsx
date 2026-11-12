@@ -307,7 +307,7 @@ export function BookPortal({
                 <button
                   type="button"
                   onClick={() => removeCatch(entry.id)}
-                  className="mt-3 text-xs text-[color:var(--cream)]/40 underline"
+                  className="mt-3 text-xs text-[color:var(--cream)]/75 underline"
                 >
                   Tear this page
                 </button>
@@ -353,7 +353,7 @@ export function BookPortal({
             Yes, wipe this phone
           </Button>
         ) : (
-          <button type="button" className="text-xs text-[color:var(--cream)]/35 underline" onClick={() => setConfirmWipe(true)}>
+          <button type="button" className="text-xs text-[color:var(--cream)]/75 underline" onClick={() => setConfirmWipe(true)}>
             Wipe the book on this phone
           </button>
         )}

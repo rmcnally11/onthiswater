@@ -112,6 +112,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
             <a
               key={l.label}
               href={l.href}
+              aria-current={activePath(pathname, l.href.split("?")[0] ?? l.href) ? "page" : undefined}
               className={cn(
                 "nav-link cursor-pointer whitespace-nowrap rounded-md px-2 py-1.5 text-[color:var(--cream)]/75 transition hover:bg-[color:var(--cream)]/6 hover:text-[color:var(--cream)]",
                 l.bar === "2xl" && "hidden 2xl:inline-flex",
@@ -166,6 +167,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
                     <a
                       key={l.label}
                       href={l.href}
+                      aria-current={on ? "page" : undefined}
                       className={cn(
                         "touch-manipulation rounded-xl px-3 py-3.5",
                         on
@@ -174,7 +176,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
                       )}
                     >
                       <span className="block font-heading text-xl">{l.label}</span>
-                      <span className="mt-0.5 block text-xs text-[color:var(--cream)]/45">{l.dek}</span>
+                      <span className="mt-0.5 block text-xs text-[color:var(--cream)]/75">{l.dek}</span>
                     </a>
                   );
                 })}

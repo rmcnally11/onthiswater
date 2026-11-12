@@ -141,10 +141,10 @@ export function MorningMail({
         />
       </div>
       <fieldset className="mt-5">
-        <legend className="text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/45">
+        <legend className="text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/75">
           Water you want mail for
         </legend>
-        <p className="mt-1 text-xs text-[color:var(--cream)]/50">
+        <p className="mt-1 text-xs text-[color:var(--cream)]/75">
           Take a whole coast, or only the subsections. Each water you leave on gets its own 5am
           brief and Sunday calendar. Saturday’s letter follows the coasts you touched.
         </p>
@@ -161,7 +161,7 @@ export function MorningMail({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm font-medium text-[color:var(--cream)]">{meta?.label}</p>
-                  <label className="flex cursor-pointer items-center gap-2 text-xs text-[color:var(--cream)]/60">
+                  <label className="flex cursor-pointer items-center gap-2 text-xs text-[color:var(--cream)]/75">
                     <input
                       type="checkbox"
                       className="size-3.5 accent-[color:var(--copper)]"
@@ -180,7 +180,7 @@ export function MorningMail({
                         className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs ${
                           on
                             ? "border-[color:var(--copper)] bg-[color:var(--copper)]/15 text-[color:var(--cream)]"
-                            : "border-[color:var(--line)] text-[color:var(--cream)]/55"
+                            : "border-[color:var(--line)] text-[color:var(--cream)]/75"
                         }`}
                       >
                         <input
@@ -200,10 +200,10 @@ export function MorningMail({
         </div>
       </fieldset>
       <fieldset className="mt-5">
-        <legend className="text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/45">
+        <legend className="text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/75">
           What you want in the inbox
         </legend>
-        <p className="mt-1 text-xs text-[color:var(--cream)]/50">
+        <p className="mt-1 text-xs text-[color:var(--cream)]/75">
           All four stay on unless you turn one off. Each is a different letter, not a louder copy of the same one.
         </p>
         <div className="mt-3 space-y-2">
@@ -226,7 +226,7 @@ export function MorningMail({
                 />
                 <span className="min-w-0">
                   <span className="block text-sm font-medium text-[color:var(--cream)]">{c.title}</span>
-                  <span className="mt-0.5 block text-xs leading-relaxed text-[color:var(--cream)]/55">
+                  <span className="mt-0.5 block text-xs leading-relaxed text-[color:var(--cream)]/75">
                     {c.blurb}
                   </span>
                 </span>

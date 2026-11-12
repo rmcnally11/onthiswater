@@ -45,7 +45,7 @@ export function TideCurve({
 
   if (!layout.ok) {
     return (
-      <div className={cn("flex h-40 items-center justify-center text-sm text-[color:var(--cream)]/45", className)}>
+      <div className={cn("flex h-40 items-center justify-center text-sm text-[color:var(--cream)]/75", className)}>
         Tide curve needs more hourly points from the gauge.
       </div>
     );
@@ -89,7 +89,7 @@ export function TideCurve({
           <rect x={layout.padL} y={layout.padT} width={layout.width - layout.padL - layout.padR} height={layout.innerH} fill="transparent" />
         </svg>
       </div>
-      <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[color:var(--cream)]/45">
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[color:var(--cream)]/75">
         <span className="capitalize">
           {stage?.replace("-", " ") ?? "tide"}
           {nowHeight != null ? ` · ${nowHeight.toFixed(2)} ft` : ""}

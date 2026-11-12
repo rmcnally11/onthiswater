@@ -36,7 +36,7 @@ export default function SpeciesPage() {
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <div>
                 <h2 className="font-heading text-2xl text-[color:var(--cream)]">{s.commonName}</h2>
-                <p className="text-sm italic text-[color:var(--cream)]/45">{s.latin}</p>
+                <p className="text-sm italic text-[color:var(--cream)]/75">{s.latin}</p>
               </div>
               <div className="flex flex-wrap gap-1">
                 <Badge variant="secondary" className="bg-[color:var(--copper)]/20 capitalize text-[color:var(--cream)]/80">
@@ -82,7 +82,7 @@ export default function SpeciesPage() {
                 {s.spinNote}
               </p>
             </div>
-            <p className="mt-3 text-xs text-[color:var(--cream)]/45">
+            <p className="mt-3 text-xs text-[color:var(--cream)]/75">
               {s.regulation}{" "}
               <a className="underline decoration-[color:var(--copper)]/50" href={s.regulationUrl}>
                 Official source

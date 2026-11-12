@@ -126,7 +126,8 @@ export type OfficialMark = {
   lon: number;
   kind: OfficialKind;
   source: string;
-  sourceUrl: string;
+  /** Agency page for this pin. Omitted when that page is gone and no live replacement exists. */
+  sourceUrl?: string;
   detail: string;
   legal?: boolean;
 };

@@ -217,7 +217,7 @@ export const SPECIES: Species[] = [
     why: "Dolphin. Keys and Bahamas summer bluewater — weedlines, FADs, the edge. Texas: offshore, not the bay. Absent from a Galveston grass headline.",
     regulation:
       "Florida: typically 10/person, 60/vessel, 20 in fork. Texas: 3/day in federal waters under HMS/coastal rules — verify NOAA HMS and TPWD. Mexico: verify CONAPESCA. Bahamas: check current bag.",
-    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/dolphin/",
+    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/dolphinfish/",
   },
   {
     id: "sailfish",
@@ -237,7 +237,7 @@ export const SPECIES: Species[] = [
     why: "SE Florida and the Keys are the winter sail coast. Bahamas bluewater. Texas: possible way offshore, not Matagorda. Do not headline a flat with a billfish.",
     regulation:
       "Florida: catch-and-release for Atlantic sail except a rare harvest tag. Federal HMS permit in federal waters. Texas/Bahamas: treat as C&R.",
-    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/sailfish/",
+    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/billfish-tuna/",
   },
   {
     id: "tuna",
@@ -257,7 +257,7 @@ export const SPECIES: Species[] = [
     why: "Blackfin on Keys/Bahamas humps and wrecks. Yellowfin farther out. Texas: Flower Garden / canyon water. Not a Baffin or Biscayne headline.",
     regulation:
       "Federal HMS rules. Yellowfin typically 27 in curved fork. Blackfin often more liberal — verify NOAA HMS and FWC/TPWD the morning you leave the inlet.",
-    regulationUrl: "https://www.fisheries.noaa.gov/atlantic-highly-migratory-species/atlantic-highly-migratory-species-recreational-fishing",
+    regulationUrl: "https://www.fisheries.noaa.gov/topic/atlantic-highly-migratory-species/recreational-fishermen",
   },
   {
     id: "hogfish",
@@ -477,7 +477,7 @@ export const SPECIES: Species[] = [
     why: "Surf and clean sand. Texas and Florida beaches in the cool months. Not a permit. Not a jack.",
     regulation:
       "Florida: typically 6/day, 11 in fork. Texas: typically 6/day, 9 in — verify TPWD. Do not keep a permit you called a pompano.",
-    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/pompano/",
+    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/permit/",
   },
   {
     id: "tripletail",
@@ -497,7 +497,7 @@ export const SPECIES: Species[] = [
     why: "Summer Gulf. Traps, weed, and channel markers. Texas and Louisiana live on this fish. Not a wreck grouper.",
     regulation:
       "Florida: typically 2/day, 18 in. Texas: typically 3/day, 17 in — verify TPWD. Louisiana: LDWF. The trap is not your property.",
-    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/triple-tail/",
+    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/tripletail/",
   },
   {
     id: "king-mackerel",
@@ -557,7 +557,7 @@ export const SPECIES: Species[] = [
     why: "Gulf and Atlantic wrecks. Not a jack crevalle. Not a GT. Do not headline a flat with an AJ.",
     regulation:
       "Gulf and Atlantic recreational seasons and slots change. Florida typically a 34-in fork and a closed window — verify FWC and NOAA the morning you drop. Texas: federal rules. Do not invent an open day.",
-    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/greater-amberjack/",
+    regulationUrl: "https://myfwc.com/fishing/saltwater/recreational/amberjack/",
   },
   {
     id: "wahoo",
@@ -597,7 +597,7 @@ export const SPECIES: Species[] = [
     why: "Blue water only. San Juan’s north drop, the Bahamas, the Yucatan current, Seychelles offshore. Never a flat. Never a Galveston grass sentence.",
     regulation:
       "Federal HMS. Atlantic blues are typically catch-and-release for recreational boats unless a rare harvest tag applies. Tournament and lodge rules are tighter. Verify NOAA HMS. Do not keep a billfish because a desk scored an 8.",
-    regulationUrl: "https://www.fisheries.noaa.gov/atlantic-highly-migratory-species/atlantic-highly-migratory-species-recreational-fishing",
+    regulationUrl: "https://www.fisheries.noaa.gov/topic/atlantic-highly-migratory-species/recreational-fishermen",
   },
   {
     id: "white-marlin",
@@ -617,7 +617,7 @@ export const SPECIES: Species[] = [
     why: "Atlantic and Gulf blue water. Not a sailfish. Not a Keys permit. Do not print him on a mangrove.",
     regulation:
       "Federal HMS. Treat as catch-and-release unless a lawful harvest tag says otherwise. Verify NOAA HMS the morning you leave.",
-    regulationUrl: "https://www.fisheries.noaa.gov/atlantic-highly-migratory-species/atlantic-highly-migratory-species-recreational-fishing",
+    regulationUrl: "https://www.fisheries.noaa.gov/topic/atlantic-highly-migratory-species/recreational-fishermen",
   },
   {
     id: "striped-marlin",
@@ -657,7 +657,7 @@ export const SPECIES: Species[] = [
     why: "Night and deep. Islamorada and the Miami canyons tell this story. Puerto Rico’s north drop. Never a flat. Never a Galveston trout sentence.",
     regulation:
       "Federal HMS. Typically one per person with a minimum length — verify NOAA HMS and FWC / DNER the morning you leave. Night gear rules matter. Do not invent a bag.",
-    regulationUrl: "https://www.fisheries.noaa.gov/atlantic-highly-migratory-species/atlantic-highly-migratory-species-recreational-fishing",
+    regulationUrl: "https://www.fisheries.noaa.gov/topic/atlantic-highly-migratory-species/recreational-fishermen",
   },
   {
     id: "barracuda",

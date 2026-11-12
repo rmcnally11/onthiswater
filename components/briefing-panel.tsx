@@ -587,7 +587,7 @@ export function BriefingPanel({
               {area.theater === "texas"
                 ? "Cited to TPWD, Texas GLO beach-access plans, and NPS. 2WD/4WD is the county plan, not a guess."
                 : area.theater === "louisiana"
-                  ? "Cited to LDWF ramp lists and Louisiana State Parks. Parish rules shift after a blow."
+                  ? "Grand Isle is cited to Louisiana State Parks. Parish rules shift after a blow."
                   : area.theater === "florida"
                     ? "County and state ramps near this water. FKNMS no-take is Keys-only, on the legal list."
                     : area.theater === "mexico"
@@ -613,9 +613,11 @@ export function BriefingPanel({
                     <p className="font-medium text-[color:var(--cream)]">{p.name}</p>
                     <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[color:var(--cream)]/40">{p.source}</p>
                     <p className="mt-1 text-sm text-[color:var(--cream)]/65">{p.detail}</p>
-                    <a className="mt-2 inline-block text-xs text-[color:var(--copper)] underline" href={p.sourceUrl}>
-                      Official source
-                    </a>
+                    {p.sourceUrl ? (
+                      <a className="mt-2 inline-block text-xs text-[color:var(--copper)] underline" href={p.sourceUrl}>
+                        Official source
+                      </a>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -638,9 +640,11 @@ export function BriefingPanel({
                   <li key={p.id} className="rounded-2xl border border-rose-400/40 bg-rose-50 p-3">
                     <p className="font-medium text-[color:var(--cream)]">{p.name}</p>
                     <p className="mt-1 text-sm text-rose-900/80">{p.detail}</p>
-                    <a className="mt-2 inline-block text-xs text-[color:var(--copper)] underline" href={p.sourceUrl}>
-                      FKNMS GIS
-                    </a>
+                    {p.sourceUrl ? (
+                      <a className="mt-2 inline-block text-xs text-[color:var(--copper)] underline" href={p.sourceUrl}>
+                        FKNMS GIS
+                      </a>
+                    ) : null}
                   </li>
                 ))}
               </ul>

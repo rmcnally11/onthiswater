@@ -24,7 +24,7 @@ export function WindCompass({
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
-      <svg width={size} height={size} viewBox="0 0 120 120" aria-label={has ? `Wind from ${cardinal ?? `${Math.round(dir)}°`}` : "No wind"}>
+      <svg width={size} height={size} viewBox="0 0 120 120" role="img" focusable="false" aria-label={has ? `Wind from ${cardinal ?? `${Math.round(dir)}°`}` : "No wind"}>
         <circle cx="60" cy="60" r="52" fill="#eef6fc" stroke="rgba(11,31,51,0.14)" />
         {ticks.map((deg) => {
           const rad = ((deg - 90) * Math.PI) / 180;
@@ -49,13 +49,13 @@ export function WindCompass({
         <text x="60" y="18" textAnchor="middle" fill={cream} fontSize="8" letterSpacing="1.2">
           N
         </text>
-        <text x="106" y="64" textAnchor="middle" fill={cream} fillOpacity="0.45" fontSize="8">
+        <text x="106" y="64" textAnchor="middle" fill={cream} fillOpacity="0.75" fontSize="8">
           E
         </text>
-        <text x="60" y="112" textAnchor="middle" fill={cream} fillOpacity="0.45" fontSize="8">
+        <text x="60" y="112" textAnchor="middle" fill={cream} fillOpacity="0.75" fontSize="8">
           S
         </text>
-        <text x="14" y="64" textAnchor="middle" fill={cream} fillOpacity="0.45" fontSize="8">
+        <text x="14" y="64" textAnchor="middle" fill={cream} fillOpacity="0.75" fontSize="8">
           W
         </text>
         {has ? (

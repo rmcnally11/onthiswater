@@ -125,7 +125,7 @@ export function MonthGrid({
         </header>
       ) : null}
       {title ? <Waterline className="mb-3" /> : null}
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] uppercase tracking-[0.16em] text-[color:var(--cream)]/40 sm:gap-1.5">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] uppercase tracking-[0.16em] text-[color:var(--cream)]/75 sm:gap-1.5">
         {DOW.map((d) => (
           <div key={d} className="py-1">
             {d}
@@ -199,7 +199,7 @@ export function MonthGrid({
                 ) : day.amazing ? (
                   <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[color:var(--gold)]">Go</p>
                 ) : day.confidence === "astronomical" ? (
-                  <p className="text-[8px] uppercase tracking-wide text-[color:var(--cream)]/30">Moon</p>
+                  <p className="text-[8px] uppercase tracking-wide text-[color:var(--cream)]/75">Moon</p>
                 ) : null}
               </div>
             </a>

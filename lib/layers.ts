@@ -201,7 +201,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -94.779,
     kind: "access",
     source: "TPWD / Galveston Parks — public ramp & pier",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Pelican Island. Ramp, pier, jetty-adjacent. County park fees.",
   },
   {
@@ -211,7 +211,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -95.127,
     kind: "access",
     source: "Brazoria County / GLO beach-access system",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Follets Island. Ramp and beach. Current at the pass — wade with respect.",
   },
   {
@@ -221,7 +221,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -94.723,
     kind: "access",
     source: "City of Galveston / Texas GLO beach access",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Drive-on beach. 2WD when packed; 4WD after rain. GLO + city plan, not a TPWD ramp.",
   },
   {
@@ -231,7 +231,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -95.98,
     kind: "access",
     source: "LCRA / TPWD coastal access",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Colorado mouth. Ramp and park. River stain after rain.",
   },
   {
@@ -251,7 +251,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.202,
     kind: "access",
     source: "Nueces County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Ramp both sides of the cut. Wade the bars on a moving tide.",
   },
   {
@@ -261,7 +261,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.157,
     kind: "access",
     source: "Cameron County / GLO beach access",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "South end of SPI. Ramps, jetties, Brazos Santiago. County beach plan governs 2WD/4WD.",
   },
   {
@@ -271,7 +271,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.297,
     kind: "pins",
     source: "NPS Padre Island National Seashore",
-    sourceUrl: "https://www.nps.gov/pais/planyourvisit/beach-driving.htm",
+    sourceUrl: "https://www.nps.gov/pais/planyourvisit/drivingdownisland.htm",
     detail: "South Beach driving is 4WD, NPS permit, tires aired down. Closed sections shift after storms. Confirm nps.gov/pais before you drop a tire.",
   },
   {
@@ -281,7 +281,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.26,
     kind: "pins",
     source: "NPS Padre Island National Seashore",
-    sourceUrl: "https://www.nps.gov/pais/planyourvisit/beach-driving.htm",
+    sourceUrl: "https://www.nps.gov/pais/planyourvisit/drivingdownisland.htm",
     detail: "North Beach is the easier drive. Still NPS rules, not a county 2WD corridor.",
   },
   {
@@ -331,7 +331,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -93.875,
     kind: "access",
     source: "TPWD / THC historic site — public ramp",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Texas Point / Sabine Pass. Ramp and jetty water. NOAA 8770822 is the clock.",
   },
   {
@@ -341,7 +341,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -93.898,
     kind: "access",
     source: "TPWD-listed launch · Port Arthur",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Sabine Lake side. Marsh drains and lake edges from here.",
   },
   {
@@ -351,7 +351,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -94.825,
     kind: "access",
     source: "City of Galveston / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "West Bay and Offatts. Trailer traffic. The bay side of the island.",
   },
   {
@@ -361,7 +361,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -95.308,
     kind: "access",
     source: "Brazoria County / GLO beach-access system",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Freeport jetties and beach. County plan, not a TPWD park. Surf and pass water.",
   },
   {
@@ -371,7 +371,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -95.283,
     kind: "access",
     source: "Village of Surfside / Texas GLO",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Drive-on when the county says so. 2WD on packed sand; 4WD after rain.",
   },
   {
@@ -381,7 +381,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -95.968,
     kind: "access",
     source: "Matagorda County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "East Matagorda and the Colorado mouth. The Nature Park is next door.",
   },
   {
@@ -391,7 +391,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -96.406,
     kind: "access",
     source: "Calhoun County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "West Matagorda, the ship channel, and the jetties. NOAA 8773701.",
   },
   {
@@ -401,7 +401,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.043,
     kind: "access",
     source: "Aransas County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Copano and Aransas. Goose Island is the other public door.",
   },
   {
@@ -411,7 +411,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.046,
     kind: "access",
     source: "City of Rockport / GLO beach access",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Bay beach, pier, and park. Not a Gulf drive-on corridor.",
   },
   {
@@ -421,7 +421,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.355,
     kind: "access",
     source: "San Patricio County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Corpus / Nueces. Pier and ramp. Winter drum water from the bank.",
   },
   {
@@ -431,7 +431,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.052,
     kind: "access",
     source: "City of Port Aransas / Texas GLO beach access",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Typical 2WD when packed. City + GLO plan. Jetties are a short walk north.",
   },
   {
@@ -441,7 +441,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.217,
     kind: "access",
     source: "Nueces County / GLO beach access",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "Packery neighborhood. Pier, beach, county park. Confirm pier status after storms.",
   },
   {
@@ -451,7 +451,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.68,
     kind: "access",
     source: "Kleberg County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "The Baffin door from land. Ramp on the Laguna. King's Inn is the fried-shrimp shrine, not a waypoint.",
   },
   {
@@ -461,7 +461,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.313,
     kind: "pins",
     source: "NPS Padre Island National Seashore",
-    sourceUrl: "https://www.nps.gov/pais/planyourvisit/birdislandbasin.htm",
+    sourceUrl: "https://www.nps.gov/pais/planyourvisit/boating.htm",
     detail: "Laguna-side campground and ramp. NPS fee. Windsurf and kayak water. Not the Gulf beach drive.",
   },
   {
@@ -471,7 +471,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.167,
     kind: "access",
     source: "Cameron County / GLO beach access",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "North SPI. County beach plan. 2WD/4WD posted at the entrance.",
   },
   {
@@ -481,7 +481,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.43,
     kind: "access",
     source: "Cameron County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Arroyo Colorado into the Lower Laguna. Ramp and park. The LLM classroom starts here.",
   },
   {
@@ -491,7 +491,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.428,
     kind: "access",
     source: "Willacy County / TPWD-listed launch",
-    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/launch/",
+    sourceUrl: "https://tpwd.texas.gov/fishboat/boat/where/",
     detail: "Basin and cut. NOAA 8778490. Laguna skinny a mile inside.",
   },
   {
@@ -501,7 +501,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -97.155,
     kind: "access",
     source: "Cameron County beach-access plan / Texas GLO",
-    sourceUrl: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+    sourceUrl: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
     detail: "South of SPI. County plan is the 2WD/4WD law here. Closures shift with SpaceX and storms — confirm before you drop a tire.",
   },
   {
@@ -531,7 +531,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -80.327,
     kind: "access",
     source: "Miami-Dade Parks",
-    sourceUrl: "https://www.miamidade.gov/parks/marinas-black-point.asp",
+    sourceUrl: "https://www.miamidade.gov/global/recreation/park/black-point-park-and-marina.page",
     detail: "South Biscayne. Featherbed and the Safety Valve are the run.",
   },
   {
@@ -600,8 +600,7 @@ const ACCESS: OfficialPoint[] = [
     lat: 29.277,
     lon: -89.355,
     kind: "access",
-    source: "Plaquemines Parish / LDWF ramp directory",
-    sourceUrl: "https://www.wlf.louisiana.gov/page/boat-ramps",
+    source: "Plaquemines Parish / LDWF",
     detail: "Birdfoot door. South and Southwest Pass are the run. Confirm which ramps are open after a blow.",
   },
   {
@@ -621,7 +620,6 @@ const ACCESS: OfficialPoint[] = [
     lon: -93.34,
     kind: "access",
     source: "Cameron Parish / LDWF",
-    sourceUrl: "https://www.wlf.louisiana.gov/page/boat-ramps",
     detail: "SW Louisiana beach. Parish rules shift. Calcasieu Pass is the next throat east.",
   },
   {
@@ -883,7 +881,7 @@ export async function loadOfficialLayers(
       },
       {
         name: "TPWD boat launch directory",
-        url: "https://tpwd.texas.gov/fishboat/boat/launch/",
+        url: "https://tpwd.texas.gov/fishboat/boat/where/",
         use: "Public ramps. Coastal GIS also flows through TxGIO (formerly TNRIS) and TPWD open data.",
       },
       {
@@ -893,12 +891,12 @@ export async function loadOfficialLayers(
       },
       {
         name: "Texas GLO beach access",
-        url: "https://www.glo.texas.gov/coast/coastal-management/beach-access",
+        url: "https://www.glo.texas.gov/coastal/protecting-coast/open-beaches",
         use: "Drive-on corridors and county beach-access plans (2WD/4WD).",
       },
       {
         name: "NPS Padre Island NS",
-        url: "https://www.nps.gov/pais/planyourvisit/beach-driving.htm",
+        url: "https://www.nps.gov/pais/planyourvisit/drivingdownisland.htm",
         use: "PINS driving, camping, and closure rules.",
       },
     ],

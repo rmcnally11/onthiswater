@@ -20,7 +20,8 @@ export function scoreHex(score: number) {
 export function scoreInk(score: number) {
   if (score >= 6.5) return "#042f2e";
   if (score >= 5) return "#3a2a00";
-  return "#3b0a0a";
+  // Near-black so a 1–4 pip stays readable on the copper chip at small sizes.
+  return "#140404";
 }
 
 export function parseTideStamp(stamp: string) {
