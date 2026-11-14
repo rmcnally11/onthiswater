@@ -6,9 +6,9 @@ import { LETTER_DISCLAIMER } from "@/lib/letter-copy";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
-  title: "For Saturday and Twitter bots",
+  title: "For the Saturday letter",
   description:
-    "Substack and X agents may only reprint On This Water. The Saturday letter is wind, sky, and the water. Morning and calendar pictures are screenshots of this site.",
+    "Substack may only reprint On This Water. The Saturday letter is wind, sky, and the water. Morning and calendar pictures are screenshots of this site.",
   path: "/for-the-letter",
   imageAlt: "Rules for reprinting the Saturday letter. Wind, sky, and the water.",
 });
@@ -26,7 +26,7 @@ export default function ForTheLetterPage() {
       <header>
         <p className="kicker text-[color:var(--copper)]">Source of truth</p>
         <h1 className="page-title mt-3 text-[color:var(--cream)]">
-          For Substack and Twitter bots
+          For the Saturday letter
         </h1>
         <p className="mt-3 text-sm text-[color:var(--cream)]/65">
           You may reprint {PRODUCT_NAME}. You may not invent weather, tides, or water. If a
@@ -81,12 +81,6 @@ export default function ForTheLetterPage() {
               {ORIGIN}/newsletter
             </a>
           </li>
-          <li>
-            Twitter JSON —{" "}
-            <a className="underline" href="/api/tweets">
-              {ORIGIN}/api/tweets
-            </a>
-          </li>
         </ol>
         <p className="mt-3 text-sm text-[color:var(--cream)]/65">
           If the JSON errors or a desk is quiet, do not publish. Do not fill gaps from memory.
@@ -132,43 +126,13 @@ export default function ForTheLetterPage() {
         </ul>
       </section>
 
-      <section className="rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5 text-sm text-[color:var(--cream)]/80">
-        <h2 className="kicker text-[color:var(--copper)]">Twitter / X</h2>
-        <p className="mt-3">
-          Morning: one post per letter water, text from <code>/api/tweets</code> mornings[]
-          verbatim — the last line is the live desk so a reader of the tweet lands on this site
-          (same as JSON <code>url</code> / <code>href</code>). Picture = screenshot of{" "}
-          <a className="underline" href="/card?area=galveston&theater=texas">
-            /card
-          </a>{" "}
-          (wind compass, moon, tide curve, and sky) — do not put that card URL in the tweet.
-          Calendar: one post per item in calendars[], last line is the live{" "}
-          <a className="underline" href="/calendar?area=galveston&theater=texas">
-            /calendar
-          </a>
-          , picture = screenshot of{" "}
-          <a className="underline" href="/card/calendar?area=galveston&theater=texas">
-            /card/calendar
-          </a>{" "}
-          (the month grid on this site). No AI images. No other weather sites. Skip any desk with
-          skip=true.
-        </p>
-      </section>
-
       <p className="text-sm text-[color:var(--cream)]/50">
-        Full prompts:{" "}
+        Full prompt:{" "}
         <a
           className="underline decoration-[color:var(--copper)]/40"
           href={`${GITHUB_REPO}/blob/main/SUBSTACK.md`}
         >
           SUBSTACK.md
-        </a>
-        {" · "}
-        <a
-          className="underline decoration-[color:var(--copper)]/40"
-          href={`${GITHUB_REPO}/blob/main/TWITTER.md`}
-        >
-          TWITTER.md
         </a>
         .
       </p>

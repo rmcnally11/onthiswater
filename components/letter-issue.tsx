@@ -15,6 +15,7 @@ import { AREA_BY_ID, waterChipLabel } from "@/lib/data/areas";
 import { DESKS } from "@/lib/desks";
 import { coastEditionLabel, isAllCoasts } from "@/lib/coasts";
 import { describeDesk, deskWords, forLetter, LETTER_LEGEND, letterTomorrowLine } from "@/lib/letter-copy";
+import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 import { LongRecord } from "@/components/long-record";
 import { JoinStrip } from "@/components/join-strip";
 import { longRecordBay } from "@/lib/data/long-record";
@@ -204,6 +205,8 @@ export function LetterIssue({
           </a>
         </p>
         <Waterline className="mx-auto mt-4 max-w-xl" />
+        <PrintSheet className="mt-4" />
+        <FieldLetterHeader priority className="mt-4 text-left" />
       </header>
 
       <JoinStrip className="mx-auto max-w-3xl" />
@@ -296,6 +299,8 @@ export function LetterIssue({
           .
         </p>
       </article>
+
+      <RoomSaltWater className="mx-auto max-w-3xl" />
 
       <section>
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">

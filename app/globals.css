@@ -206,6 +206,22 @@
   letter-spacing: -0.01em;
   line-height: 1;
   text-transform: none;
+  color: #4a4742;
+}
+
+.print-sheet {
+  display: none;
+}
+
+@media print {
+  .print-sheet {
+    display: block;
+    margin: 0 0 12px;
+  }
+  .house-hero,
+  .house-room {
+    display: none;
+  }
 }
 
 .geo-lockup {

@@ -4,7 +4,8 @@ import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PRODUCT_DOMAIN } from "@/lib/brand";
-import { HOME_DESCRIPTION, HOME_TITLE, ogImageForArea } from "@/lib/seo";
+import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE, PAPER } from "@/lib/house";
+import { HOME_DESCRIPTION, HOME_TITLE } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +28,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#ffffff",
+  themeColor: PAPER,
 };
 
 export const metadata: Metadata = {
@@ -43,13 +44,13 @@ export const metadata: Metadata = {
     description: HOME_DESCRIPTION,
     url: `https://${PRODUCT_DOMAIN}`,
     siteName: "On This Water",
-    images: [{ url: ogImageForArea("galveston"), width: 1200, height: 520, alt: "Galveston tide" }],
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: DEFAULT_OG_ALT }],
   },
   twitter: {
     card: "summary_large_image",
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: [ogImageForArea("galveston")],
+    images: [DEFAULT_OG_IMAGE],
   },
 };
 

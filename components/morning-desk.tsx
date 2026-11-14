@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { breadcrumbJsonLd, reportJsonLd } from "@/lib/seo";
 import type { Briefing } from "@/lib/types";
 import { notFound } from "next/navigation";
+import { PrintSheet, RoomSaltWater, WelcomeWide } from "@/components/house-art";
 
 export async function MorningDesk({
   areaId,
@@ -63,7 +64,10 @@ export async function MorningDesk({
 
   if (error || !briefing) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-3xl space-y-8">
+        <PrintSheet />
+        <WelcomeWide priority sizes="(min-width: 48rem) 48rem, 100vw" />
+        <RoomSaltWater sizes="(min-width: 48rem) 48rem, 100vw" />
         <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
           <p className="font-heading text-xl">The gauges did not answer.</p>
           <p className="mt-2 text-sm opacity-80">{error}</p>
@@ -86,6 +90,7 @@ export async function MorningDesk({
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
+      <PrintSheet />
       <JsonLd
         data={reportJsonLd({
           headline: `This morning on ${briefing.area.shortName}`,
@@ -113,6 +118,7 @@ export async function MorningDesk({
           Copy it. Send it. The rest of that coast is named underneath.
         </p>
         <Waterline className="mt-3" />
+        <WelcomeWide priority className="mt-4" sizes="(min-width: 48rem) 48rem, 100vw" />
         <DockPostedHandoff theater={briefing.area.theater} areaId={briefing.area.id} />
       </div>
 
@@ -227,6 +233,8 @@ export async function MorningDesk({
           timezone={briefing.area.timezone}
         />
       ) : null}
+
+      <RoomSaltWater sizes="(min-width: 48rem) 48rem, 100vw" />
 
       {neighbors.length > 0 ? (
         <section>

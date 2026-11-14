@@ -6,6 +6,8 @@ import { skyCopy } from "@/lib/wx";
 import { WindCompass } from "@/components/viz/wind-compass";
 import { MoonDisk } from "@/components/viz/moon-disk";
 import { TideCurve } from "@/components/viz/tide-curve";
+import { HouseCardFrame } from "@/components/house-frame";
+import { CHARCOAL } from "@/lib/house";
 import { Waterline } from "@/components/viz/waterline";
 import type { Briefing, CalendarDay } from "@/lib/types";
 import type { Metadata } from "next";
@@ -33,7 +35,8 @@ export function MorningCard({
   const line = morningLine(briefing, yolo, { noScore: true });
 
   return (
-    <article className="box-border flex h-[675px] w-[1200px] flex-col bg-[color:var(--ink)] p-8">
+    <HouseCardFrame className="box-border h-[675px] w-[1200px]">
+    <article className="flex h-full flex-col p-6">
       <header className="flex items-end justify-between gap-4">
         <div>
           <p className="kicker text-[color:var(--copper)]">
@@ -79,6 +82,7 @@ export function MorningCard({
         </div>
       </div>
     </article>
+    </HouseCardFrame>
   );
 }
 
@@ -101,9 +105,13 @@ export default async function MorningCardPage({
 
   if (!briefing) {
     return (
-      <div className="flex h-[675px] w-[1200px] items-center justify-center bg-[color:var(--ink)]">
-        <p className="font-heading text-3xl text-rose-900">Gauge quiet · {area.shortName}</p>
-      </div>
+      <HouseCardFrame className="box-border flex h-[675px] w-[1200px]">
+        <div className="flex h-full items-center justify-center">
+          <p className="font-heading text-3xl" style={{ color: CHARCOAL }}>
+            Gauge quiet · {area.shortName}
+          </p>
+        </div>
+      </HouseCardFrame>
     );
   }
 
