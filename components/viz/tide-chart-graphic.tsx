@@ -1,18 +1,29 @@
 import { cream, copper, gold, water } from "@/lib/viz";
 import type { TideChartLayout } from "@/lib/tide-chart";
 
+export type TidePaint = {
+  cream: string;
+  copper: string;
+  gold: string;
+  water: string;
+};
+
+const sitePaint: TidePaint = { cream, copper, gold, water };
+
 export function TideChartGraphic({
   layout,
   fillId = "tideFill",
   fit = "fixed",
   labels = true,
   cursor,
+  paint = sitePaint,
 }: {
   layout: TideChartLayout;
   fillId?: string;
   fit?: "fixed" | "fluid";
   labels?: boolean;
   cursor?: { x: number; y: number; label: string } | null;
+  paint?: TidePaint;
 }) {
   if (!layout.ok) return null;
   const {
@@ -49,9 +60,9 @@ export function TideChartGraphic({
     >
       <defs>
         <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={copper} stopOpacity={0.45} />
-          <stop offset="55%" stopColor={water} stopOpacity={0.55} />
-          <stop offset="100%" stopColor={water} stopOpacity={0.05} />
+          <stop offset="0%" stopColor={paint.copper} stopOpacity={0.45} />
+          <stop offset="55%" stopColor={paint.water} stopOpacity={0.55} />
+          <stop offset="100%" stopColor={paint.water} stopOpacity={0.05} />
         </linearGradient>
       </defs>
       {bands.map((b, i) =>
@@ -62,7 +73,7 @@ export function TideChartGraphic({
             y={padT}
             width={b.w}
             height={innerH}
-            fill={copper}
+            fill={paint.copper}
             opacity={0.12}
           />
         ) : null,
@@ -74,7 +85,7 @@ export function TideChartGraphic({
           x2={width - padR}
           y1={t.y}
           y2={t.y}
-          stroke={cream}
+          stroke={paint.cream}
           strokeOpacity={0.12}
         />
       ))}
@@ -85,7 +96,7 @@ export function TideChartGraphic({
               x={padL - 6}
               y={t.y + fontSize * 0.35}
               textAnchor="end"
-              fill={cream}
+              fill={paint.cream}
               fillOpacity={0.4}
               fontSize={fontSize}
               fontFamily="ui-monospace, monospace"
@@ -95,9 +106,9 @@ export function TideChartGraphic({
           ))
         : null}
       <path d={fillPath} fill={`url(#${fillId})`} />
-      <path d={strokePath} fill="none" stroke={cream} strokeOpacity={0.85} strokeWidth={strokeWidth} />
+          <path d={strokePath} fill="none" stroke={paint.cream} strokeOpacity={0.85} strokeWidth={strokeWidth} />
       {marks.map((m) => (
-        <circle key={`${m.time}-${m.type}`} cx={m.x} cy={m.y} r={markR} fill={m.type === "H" ? cream : copper} />
+        <circle key={`${m.time}-${m.type}`} cx={m.x} cy={m.y} r={markR} fill={m.type === "H" ? paint.cream : paint.copper} />
       ))}
       {labels
         ? marks.map((m) => (
@@ -106,7 +117,7 @@ export function TideChartGraphic({
               x={m.x}
               y={m.type === "H" ? m.y - fontSize * 0.85 : m.y + fontSize * 1.5}
               textAnchor="middle"
-              fill={cream}
+              fill={paint.cream}
               fillOpacity={0.7}
               fontSize={fontSize}
               fontFamily="ui-sans-serif, system-ui, sans-serif"
@@ -122,10 +133,10 @@ export function TideChartGraphic({
             x2={cursor.x}
             y1={padT}
             y2={height - padB}
-            stroke={gold}
+            stroke={paint.gold}
             strokeWidth={nowWidth}
           />
-          <circle cx={cursor.x} cy={cursor.y} r={markR * 1.15} fill={gold} />
+          <circle cx={cursor.x} cy={cursor.y} r={markR * 1.15} fill={paint.gold} />
         </g>
       ) : null}
       {nowOn ? (
@@ -134,7 +145,7 @@ export function TideChartGraphic({
           x2={nowX}
           y1={padT}
           y2={height - padB}
-          stroke={copper}
+          stroke={paint.copper}
           strokeDasharray={`${3 * (fontSize / 8)} ${3 * (fontSize / 8)}`}
           strokeWidth={nowWidth}
         />
@@ -143,7 +154,7 @@ export function TideChartGraphic({
         <text
           x={nowX + fontSize * 0.5}
           y={padT + fontSize * 1.25}
-          fill={copper}
+          fill={paint.copper}
           fontSize={fontSize}
           letterSpacing={0.8}
           fontFamily="ui-sans-serif, system-ui, sans-serif"
@@ -156,7 +167,7 @@ export function TideChartGraphic({
           x={cursor.x + fontSize * 0.6 < width - padR - 80 ? cursor.x + fontSize * 0.6 : cursor.x - fontSize * 0.6}
           y={Math.max(padT + fontSize * 1.2, cursor.y - fontSize)}
           textAnchor={cursor.x + fontSize * 0.6 < width - padR - 80 ? "start" : "end"}
-          fill={gold}
+          fill={paint.gold}
           fontSize={fontSize * 1.15}
           fontFamily="ui-sans-serif, system-ui, sans-serif"
         >
@@ -171,7 +182,7 @@ export function TideChartGraphic({
                 key={`day-${m.x}`}
                 x={m.x}
                 y={height - 6}
-                fill={cream}
+                fill={paint.cream}
                 fillOpacity={0.35}
                 fontSize={fontSize}
                 fontFamily="ui-sans-serif, system-ui, sans-serif"

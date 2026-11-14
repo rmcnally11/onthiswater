@@ -1,4 +1,5 @@
 import { getNewsletter, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
+import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 import { LetterIssue } from "@/components/letter-issue";
 import { resolveElectedCoasts } from "@/lib/coasts";
 import { readCoastsPref } from "@/lib/prefs";
@@ -28,9 +29,14 @@ export default async function NewsletterPage({
 
   if (error || !issue) {
     return (
-      <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
-        <p className="font-heading text-xl">The letter did not set.</p>
-        <p className="mt-2 text-sm opacity-80">{error}</p>
+      <div className="space-y-6">
+        <PrintSheet />
+        <FieldLetterHeader priority />
+        <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
+          <p className="font-heading text-xl">The letter did not set.</p>
+          <p className="mt-2 text-sm opacity-80">{error}</p>
+        </div>
+        <RoomSaltWater />
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PRODUCT_DOMAIN, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
+import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE } from "@/lib/house";
 
 export const HOME_TITLE =
   "On This Water — tide and wind this morning, Texas to the Azores";
@@ -32,7 +33,8 @@ export function pageMeta(opts: {
   index?: boolean;
 }): Metadata {
   const url = canonicalUrl(opts.path);
-  const image = opts.image ?? ogImageForArea("galveston");
+  const image = opts.image ?? DEFAULT_OG_IMAGE;
+  const ogHeight = image.startsWith("/api/") ? 520 : 630;
   const title = opts.absoluteTitle ? { absolute: opts.title } : opts.title;
   return {
     title,
@@ -45,7 +47,7 @@ export function pageMeta(opts: {
       url,
       siteName: PRODUCT_NAME,
       type: "website",
-      images: [{ url: image, width: 1200, height: 520, alt: opts.imageAlt ?? opts.title }],
+      images: [{ url: image, width: 1200, height: ogHeight, alt: opts.imageAlt ?? (image === DEFAULT_OG_IMAGE ? DEFAULT_OG_ALT : opts.title) }],
     },
     twitter: {
       card: "summary_large_image",

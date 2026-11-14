@@ -5,6 +5,7 @@ import { calendarSnapshotYolo, type CalendarMonthSnapshot } from "@/lib/snapshot
 import { ymdInZone } from "@/lib/time";
 import { MonthGrid } from "@/components/month-grid";
 import { YoloBanner } from "@/components/yolo-banner";
+import { HouseCardFrame } from "@/components/house-frame";
 import { Waterline } from "@/components/viz/waterline";
 import type { CalendarDay } from "@/lib/types";
 
@@ -22,7 +23,8 @@ export function CalendarCard({
   const days = months?.[0]?.days ?? [];
 
   return (
-    <article className="box-border w-[1200px] bg-[color:var(--ink)] p-8 text-[color:var(--cream)]">
+    <HouseCardFrame className="box-border w-[1200px]">
+    <article className="p-6 text-[color:var(--cream)]">
       <header className="flex items-end justify-between gap-4">
         <div>
           <p className="kicker text-[color:var(--copper)]">
@@ -64,6 +66,7 @@ export function CalendarCard({
         <p className="py-16 text-center font-heading text-2xl text-rose-900">Calendar did not set.</p>
       )}
     </article>
+    </HouseCardFrame>
   );
 }
 

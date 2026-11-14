@@ -5,6 +5,7 @@ import { DockPostedHandoff } from "@/components/dock-posted-handoff";
 import { JoinStrip } from "@/components/join-strip";
 import { ScoreRing } from "@/components/viz/score-ring";
 import { Waterline } from "@/components/viz/waterline";
+import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 import { briefHref, morningHref } from "@/lib/hrefs";
 import { getBriefing } from "@/lib/briefing";
 import { skyCopy } from "@/lib/wx";
@@ -27,6 +28,8 @@ export function AllWaterSkeleton() {
           Texas through the Seychelles. Reading the gauges.
         </p>
         <Waterline className="mt-3" />
+        <PrintSheet className="mt-4" />
+        <FieldLetterHeader priority className="mt-4" />
       </div>
       <JoinStrip />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -102,6 +105,8 @@ export function AllWaterBoard({
           Texas through the Seychelles. Same 1–10. Not a bite. Pick a water. This page is the whole morning.
         </p>
         <Waterline className="mt-3" />
+        <PrintSheet className="mt-4" />
+        <FieldLetterHeader priority className="mt-4" />
         <DockPostedHandoff compact />
       </div>
 
@@ -179,6 +184,7 @@ export function AllWaterBoard({
           })}
         </div>
       )}
+      <RoomSaltWater />
     </div>
   );
 }

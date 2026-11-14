@@ -7,13 +7,18 @@ import { theaterLabel } from "@/lib/data/theaters";
 import { layoutTideChart } from "@/lib/tide-chart";
 import { loadTides } from "@/lib/tides";
 import type { TideChartLayout } from "@/lib/tide-chart";
-import { cream, copper, gold, sea } from "@/lib/viz";
+import { CHARCOAL, HULL, PAPER, PEACH, SAND, SUN, TEAL } from "@/lib/house";
 
 function TideChartOg({ layout }: { layout: TideChartLayout }) {
   const { width, height, padL, padT, padB, fontSize, yTicks, marks, dayMarks, nowX, nowOn } = layout;
   return (
     <div style={{ position: "relative", width, height, display: "flex" }}>
-      <TideChartGraphic layout={layout} fillId="ogTideFill" labels={false} />
+      <TideChartGraphic
+        layout={layout}
+        fillId="ogTideFill"
+        labels={false}
+        paint={{ cream: CHARCOAL, copper: HULL, gold: SUN, water: TEAL }}
+      />
       {yTicks.map((t) => (
         <div
           key={`y-${t.v}`}
@@ -25,7 +30,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
             display: "flex",
             justifyContent: "flex-end",
             fontSize,
-            color: "rgba(11,31,51,0.4)",
+            color: "rgba(74,71,66,0.55)",
             fontFamily: "ui-monospace, monospace",
           }}
         >
@@ -43,7 +48,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
             display: "flex",
             justifyContent: "center",
             fontSize,
-            color: "rgba(11,31,51,0.7)",
+            color: "rgba(74,71,66,0.78)",
             fontFamily: "ui-sans-serif, system-ui, sans-serif",
           }}
         >
@@ -57,7 +62,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
             left: nowX + 6,
             top: padT,
             fontSize,
-            color: copper,
+            color: HULL,
             letterSpacing: 1,
             fontFamily: "ui-sans-serif, system-ui, sans-serif",
           }}
@@ -75,7 +80,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
               left: m.x,
               top: height - padB + 4,
               fontSize,
-              color: "rgba(11,31,51,0.35)",
+              color: "rgba(74,71,66,0.45)",
               fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
@@ -100,8 +105,9 @@ function chrome(opts: { kicker: string; title: string; stage: string; source: st
         height: HEIGHT,
         display: "flex",
         flexDirection: "column",
-        background: "#f4f8fc",
-        color: cream,
+        background: PAPER,
+        color: CHARCOAL,
+        boxShadow: `inset 0 0 0 10px ${SAND}`,
         padding: "28px 36px 24px",
       }}
     >
@@ -112,7 +118,7 @@ function chrome(opts: { kicker: string; title: string; stage: string; source: st
               fontSize: 13,
               letterSpacing: 3.2,
               textTransform: "uppercase",
-              color: copper,
+              color: HULL,
               fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
@@ -137,21 +143,21 @@ function chrome(opts: { kicker: string; title: string; stage: string; source: st
             fontFamily: "ui-sans-serif, system-ui, sans-serif",
           }}
         >
-          <div style={{ fontSize: 18, color: cream }}>{opts.stage}</div>
-          <div style={{ marginTop: 4, fontSize: 13, color: "rgba(11,31,51,0.45)" }}>{opts.source}</div>
+          <div style={{ fontSize: 18, color: CHARCOAL }}>{opts.stage}</div>
+          <div style={{ marginTop: 4, fontSize: 13, color: "rgba(74,71,66,0.55)" }}>{opts.source}</div>
         </div>
       </div>
       <div style={{ display: "flex", marginTop: 16, height: 4 }}>
-        <div style={{ width: "42%", background: sea }} />
-        <div style={{ width: "22%", background: gold }} />
-        <div style={{ width: "36%", background: copper }} />
+        <div style={{ width: "42%", background: TEAL }} />
+        <div style={{ width: "22%", background: SUN }} />
+        <div style={{ width: "36%", background: PEACH }} />
       </div>
       <div style={{ display: "flex", flex: 1, marginTop: 10, alignItems: "center" }}>
         {opts.children ?? (
           <div
             style={{
               fontSize: 22,
-              color: "rgba(11,31,51,0.45)",
+              color: "rgba(74,71,66,0.55)",
               fontFamily: "Georgia, Times New Roman, serif",
             }}
           >
@@ -165,7 +171,7 @@ function chrome(opts: { kicker: string; title: string; stage: string; source: st
           justifyContent: "space-between",
           marginTop: 8,
           fontSize: 14,
-          color: "rgba(11,31,51,0.4)",
+          color: "rgba(74,71,66,0.55)",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
       >

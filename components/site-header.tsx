@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { BrandMark } from "@/components/house-art";
 import { Waterline } from "@/components/viz/waterline";
 import { JoinLink } from "@/components/join-link";
 import { getArea, neighborArea } from "@/lib/data/areas";
@@ -103,8 +104,9 @@ function HeaderBar({ links }: { links: NavItem[] }) {
   return (
     <header className="sticky top-0 z-30 border-b border-[color:var(--line)] bg-[color:var(--ink)]/80 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:px-6">
-        <a href="/" className="flex shrink-0 items-baseline gap-2">
-          <span className="wordmark text-[color:var(--cream)]">{PRODUCT_NAME}</span>
+        <a href="/" className="flex shrink-0 items-center gap-2">
+          <BrandMark />
+          <span className="wordmark text-[#4A4742]">{PRODUCT_NAME}</span>
           <span className="geo-lockup hidden text-[color:var(--sea)] xl:inline">Seven coasts</span>
         </a>
         <nav className="hidden min-w-0 flex-1 items-center justify-end overflow-hidden lg:flex">
@@ -147,7 +149,8 @@ function HeaderBar({ links }: { links: NavItem[] }) {
                 <p className="kicker text-[color:var(--copper)]">
                   The coast
                 </p>
-                <SheetTitle className="font-heading text-2xl text-[color:var(--cream)]">
+                <SheetTitle className="flex items-center gap-2 font-heading text-2xl text-[#4A4742]">
+                  <BrandMark pixels={28} />
                   {PRODUCT_NAME}
                 </SheetTitle>
                 <SheetDescription className="text-[color:var(--cream)]/50">

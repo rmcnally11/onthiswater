@@ -36,6 +36,7 @@ import { DockPostedHandoff } from "@/components/dock-posted-handoff";
 import { JoinStrip } from "@/components/join-strip";
 import { LogCatchLaunch } from "@/components/log-catch";
 import { logContextFromBriefing } from "@/lib/book";
+import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 
 function tideClock(stamp: string, tz: string) {
   const d = stamp.includes("T") ? new Date(stamp) : parseNoaaGmt(stamp);
@@ -68,6 +69,8 @@ export function BriefingPanel({
 
   return (
     <div className="space-y-10">
+      <PrintSheet />
+      <FieldLetterHeader priority />
       <section className="overflow-hidden rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)]">
         <Waterline />
         <div className="grid gap-6 p-5 md:grid-cols-[1fr_auto] md:p-7">
@@ -132,6 +135,8 @@ export function BriefingPanel({
           />
         </div>
       </section>
+
+      <RoomSaltWater />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Instrument

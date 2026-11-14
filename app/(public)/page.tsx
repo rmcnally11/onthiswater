@@ -9,6 +9,7 @@ import { isAllWaterQuery, readWaterPref, resolveDeskForTheater } from "@/lib/pre
 import { getYoloDay } from "@/lib/calendar";
 import { addDaysYmd, ymdInZone } from "@/lib/time";
 import { AREA_BY_ID } from "@/lib/data/areas";
+import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 import { JsonLd } from "@/components/json-ld";
 import {
   faqJsonLd,
@@ -52,7 +53,7 @@ export async function generateMetadata({
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
     path: "/",
-    image: ogImageForArea("galveston"),
+    imageAlt: "A wooden skiff with a small pirate flag on a pastel dawn flat.",
     absoluteTitle: true,
   });
 }
@@ -115,9 +116,14 @@ export default async function Home({
         />
       </Suspense>
       {error || !briefing ? (
-        <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
-          <p className="font-heading text-xl">The gauges did not answer.</p>
-          <p className="mt-2 text-sm opacity-80">{error}</p>
+        <div className="space-y-6">
+          <PrintSheet />
+          <FieldLetterHeader priority />
+          <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
+            <p className="font-heading text-xl">The gauges did not answer.</p>
+            <p className="mt-2 text-sm opacity-80">{error}</p>
+          </div>
+          <RoomSaltWater />
         </div>
       ) : (
         <BriefingPanel
