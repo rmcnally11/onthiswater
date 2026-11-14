@@ -6,6 +6,7 @@ import { morningLine } from "@/lib/morning";
 import { siteOrigin } from "@/lib/brand";
 import { CopyLine } from "@/components/copy-line";
 import { YoloBanner } from "@/components/yolo-banner";
+import { DockDieselCopy } from "@/components/dock-diesel";
 import { DockPostedHandoff } from "@/components/dock-posted-handoff";
 import { CavalierHandoff } from "@/components/cavalier-handoff";
 import { Waterline } from "@/components/viz/waterline";
@@ -17,6 +18,8 @@ import { AREA_BY_ID, areasInTheater } from "@/lib/data/areas";
 import { theaterLabel, THEATER_META } from "@/lib/data/theaters";
 import { cn } from "@/lib/utils";
 import { breadcrumbJsonLd, reportJsonLd } from "@/lib/seo";
+import { isGulfFuelDesk, type DockDieselQuote } from "@/lib/dock-diesel";
+import { getDockDiesel } from "@/lib/dock-diesel-load";
 import type { Briefing } from "@/lib/types";
 import { notFound } from "next/navigation";
 
@@ -41,7 +44,9 @@ export async function MorningDesk({
   let yolo = null;
   let tomorrow: Briefing | null = null;
   let coastBriefs: PromiseSettledResult<Briefing>[] = [];
+  let diesel: DockDieselQuote | null = null;
   let error: string | null = null;
+  const dieselPromise = isGulfFuelDesk(area.theater) ? getDockDiesel() : Promise.resolve(null);
   try {
     const loaded = await Promise.all([
       getBriefing(area.id, activity, date),
@@ -52,11 +57,13 @@ export async function MorningDesk({
       Promise.allSettled(
         coast.filter((a) => a.id !== area.id).map((a) => getBriefing(a.id, activity, date)),
       ),
+      dieselPromise,
     ]);
     briefing = loaded[0];
     yolo = loaded[1];
     tomorrow = loaded[2];
     coastBriefs = loaded[3];
+    diesel = loaded[4];
   } catch (e) {
     error = e instanceof Error ? e.message : "Could not build the briefing.";
   }
@@ -114,6 +121,7 @@ export async function MorningDesk({
         </p>
         <Waterline className="mt-3" />
         <DockPostedHandoff theater={briefing.area.theater} areaId={briefing.area.id} />
+        <DockDieselCopy theater={briefing.area.theater} quote={diesel} />
       </div>
 
       <nav className="flex flex-wrap gap-1.5">
