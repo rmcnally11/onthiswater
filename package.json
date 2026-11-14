@@ -15,6 +15,7 @@
     "test:snapshot": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot.ts",
     "test:store": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-snapshot-store.ts",
     "test:calendar": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-calendar-snapshot.ts",
+    "test:tweet-yolo": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-tweet-yolo.ts",
     "test:letter": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-letter-no-scores.ts",
     "test:hrefs": "node --experimental-strip-types --import ./scripts/register-alias.mjs --import ./scripts/register-tsx.mjs scripts/test-letter-hrefs.ts",
     "test:card": "node --experimental-strip-types --import ./scripts/register-alias.mjs --import ./scripts/register-tsx.mjs scripts/test-card-no-scores.ts",
