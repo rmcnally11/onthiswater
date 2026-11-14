@@ -5,6 +5,7 @@ import {
   calendarSnapshotKey,
   calendarSnapshotStore,
   calendarSnapshotYolo,
+  pickYolo,
   readOrCreateCalendar,
   type CalendarSnapshot,
 } from "@/lib/snapshot-store";
@@ -19,6 +20,8 @@ import { fetchOpenMeteo } from "@/lib/openmeteo";
 import { activityWindPenalty, timeOfDayScore } from "@/lib/engine";
 import { coerceSky, isSightSky, precipFishability, skyFromText, skyFromWmo, skyCopy, worseSky } from "@/lib/wx";
 import type { SkyKind } from "@/lib/types";
+
+export { pickYolo };
 
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
@@ -319,18 +322,6 @@ function scoreDay(area: Area, activity: ActivityId | "all", ymd: string, inputs:
   };
 }
 
-export function pickYolo(days: CalendarDay[], fromYmd: string): CalendarDay | null {
-  const pool = days.filter((d) => d.date >= fromYmd && d.windMph != null);
-  if (!pool.length) return null;
-  const wetRank = (d: CalendarDay) => (d.wx === "storm" ? 3 : d.wx === "rain" ? 2 : (d.precipChance ?? 0) >= 55 ? 1 : 0);
-  return [...pool].sort((a, b) => {
-    if (wetRank(a) !== wetRank(b)) return wetRank(a) - wetRank(b);
-    if (a.amazing !== b.amazing) return a.amazing ? -1 : 1;
-    if (b.score !== a.score) return b.score - a.score;
-    return (a.windMph ?? 99) - (b.windMph ?? 99);
-  })[0];
-}
-
 function markYolo(days: CalendarDay[], fromYmd: string) {
   const winner = pickYolo(days, fromYmd);
   return days.map((d) => ({ ...d, yolo: winner?.date === d.date }));
@@ -347,6 +338,7 @@ async function monthsFromInputs(
   month: number,
   count: number,
   inputs: CalendarInputs,
+  fromYmd: string,
 ) {
   const months: { year: number; month: number; label: string; days: CalendarDay[] }[] = [];
   for (let i = 0; i < count; i++) {
@@ -359,7 +351,6 @@ async function monthsFromInputs(
       days.push(scoreDay(area, activity, `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`, inputs));
       await yieldToEventLoop();
     }
-    const fromYmd = ymdInZone(new Date(), area.timezone);
     months.push({
       year: y,
       month: m,
@@ -378,7 +369,8 @@ export async function buildCalendar(
 ): Promise<CalendarDay[]> {
   const start = new Date(Date.UTC(year, month - 1, 1, 6, 0));
   const inputs = await loadCalendarInputs(area, start, daysInMonth(year, month));
-  return (await monthsFromInputs(area, activity, year, month, 1, inputs))[0].days;
+  const fromYmd = ymdInZone(new Date(), area.timezone);
+  return (await monthsFromInputs(area, activity, year, month, 1, inputs, fromYmd))[0].days;
 }
 
 export function upcomingDays(months: { days: CalendarDay[] }[], fromYmd: string, count = 14) {
@@ -424,15 +416,17 @@ async function computeCalendarRange(
   month: number,
   activity: ActivityId | "all",
   count: number,
+  fromYmd: string,
   budget: CalendarBudget = TIGHT_BUDGET,
 ) {
   const area = getArea(areaId);
   const start = new Date(Date.UTC(year, month - 1, 1, 6, 0));
   const inputs = await loadCalendarInputs(area, start, count * 32, budget);
-  return monthsFromInputs(area, activity, year, month, count, inputs);
+  return monthsFromInputs(area, activity, year, month, count, inputs, fromYmd);
 }
 
-const cachedCalendarRange = unstable_cache(computeCalendarRange, ["field-calendar-v4"], {
+// fromYmd is an argument so unstable_cache cannot reuse yesterday's yolo marks.
+const cachedCalendarRange = unstable_cache(computeCalendarRange, ["field-calendar-v5"], {
   revalidate: 300,
 });
 
@@ -443,7 +437,8 @@ export async function buildCalendarRange(
   activity: ActivityId | "all",
   count = 2,
 ) {
-  return cachedCalendarRange(area.id, year, month, activity, count);
+  const fromYmd = ymdInZone(new Date(), area.timezone);
+  return cachedCalendarRange(area.id, year, month, activity, count, fromYmd);
 }
 
 const calendarInflight = new Map<string, Promise<CalendarSnapshot>>();
@@ -452,9 +447,11 @@ const calendarRecent = new Map<string, { at: number; snap: CalendarSnapshot }>()
 const CALENDAR_RECENT_MS = 60_000;
 
 async function computeCalendarSnapshot(area: Area, activity: ActivityId | "all"): Promise<CalendarSnapshot> {
-  const now = clockParts(new Date(), area.timezone);
+  const at = new Date();
+  const now = clockParts(at, area.timezone);
+  const fromYmd = ymdInZone(at, area.timezone);
   const months = await monthsForCalendarSnapshot((budget) =>
-    computeCalendarRange(area.id, now.year, now.month, activity, 2, budget),
+    computeCalendarRange(area.id, now.year, now.month, activity, 2, fromYmd, budget),
   );
   return { v: 1, months };
 }
@@ -482,5 +479,5 @@ export async function getCalendarSnapshot(area: Area, activity: ActivityId | "al
 
 export async function getYoloDay(area: Area, activity: ActivityId | "all") {
   const snap = await getCalendarSnapshot(area, activity);
-  return calendarSnapshotYolo(snap);
+  return calendarSnapshotYolo(snap, ymdInZone(new Date(), area.timezone));
 }

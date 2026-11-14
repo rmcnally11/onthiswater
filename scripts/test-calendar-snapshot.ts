@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { monthsForCalendarSnapshot } from "../lib/calendar-budget.ts";
 import {
   calendarSnapshotKey,
   calendarSnapshotYolo,
   memorySnapshotStore,
+  pickYolo,
   readOrCreateCalendar,
   snapshotKey,
   type CalendarSnapshot,
@@ -17,7 +19,7 @@ function sleep(ms: number) {
 
 function day(
   date: string,
-  opts: { yolo?: boolean; windMph?: number | null; score?: number },
+  opts: { yolo?: boolean; windMph?: number | null; score?: number; amazing?: boolean },
 ): CalendarDay {
   const windMph = opts.windMph === undefined ? 10 : opts.windMph;
   return {
@@ -26,7 +28,7 @@ function day(
     confidence: windMph == null ? "astronomical" : "forecast",
     drivers: [],
     bestWindow: null,
-    amazing: false,
+    amazing: Boolean(opts.amazing),
     yolo: Boolean(opts.yolo),
     moon: { name: "Full", glyph: "●", phase: 0.5, illumination: 1, springNeap: "spring" },
     tides: [],
@@ -78,8 +80,9 @@ const [page, card, feed] = await Promise.all([
   }),
 ]);
 
-const pageYolo = calendarSnapshotYolo(page);
-const cardYolo = calendarSnapshotYolo(card);
+const storedToday = "2026-10-06";
+const pageYolo = calendarSnapshotYolo(page, storedToday);
+const cardYolo = calendarSnapshotYolo(card, storedToday);
 const days = feed.months[0]?.days ?? [];
 const text = calendarTweetText("Galveston", "galveston", "texas", days);
 const alt = calendarAlt("Galveston", days, "galveston");
@@ -97,28 +100,28 @@ assert.equal(text.includes("10-13"), false);
 assert.equal(pageYolo?.date === "2026-11-02", false);
 
 const again = await readOrCreateCalendar(store, key, async () => snapshot("2099-01-01", 1, 99));
-assert.equal(calendarSnapshotYolo(again)?.date, pageYolo?.date);
+assert.equal(calendarSnapshotYolo(again, storedToday)?.date, pageYolo?.date);
 assert.equal(again.months[0]?.days.find((d) => d.yolo)?.score, 8.2);
 
 const quiet = memorySnapshotStore<CalendarSnapshot>();
 const quietKey = calendarSnapshotKey("ascension", "all", "2026-10-06", "10");
 const missed = await readOrCreateCalendar(quiet, quietKey, async () => snapshot("2026-10-18", 8.2, null));
-assert.equal(calendarSnapshotYolo(missed), null);
+assert.equal(calendarSnapshotYolo(missed, storedToday), null);
 assert.equal(
   missed.months[0]?.days.every((d) => d.windMph == null),
   true,
 );
 assert.equal(await quiet.read(quietKey), null);
 const kept = await readOrCreateCalendar(quiet, quietKey, async () => snapshot("2026-10-15", 9.1, 8));
-assert.equal(calendarSnapshotYolo(kept)?.date, "2026-10-15");
+assert.equal(calendarSnapshotYolo(kept, storedToday)?.date, "2026-10-15");
 const reread = await readOrCreateCalendar(quiet, quietKey, async () => snapshot("2026-10-13", 7.4, 14));
-assert.equal(calendarSnapshotYolo(reread)?.date, "2026-10-15");
+assert.equal(calendarSnapshotYolo(reread, storedToday)?.date, "2026-10-15");
 assert.equal((await quiet.read(quietKey))?.months[0]?.days.find((d) => d.yolo)?.date, "2026-10-15");
 
 const calm = memorySnapshotStore<CalendarSnapshot>();
 const calmKey = calendarSnapshotKey("alphonse", "all", "2026-10-06", "15");
 const zero = await readOrCreateCalendar(calm, calmKey, async () => snapshot("2026-10-18", 8, 0));
-assert.equal(calendarSnapshotYolo(zero)?.date, "2026-10-18");
+assert.equal(calendarSnapshotYolo(zero, storedToday)?.date, "2026-10-18");
 assert.ok(await calm.read(calmKey));
 
 const race = memorySnapshotStore<CalendarSnapshot>();
@@ -133,8 +136,8 @@ const [good, late] = await Promise.all([
     return snapshot("2026-10-06", 7.4, null);
   }),
 ]);
-assert.equal(calendarSnapshotYolo(good)?.date, "2026-10-12");
-assert.equal(calendarSnapshotYolo(late)?.date, "2026-10-12");
+assert.equal(calendarSnapshotYolo(good, storedToday)?.date, "2026-10-12");
+assert.equal(calendarSnapshotYolo(late, storedToday)?.date, "2026-10-12");
 assert.equal(late.months[0]?.days.find((d) => d.windMph != null)?.windMph, 5);
 
 const budgets: number[] = [];
@@ -180,5 +183,52 @@ assert.equal(
   "calendar/v1/development/galveston/all/2026-10-06/10.json",
 );
 assert.equal(snapshotKey("galveston", "all", "2026-10-06", "10", "production"), "morning/v1/production/galveston/all/2026-10-06/10.json");
+
+const novemberDays = [
+  day("2026-11-13", { yolo: true, amazing: true, score: 9.1, windMph: 8 }),
+  day("2026-11-18", { score: 8.8, windMph: 9 }),
+  day("2026-11-24", { amazing: true, score: 8.2, windMph: 10 }),
+];
+const november: CalendarSnapshot = {
+  v: 1,
+  months: [
+    { year: 2026, month: 11, label: "November 2026", days: novemberDays },
+    {
+      year: 2026,
+      month: 12,
+      label: "December 2026",
+      days: [day("2026-12-02", { yolo: true, amazing: true, score: 9.6, windMph: 7 })],
+    },
+  ],
+};
+
+assert.equal(pickYolo(novemberDays, "2026-11-13")?.date, "2026-11-13");
+assert.equal(pickYolo(novemberDays, "2026-11-14")?.date, "2026-11-24");
+const left = calendarSnapshotYolo(november, "2026-11-14");
+assert.equal(left?.date, "2026-11-24");
+assert.equal(left?.amazing, true);
+assert.ok(left && left.date >= "2026-11-14");
+assert.equal(left?.date === "2026-11-13", false);
+assert.equal(calendarSnapshotYolo(november, "2026-11-13")?.date, "2026-11-13");
+assert.notEqual(left?.date, "2026-12-02");
+
+const onlyYesterday: CalendarSnapshot = {
+  v: 1,
+  months: [
+    {
+      year: 2026,
+      month: 11,
+      label: "November 2026",
+      days: [day("2026-11-13", { yolo: true, amazing: true, score: 9.1, windMph: 8 })],
+    },
+    { year: 2026, month: 12, label: "December 2026", days: [] },
+  ],
+};
+assert.equal(calendarSnapshotYolo(onlyYesterday, "2026-11-14"), null);
+
+const calendarSource = readFileSync(new URL("../lib/calendar.ts", import.meta.url), "utf8");
+assert.match(calendarSource, /\["field-calendar-v5"\]/);
+assert.match(calendarSource, /cachedCalendarRange\(area\.id, year, month, activity, count, fromYmd\)/);
+assert.match(calendarSource, /calendarSnapshotYolo\(snap, ymdInZone\(new Date\(\), area\.timezone\)\)/);
 
 console.log("ok calendar snapshot");

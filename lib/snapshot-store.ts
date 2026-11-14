@@ -225,9 +225,28 @@ export function calendarHasForecastWind(snap: CalendarSnapshot) {
   return (snap.months[0]?.days ?? []).some((day) => day.windMph != null);
 }
 
-/** Best dry day is the current month's outlined day. The next month is not a candidate. */
-export function calendarSnapshotYolo(snap: CalendarSnapshot): CalendarDay | null {
-  return snap.months[0]?.days.find((day) => day.yolo) ?? null;
+/** Same order the month uses when it outlines a day. Wet days lose. Amazing dry days win. */
+export function pickYolo(days: CalendarDay[], fromYmd: string): CalendarDay | null {
+  const pool = days.filter((d) => d.date >= fromYmd && d.windMph != null);
+  if (!pool.length) return null;
+  const wetRank = (d: CalendarDay) => (d.wx === "storm" ? 3 : d.wx === "rain" ? 2 : (d.precipChance ?? 0) >= 55 ? 1 : 0);
+  return [...pool].sort((a, b) => {
+    if (wetRank(a) !== wetRank(b)) return wetRank(a) - wetRank(b);
+    if (a.amazing !== b.amazing) return a.amazing ? -1 : 1;
+    if (b.score !== a.score) return b.score - a.score;
+    return (a.windMph ?? 99) - (b.windMph ?? 99);
+  })[0];
+}
+
+/**
+ * Best dry day left in the current month. `fromYmd` is today in the area's
+ * timezone. A stored flag on an earlier date is not reused. The next month
+ * is not a candidate.
+ */
+export function calendarSnapshotYolo(snap: CalendarSnapshot, fromYmd: string): CalendarDay | null {
+  const winner = pickYolo(snap.months[0]?.days ?? [], fromYmd);
+  if (!winner) return null;
+  return winner.yolo ? winner : { ...winner, yolo: true };
 }
 
 function sleep(ms: number) {

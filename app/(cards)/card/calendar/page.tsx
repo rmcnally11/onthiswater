@@ -2,6 +2,7 @@ import { getCalendarSnapshot } from "@/lib/calendar";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
 import { calendarSnapshotYolo, type CalendarMonthSnapshot } from "@/lib/snapshot-store";
+import { ymdInZone } from "@/lib/time";
 import { MonthGrid } from "@/components/month-grid";
 import { YoloBanner } from "@/components/yolo-banner";
 import { Waterline } from "@/components/viz/waterline";
@@ -81,7 +82,7 @@ export default async function CalendarCardPage({
   }
 
   const months = snap?.months ?? null;
-  const yolo = snap ? calendarSnapshotYolo(snap) : null;
+  const yolo = snap ? calendarSnapshotYolo(snap, ymdInZone(new Date(), area.timezone)) : null;
 
   return <CalendarCard area={area} months={months} yolo={yolo} />;
 }
