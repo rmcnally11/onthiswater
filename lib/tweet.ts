@@ -6,7 +6,7 @@ import { COAST_DEADLINE_MS, withDeadline } from "@/lib/deadline";
 import { DESKS } from "@/lib/desks";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
-import { snapshotHourStamp } from "@/lib/time";
+import { isYmd, snapshotHourStamp, ymdInZone } from "@/lib/time";
 import { windLabel } from "@/lib/wind";
 import { skyCopy } from "@/lib/wx";
 
@@ -87,9 +87,25 @@ function extraBit(briefing: Briefing) {
   return "";
 }
 
-export function morningTweetText(briefing: Briefing, yolo?: CalendarDay | null, kicker?: string) {
+/**
+ * Desk-local day this morning is about. A brief filed for an earlier morning
+ * keeps that date, so a historical card can still name a later dry day.
+ * A brief for today, or later, uses the desk clock and never a day already gone.
+ */
+function yoloToday(briefing: Briefing, now: Date) {
+  const wall = ymdInZone(now, briefing.area.timezone);
+  if (!isYmd(briefing.forDate) || briefing.forDate >= wall) return wall;
+  return briefing.forDate;
+}
+
+export function morningTweetText(
+  briefing: Briefing,
+  yolo?: CalendarDay | null,
+  kicker?: string,
+  now = new Date(),
+) {
   const place = PLACE[briefing.area.id] ?? `${theaterLabel(briefing.area.theater)} fishing`;
-  const yoloBit = yolo ? ` Best dry day left is ${yolo.date.slice(5)}.` : "";
+  const yoloBit = yolo && yolo.date >= yoloToday(briefing, now) ? ` Best dry day left is ${yolo.date.slice(5)}.` : "";
   const kick = kicker ? ` ${kicker}.` : "";
   const line = `${briefing.area.shortName} fishing weather: ${briefing.overall.toFixed(1)} this morning. ${place}. Wind ${windBit(briefing)}, ${skyBit(briefing)}.${extraBit(briefing)}${kick} ${PRODUCT_NAME} — a 1–10, not a bite.${yoloBit}`;
   return `${line}\n${deskHref(briefing.area.id, briefing.area.theater)}`;

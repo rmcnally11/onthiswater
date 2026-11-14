@@ -3,7 +3,7 @@ import { AmazingChip, MonthGrid } from "@/components/month-grid";
 import { RhymeStrip } from "@/components/rhyme-strip";
 import { YoloBanner } from "@/components/yolo-banner";
 import { calendarSnapshotYolo } from "@/lib/snapshot-store";
-import { clockParts } from "@/lib/time";
+import { clockParts, ymdInZone } from "@/lib/time";
 import type { ActivityId, Area } from "@/lib/types";
 
 export function CalendarSkeleton() {
@@ -50,7 +50,7 @@ export async function CalendarBody({
     if (current) {
       const snap = await getCalendarSnapshot(area, activity);
       months = snap.months;
-      yolo = calendarSnapshotYolo(snap);
+      yolo = calendarSnapshotYolo(snap, ymdInZone(new Date(), area.timezone));
     } else {
       months = await buildCalendarRange(area, year, month, activity, 2);
       yolo = months.flatMap((m) => m.days).find((d) => d.yolo) ?? null;
