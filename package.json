@@ -21,7 +21,8 @@
     "test:subscribe": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-subscribe-returns.ts",
     "test:time": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-time-format.ts",
     "test:decode": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-safe-decode.ts",
-    "test:dispatch": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-dispatch.ts"
+    "test:dispatch": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-dispatch.ts",
+    "test:wx": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-wx.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

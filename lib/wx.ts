@@ -14,12 +14,13 @@ export function skyFromText(text?: string | null): SkyKind | null {
   return null;
 }
 
+/** Open-Meteo WMO: 0–1 clear, 2/3/45/48 and drizzle 51–57 clouds, wet bands rain, 95+ storm. */
 export function skyFromWmo(code?: number | null): SkyKind | null {
   if (code == null || Number.isNaN(code)) return null;
   if (code >= 95) return "storm";
-  if (code >= 51) return "rain";
-  if (code >= 45 || (code >= 1 && code <= 3)) return "clouds";
-  if (code === 0) return "clear";
+  if ((code >= 61 && code <= 67) || (code >= 71 && code <= 77) || (code >= 80 && code <= 86)) return "rain";
+  if ((code >= 51 && code <= 57) || code === 2 || code === 3 || code === 45 || code === 48) return "clouds";
+  if (code === 0 || code === 1) return "clear";
   return null;
 }
 
