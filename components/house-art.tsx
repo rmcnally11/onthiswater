@@ -111,13 +111,17 @@ export function PrintSheet({ className = "" }: { className?: string }) {
 }
 
 export function BrandMark({ pixels = 36 }: { pixels?: number }) {
+  const small = pixels <= 32;
+  const src = small ? "/art/logo-v2-64.png" : "/art/logo-v2-128.png";
+  const intrinsic = small ? 64 : 128;
   return (
     <Image
-      src="/art/logo-square.jpg"
+      src={src}
       alt=""
-      width={pixels}
-      height={pixels}
+      width={intrinsic}
+      height={intrinsic}
       sizes={`${pixels}px`}
+      unoptimized
       className="shrink-0 rounded-md"
       style={{ width: pixels, height: pixels }}
     />
