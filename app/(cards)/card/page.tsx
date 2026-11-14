@@ -1,3 +1,4 @@
+import { DockDieselCopy } from "@/components/dock-diesel";
 import { getMorningSnapshot } from "@/lib/briefing";
 import { getArea } from "@/lib/data/areas";
 import { theaterLabel } from "@/lib/data/theaters";
@@ -7,6 +8,8 @@ import { WindCompass } from "@/components/viz/wind-compass";
 import { MoonDisk } from "@/components/viz/moon-disk";
 import { TideCurve } from "@/components/viz/tide-curve";
 import { Waterline } from "@/components/viz/waterline";
+import { isGulfFuelDesk, type DockDieselQuote } from "@/lib/dock-diesel";
+import { getDockDiesel } from "@/lib/dock-diesel-load";
 import type { Briefing, CalendarDay } from "@/lib/types";
 import type { Metadata } from "next";
 import { pageMeta } from "@/lib/seo";
@@ -24,10 +27,12 @@ export function MorningCard({
   area,
   briefing,
   yolo,
+  dockDiesel = null,
 }: {
   area: ReturnType<typeof getArea>;
   briefing: Briefing;
   yolo: CalendarDay | null;
+  dockDiesel?: DockDieselQuote | null;
 }) {
   const w = briefing.conditions.weather;
   const line = morningLine(briefing, yolo, { noScore: true });
@@ -41,6 +46,7 @@ export function MorningCard({
           </p>
           <h1 className="mt-1 font-heading text-5xl text-[color:var(--cream)]">{area.shortName}</h1>
           <p className="mt-2 max-w-3xl font-heading text-2xl leading-snug text-[color:var(--cream)]/80">{line}</p>
+          <DockDieselCopy theater={area.theater} quote={dockDiesel} compact />
         </div>
       </header>
       <Waterline className="my-4" />
@@ -89,12 +95,18 @@ export default async function MorningCardPage({
 }) {
   const q = await searchParams;
   const area = getArea(q.area);
+  const dieselPromise = isGulfFuelDesk(area.theater) ? getDockDiesel() : Promise.resolve(null);
   let briefing;
   let yolo = null;
+  let dockDiesel: DockDieselQuote | null = null;
   try {
-    const snap = await getMorningSnapshot(area.id, undefined, undefined, q.h);
+    const [snap, diesel] = await Promise.all([
+      getMorningSnapshot(area.id, undefined, undefined, q.h),
+      dieselPromise,
+    ]);
     briefing = snap.briefing;
     yolo = snap.yolo;
+    dockDiesel = diesel;
   } catch {
     briefing = null;
   }
@@ -107,5 +119,5 @@ export default async function MorningCardPage({
     );
   }
 
-  return <MorningCard area={area} briefing={briefing} yolo={yolo} />;
+  return <MorningCard area={area} briefing={briefing} yolo={yolo} dockDiesel={dockDiesel} />;
 }
