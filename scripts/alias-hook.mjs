@@ -12,8 +12,9 @@ export async function resolve(specifier, context, nextResolve) {
     return nextResolve(url.href, context);
   }
   // Node's type stripper does not apply Next's extensionless package entry.
-  if (specifier === "next/cache" || specifier === "next/server") {
-    const file = specifier === "next/cache" ? "cache.js" : "server.js";
+  if (specifier === "next/cache" || specifier === "next/server" || specifier === "next/headers") {
+    const file =
+      specifier === "next/cache" ? "cache.js" : specifier === "next/headers" ? "headers.js" : "server.js";
     const url = new URL(`../node_modules/next/${file}`, import.meta.url);
     return nextResolve(url.href, context);
   }

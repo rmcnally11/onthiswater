@@ -1,13 +1,20 @@
-import { getNewsletter, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
-import { LetterIssue } from "@/components/letter-issue";
-import { isYmd } from "@/lib/time";
-import { readCoastsPref } from "@/lib/prefs";
-import { resolveElectedCoasts } from "@/lib/coasts";
 import type { Metadata } from "next";
+import { LetterIssue } from "@/components/letter-issue";
+import { withFetchRevalidate, withHistoricalFetches } from "@/lib/external-fetch";
 import { letterWeekMeta } from "@/lib/letter-copy";
+import { getNewsletter, letterWeekId, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
 import { pageMeta } from "@/lib/seo";
+import { isPastYmd, isYmd } from "@/lib/time";
 
-export const dynamic = "force-dynamic";
+// Dynamic segments otherwise render per request and send `private, no-store`.
+// A passed Saturday is cached 30 days. This week's URL is redirected to /newsletter.
+export const revalidate = 2592000;
+export const fetchCache = "force-cache";
+export const dynamic = "error";
+
+function pastIssue(week: string) {
+  return isYmd(week) && isPastYmd(week, letterWeekId());
+}
 
 export async function generateMetadata({
   params,
@@ -27,36 +34,35 @@ export async function generateMetadata({
 
 export default async function WeekLetterPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ week: string }>;
-  searchParams: Promise<{ coasts?: string; desks?: string }>;
 }) {
-  const [{ week }, q] = await Promise.all([params, searchParams]);
-  const cookie = await readCoastsPref();
-  const coasts = resolveElectedCoasts({
-    coastsQuery: q.coasts,
-    desksQuery: q.desks,
-    cookie: cookie?.join(",") ?? null,
+  const { week } = await params;
+  if (!pastIssue(week)) {
+    return withFetchRevalidate(300, async () => {
+      let issue;
+      let error: string | null = null;
+      try {
+        issue = await withCoastWaters(await getNewsletter(isYmd(week) ? week : null), null);
+      } catch (e) {
+        error = e instanceof Error ? e.message : "The letter did not set.";
+      }
+      if (error || !issue) {
+        return (
+          <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
+            <p className="font-heading text-xl">The letter did not set.</p>
+            <p className="mt-2 text-sm opacity-80">{error}</p>
+          </div>
+        );
+      }
+      const tomorrows = await loadLetterTomorrows(issue);
+      return <LetterIssue issue={issue} coasts={null} weekPath tomorrows={tomorrows} />;
+    });
+  }
+
+  return withHistoricalFetches(async () => {
+    const issue = { ...(await getNewsletter(week)), frozen: true as const };
+    const tomorrows = await loadLetterTomorrows(issue);
+    return <LetterIssue issue={issue} coasts={null} weekPath tomorrows={tomorrows} />;
   });
-
-  let issue;
-  let error: string | null = null;
-  try {
-    issue = await withCoastWaters(await getNewsletter(isYmd(week) ? week : null), coasts);
-  } catch (e) {
-    error = e instanceof Error ? e.message : "The letter did not set.";
-  }
-
-  if (error || !issue) {
-    return (
-      <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
-        <p className="font-heading text-xl">The letter did not set.</p>
-        <p className="mt-2 text-sm opacity-80">{error}</p>
-      </div>
-    );
-  }
-
-  const tomorrows = await loadLetterTomorrows(issue);
-  return <LetterIssue issue={issue} coasts={coasts} weekPath tomorrows={tomorrows} />;
 }

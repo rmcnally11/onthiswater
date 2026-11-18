@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { incidentalNoise, recentLetterWeeks, type NewsletterIssue } from "@/lib/newsletter";
+import { LetterCoasts } from "@/components/letter-coasts";
 import { theaterLabel } from "@/lib/data/fundamentals";
 import { Waterline } from "@/components/viz/waterline";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +31,10 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
   const c = briefing?.conditions;
 
   return (
-    <article className="flex flex-col rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5">
+    <article
+      data-letter-theater={desk.theater}
+      className="flex flex-col rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="kicker text-[color:var(--copper)]">{desk.desk}</p>
@@ -184,14 +189,17 @@ export function LetterIssue({
     .join(", ");
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10" data-letter="">
+      <Suspense fallback={null}>
+        <LetterCoasts />
+      </Suspense>
       <header className="mx-auto max-w-3xl text-center">
         <p className="kicker text-[color:var(--copper)]">
           Saturday on your water · Vol. 1 · No. {issue.weekNumber}
         </p>
         <h1 className="page-title mt-3 text-[color:var(--cream)]">Saturday on your water.</h1>
         <p className="mt-3 text-sm text-[color:var(--cream)]/55">
-          {issue.rangeLabel} · {issue.monthName} fundamentals · {edition} · {liveDesks} of{" "}
+          {issue.rangeLabel} · {issue.monthName} fundamentals · <span data-letter-edition="">{edition}</span> · {liveDesks} of{" "}
           {issue.desks.length} {issue.desks.length === 1 ? "water" : "waters"}
           {issue.frozen ? " · frozen Saturday" : " · this week’s waters"}
         </p>
@@ -270,6 +278,7 @@ export function LetterIssue({
                 <a
                   key={`strip-${desk.areaId}`}
                   href={`/?area=${desk.areaId}&theater=${desk.theater}`}
+                  data-letter-theater={desk.theater}
                   className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--panel)] px-4 py-3"
                 >
                   <div className="flex items-center justify-between gap-3">

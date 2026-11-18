@@ -1,4 +1,5 @@
 import type { ActivityId, Briefing, CalendarDay } from "@/lib/types";
+import { parseActivity } from "@/lib/activity";
 import { getArea } from "@/lib/data/areas";
 import { getYoloDay } from "@/lib/calendar";
 import { loadConditions } from "@/lib/conditions";
@@ -7,12 +8,7 @@ import { loadOfficialLayers } from "@/lib/layers";
 import { readOrCreate, snapshotKey, snapshotStore, type MorningSnapshot } from "@/lib/snapshot-store";
 import { isYmd, parseHourStamp, snapshotHour, startOfDayInZone, ymdInZone } from "@/lib/time";
 
-const ACTIVITIES = new Set(["wade", "skiff", "kayak", "fly", "spin", "structure", "offshore", "all"]);
-
-export function parseActivity(raw?: string | null): ActivityId | "all" {
-  if (!raw || !ACTIVITIES.has(raw)) return "all";
-  return raw as ActivityId | "all";
-}
+export { parseActivity };
 
 export function parseBriefDate(raw?: string | null) {
   return isYmd(raw) ? raw : null;

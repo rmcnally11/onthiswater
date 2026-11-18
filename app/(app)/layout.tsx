@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { NavBusy } from "@/components/nav-busy";
+import { RememberVisit } from "@/components/remember-visit";
 import { SkipLink } from "@/components/skip-link";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -10,6 +11,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <>
       <Suspense fallback={null}>
         <NavBusy />
+        <RememberVisit />
       </Suspense>
       <SkipLink />
       <SiteHeader />

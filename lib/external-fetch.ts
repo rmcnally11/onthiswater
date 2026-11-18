@@ -1,4 +1,29 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { Agent } from "undici";
+
+/** Past mornings and past letters cache upstream reads for 30 days. */
+export const HISTORICAL_REVALIDATE = 2592000;
+
+const historicalFetch = new AsyncLocalStorage<number>();
+
+/**
+ * Run `fn` so `fetchExternal` uses `next: { revalidate }` instead of `cache: "no-store"`.
+ * A no-store fetch during render forces the page to `Cache-Control: private, no-store`,
+ * which the CDN will not keep.
+ */
+export function withFetchRevalidate<T>(seconds: number, fn: () => Promise<T>): Promise<T> {
+  return historicalFetch.run(seconds, fn);
+}
+
+export function withHistoricalFetches<T>(fn: () => Promise<T>): Promise<T> {
+  return withFetchRevalidate(HISTORICAL_REVALIDATE, fn);
+}
+
+export function fetchCacheFields(explicit?: RequestCache): { cache?: RequestCache; revalidate?: number } {
+  const historical = historicalFetch.getStore();
+  if (historical != null) return { revalidate: historical };
+  return { cache: explicit ?? "no-store" };
+}
 
 /**
  * Undici's default header timeout is 300 seconds. Next's patched fetch drops
@@ -64,14 +89,17 @@ export async function fetchExternal(
   const controller = new AbortController();
   const kill = setTimeout(() => controller.abort(), timeoutMs);
   let extra: ReturnType<typeof setTimeout> | undefined;
-  const request = globalThis.fetch(url, {
+  const fields = fetchCacheFields(init.cache);
+  const requestInit: RequestInit & { next?: { revalidate: number }; dispatcher: Agent } = {
     method: init.method,
     headers: init.headers,
     body: init.body,
-    cache: init.cache ?? "no-store",
     signal: controller.signal,
     dispatcher: agentFor(timeoutMs),
-  } as RequestInit);
+  };
+  if (fields.revalidate != null) requestInit.next = { revalidate: fields.revalidate };
+  else requestInit.cache = fields.cache;
+  const request = globalThis.fetch(url, requestInit);
   try {
     return await Promise.race([
       request,
