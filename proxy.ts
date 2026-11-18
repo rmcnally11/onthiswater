@@ -11,7 +11,7 @@ import {
 import { THEATER_IDS } from "@/lib/data/theaters";
 import { COAST_HUB_BY_SLUG } from "@/lib/coast-hubs";
 import { bookRequestStatus } from "@/lib/safe-decode";
-import { isYmd } from "@/lib/time";
+import { isPastYmd, isYmd, mostRecentSaturday, ymdInZone } from "@/lib/time";
 
 function rememberWater(request: NextRequest, res: NextResponse) {
   const fromQuery = request.nextUrl.searchParams.get("area") ?? request.nextUrl.searchParams.get("a");
@@ -54,6 +54,19 @@ function remember(request: NextRequest, res: NextResponse) {
   return rememberCoasts(request, rememberWater(request, res));
 }
 
+/** Today's dated morning URL is time-sensitive. Send it to the undated desk, which stays dynamic. */
+function todayMorningRedirect(request: NextRequest) {
+  const morning = request.nextUrl.pathname.match(/^\/morning\/([^/]+)\/(\d{4}-\d{2}-\d{2})$/);
+  if (!morning) return null;
+  const area = AREA_BY_ID[morning[1]];
+  const date = morning[2];
+  if (!area || !isYmd(date)) return null;
+  if (date !== ymdInZone(new Date(), area.timezone)) return null;
+  const dest = request.nextUrl.clone();
+  dest.pathname = `/morning/${area.id}`;
+  return NextResponse.redirect(dest, 307);
+}
+
 function morningQueryRedirect(request: NextRequest) {
   if (request.nextUrl.pathname !== "/morning") return null;
   const areaId = request.nextUrl.searchParams.get("area");
@@ -87,7 +100,21 @@ export function proxy(request: NextRequest) {
   const morning = morningQueryRedirect(request);
   if (morning) return morning;
 
-  return remember(request, NextResponse.next());
+  const today = todayMorningRedirect(request);
+  if (today) return today;
+
+  const issue = pathname.match(/^\/newsletter\/(\d{4}-\d{2}-\d{2})$/);
+  if (issue && isYmd(issue[1]) && !isPastYmd(issue[1], mostRecentSaturday())) {
+    const dest = request.nextUrl.clone();
+    dest.pathname = "/newsletter";
+    return NextResponse.redirect(dest, 307);
+  }
+
+  // Document responses stay free of Set-Cookie so the CDN can cache frozen pages.
+  // RememberVisit writes fb_water and fb_coasts in the browser instead.
+  // Redirects still set the cookie: /morning?area= and /subscribers drop the query
+  // before the next page can see it.
+  return NextResponse.next();
 }
 
 export const config = {

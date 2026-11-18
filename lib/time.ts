@@ -71,6 +71,11 @@ export function clockParts(date: Date, timeZone: string) {
   };
 }
 
+/** `YYYY-MM-DD` string order matches calendar order. */
+export function isPastYmd(date: string, today: string) {
+  return date < today;
+}
+
 export function ymdInZone(date: Date, timeZone: string) {
   const { year, month, day } = clockParts(date, timeZone);
   return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;

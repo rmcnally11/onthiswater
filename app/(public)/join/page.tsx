@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { MorningMail } from "@/components/morning-mail";
-import { desksForCoasts, isAllCoasts, letterDeskForArea, resolveElectedCoasts } from "@/lib/coasts";
-import { readCoastsPref, readWaterPref } from "@/lib/prefs";
+import { JoinMail } from "@/components/join-mail";
 import { Waterline } from "@/components/viz/waterline";
 import { JsonLd } from "@/components/json-ld";
 import { faqJsonLd, HOME_FAQ, pageMeta } from "@/lib/seo";
-
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = pageMeta({
   title: "Join the list",
@@ -15,23 +11,7 @@ export const metadata: Metadata = pageMeta({
   path: "/join",
 });
 
-export default async function JoinPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ coasts?: string; desks?: string }>;
-}) {
-  const q = await searchParams;
-  const [cookie, water] = await Promise.all([readCoastsPref(), readWaterPref()]);
-  const coasts = resolveElectedCoasts({
-    coastsQuery: q.coasts,
-    desksQuery: q.desks,
-    cookie: cookie?.join(",") ?? null,
-  });
-  const signupDesks =
-    coasts && !isAllCoasts(coasts)
-      ? desksForCoasts(coasts)
-      : [letterDeskForArea(water?.areaId) ?? "galveston"];
-
+export default function JoinPage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <JsonLd data={faqJsonLd(HOME_FAQ)} />
@@ -48,12 +28,7 @@ export default async function JoinPage({
         </p>
         <Waterline className="mt-4" />
       </header>
-      <MorningMail
-        source="Letter"
-        defaultDesks={signupDesks}
-        defaultDesk={signupDesks[0]}
-        join
-      />
+      <JoinMail />
     </div>
   );
 }
