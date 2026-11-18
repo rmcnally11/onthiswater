@@ -1,4 +1,5 @@
 import { fetchExternal } from "@/lib/external-fetch";
+import { normalizeJoinRef } from "@/lib/join-ref";
 
 /** On This Water list — Costal Cavaliers workspace. IDs are public; the token is not. */
 export const AIRTABLE_BASE = "app3GRvkkpJdnVIKy";
@@ -18,6 +19,17 @@ export const AIRTABLE_FIELDS = {
 } as const;
 
 export type ListSource = "Brief" | "Letter" | "Morning" | "Operator";
+
+/**
+ * Single line text on Subscribers. Not created here — the column may be absent.
+ * Writes use the field name, and only on a new row.
+ */
+export const AIRTABLE_ENTRY_FIELD = "Entry";
+
+export function isUnknownAirtableField(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return /UNKNOWN_FIELD_NAME|Unknown field name/i.test(message);
+}
 
 function token() {
   return process.env.AIRTABLE_API_KEY?.trim() || process.env.AIRTABLE_TOKEN?.trim() || "";
@@ -70,6 +82,8 @@ export async function upsertAirtableSubscriber(input: {
   cadence?: string[];
   name?: string;
   zip?: string;
+  /** Page tag from `?ref=`. Written only when this call creates the row. */
+  ref?: string;
 }) {
   const found = await airtable<{ records: AirtableRecord[] }>(
     `?${new URLSearchParams({
@@ -104,11 +118,23 @@ export async function upsertAirtableSubscriber(input: {
     await airtable(`/${existing.id}`, { method: "PATCH", body: JSON.stringify({ fields, typecast: true }) });
     return { id: existing.id, created: false, excluded };
   }
-  const created = await airtable<{ id: string }>("", {
+  const entry = normalizeJoinRef(input.ref);
+  const createdFields = entry ? { ...fields, [AIRTABLE_ENTRY_FIELD]: entry } : fields;
+  try {
+    const created = await createAirtableRow(createdFields);
+    return { id: created.id, created: true, excluded: false };
+  } catch (error) {
+    if (!entry || !isUnknownAirtableField(error)) throw error;
+    const created = await createAirtableRow(fields);
+    return { id: created.id, created: true, excluded: false };
+  }
+}
+
+function createAirtableRow(fields: Record<string, unknown>) {
+  return airtable<{ id: string }>("", {
     method: "POST",
     body: JSON.stringify({ fields, typecast: true }),
   });
-  return { id: created.id, created: true, excluded: false };
 }
 
 export async function listAirtableSubscribers(opts?: { timeoutMs?: number }) {

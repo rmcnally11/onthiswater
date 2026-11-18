@@ -15,6 +15,7 @@ import {
 import { BrandMark } from "@/components/house-art";
 import { Waterline } from "@/components/viz/waterline";
 import { JoinLink } from "@/components/join-link";
+import { joinHref, joinRefForPath } from "@/lib/join-ref";
 import { getArea, neighborArea } from "@/lib/data/areas";
 import { PRODUCT_LINE, PRODUCT_NAME } from "@/lib/brand";
 import { letterNavCopy } from "@/lib/letter-copy";
@@ -95,6 +96,7 @@ function HeaderWithWater() {
 function HeaderBar({ links }: { links: NavItem[] }) {
   const pathname = usePathname();
   const onJoin = activePath(pathname, "/join");
+  const joinTo = joinHref(joinRefForPath(pathname ?? ""));
   const shown = links.map((l) => {
     const copy = letterNavCopy(pathname, l.label, l.dek);
     return { ...l, label: copy.label, dek: copy.dek };
@@ -126,7 +128,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
           ))}
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
-          <JoinLink on={onJoin} compact />
+          <JoinLink href={joinTo} on={onJoin} compact />
           <Sheet>
             <SheetTrigger
               render={
@@ -159,7 +161,7 @@ function HeaderBar({ links }: { links: NavItem[] }) {
               </SheetHeader>
               <Waterline className="px-4" />
               <div className="px-4 pt-3">
-                <JoinLink on={onJoin} className="w-full">
+                <JoinLink href={joinTo} on={onJoin} className="w-full">
                   Join the list
                 </JoinLink>
               </div>

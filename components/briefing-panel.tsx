@@ -119,7 +119,7 @@ export function BriefingPanel({
           <DockPostedHandoff theater={area.theater} areaId={area.id} compact />
         </div>
         <div className="border-t border-[color:var(--line)] px-5 py-4 md:px-7">
-          <JoinStrip />
+          <JoinStrip place={`desk-${area.id}`} />
         </div>
         <div className="border-t border-[color:var(--line)] px-3 py-4 md:px-6">
           <TideCurve

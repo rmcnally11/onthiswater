@@ -31,7 +31,7 @@ export function AllWaterSkeleton() {
         <PrintSheet className="mt-4" />
         <FieldLetterHeader priority className="mt-4" />
       </div>
-      <JoinStrip />
+      <JoinStrip place="home" />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {DESKS.map((desk) => (
           <div
@@ -110,7 +110,7 @@ export function AllWaterBoard({
         <DockPostedHandoff compact />
       </div>
 
-      <JoinStrip />
+      <JoinStrip place="home" />
 
       {live === 0 ? (
         <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">

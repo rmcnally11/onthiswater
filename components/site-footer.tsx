@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/house-art";
 import { PRODUCT_NAME } from "@/lib/brand";
 import { dockPostedHomeHref } from "@/lib/dock-posted";
+import { joinHref, joinRefForPath } from "@/lib/join-ref";
 import { letterChromeLegend } from "@/lib/letter-copy";
 
 export function SiteFooter() {
+  const pathname = usePathname() ?? "";
   const legend =
-    letterChromeLegend(usePathname() ?? "") ??
+    letterChromeLegend(pathname) ??
     "Scores are 1–10. They are not a bite. Not a chart you steer by.";
   return (
     <footer className="border-t border-[color:var(--line)] px-4 py-8 pb-[max(1.75rem,env(safe-area-inset-bottom))] text-center">
@@ -19,7 +21,7 @@ export function SiteFooter() {
       <p className="text-sm text-[color:var(--cream)]/80">
         Want this morning in the inbox?{" "}
         <a
-          href="/join"
+          href={joinHref(joinRefForPath(pathname))}
           className="font-medium text-[color:var(--copper)] underline decoration-[color:var(--copper)]/40 underline-offset-2"
         >
           Join the list

@@ -217,7 +217,7 @@ export function LetterIssue({
         <FieldLetterHeader priority className="mt-4 text-left" />
       </header>
 
-      <JoinStrip className="mx-auto max-w-3xl" />
+      <JoinStrip place="newsletter" className="mx-auto max-w-3xl" />
 
       <nav className="flex flex-wrap justify-center gap-2 text-xs">
         <a

@@ -5,10 +5,21 @@ import { MorningMail } from "@/components/morning-mail";
 import { cookieValue } from "@/lib/cookie-jar";
 import { COASTS_COOKIE } from "@/lib/coasts";
 import { joinDesks } from "@/lib/join-desks";
+import { joinRefFromSearch } from "@/lib/join-ref";
 import { WATER_COOKIE, parseWaterPref } from "@/lib/pref-codec";
 
 let clientDesks = "galveston";
 let clientDesksKey = "";
+let clientRef = "";
+let clientRefKey = "";
+
+function clientRefSnapshot() {
+  const key = window.location.search;
+  if (key === clientRefKey) return clientRef;
+  clientRefKey = key;
+  clientRef = joinRefFromSearch(key);
+  return clientRef;
+}
 
 function clientJoinSnapshot() {
   const key = `${window.location.search}|${document.cookie}`;
@@ -27,11 +38,13 @@ function clientJoinSnapshot() {
 
 export function JoinMail() {
   const desks = useSyncExternalStore(() => () => {}, clientJoinSnapshot, () => "galveston");
+  const entry = useSyncExternalStore(() => () => {}, clientRefSnapshot, () => "");
   const chosen = desks.split(",");
   return (
     <MorningMail
       key={chosen.join(",")}
       source="Letter"
+      entry={entry}
       defaultDesks={chosen}
       defaultDesk={chosen[0]}
       join

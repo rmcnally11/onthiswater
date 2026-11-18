@@ -1,7 +1,8 @@
 import { JoinLink } from "@/components/join-link";
+import { joinHref } from "@/lib/join-ref";
 import { cn } from "@/lib/utils";
 
-export function JoinStrip({ className }: { className?: string }) {
+export function JoinStrip({ className, place }: { className?: string; place?: string }) {
   return (
     <aside
       data-testid="join-strip"
@@ -16,7 +17,7 @@ export function JoinStrip({ className }: { className?: string }) {
           This morning and the Saturday letter, in the inbox.
         </p>
       </div>
-      <JoinLink compact className="w-full sm:w-auto" />
+      <JoinLink href={joinHref(place)} compact className="w-full sm:w-auto" />
     </aside>
   );
 }
