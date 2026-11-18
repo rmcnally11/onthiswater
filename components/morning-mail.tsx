@@ -8,6 +8,7 @@ import type { TheaterId } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { subscribePayload } from "@/lib/join-ref";
 
 export function MorningMail({
   defaultDesk,
@@ -15,12 +16,14 @@ export function MorningMail({
   compact = false,
   join = false,
   source = "Brief",
+  entry = "",
 }: {
   defaultDesk?: string;
   defaultDesks?: string[];
   compact?: boolean;
   join?: boolean;
   source?: "Brief" | "Letter" | "Morning";
+  entry?: string;
 }) {
   const homeDesk = letterDeskForArea(defaultDesk) ?? "galveston";
   const [name, setName] = useState("");
@@ -55,7 +58,7 @@ export function MorningMail({
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, zip, desks, cadence, source }),
+        body: JSON.stringify(subscribePayload({ name, email, zip, desks, cadence, source, ref: entry })),
       });
       const json = (await res.json()) as { error?: string; note?: string };
       if (!res.ok) {

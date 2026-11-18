@@ -34,7 +34,7 @@ export function pageMeta(opts: {
 }): Metadata {
   const url = canonicalUrl(opts.path);
   const image = opts.image ?? DEFAULT_OG_IMAGE;
-  const ogHeight = image.startsWith("/api/") ? 520 : 630;
+  const ogHeight = 630;
   const title = opts.absoluteTitle ? { absolute: opts.title } : opts.title;
   return {
     title,

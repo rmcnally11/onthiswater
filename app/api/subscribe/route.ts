@@ -10,6 +10,7 @@ import {
   encodeCoasts,
   parseCadence,
 } from "@/lib/coasts";
+import { normalizeJoinRef } from "@/lib/join-ref";
 
 const SOURCES = new Set<ListSource>(["Brief", "Letter", "Morning", "Operator"]);
 
@@ -42,7 +43,15 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  let body: { email?: string; name?: string; zip?: string; desks?: unknown; cadence?: unknown; source?: string };
+  let body: {
+    email?: string;
+    name?: string;
+    zip?: string;
+    desks?: unknown;
+    cadence?: unknown;
+    source?: string;
+    ref?: string;
+  };
   try {
     body = (await request.json()) as {
       email?: string;
@@ -51,6 +60,7 @@ export async function POST(request: NextRequest) {
       desks?: unknown;
       cadence?: unknown;
       source?: string;
+      ref?: string;
     };
   } catch {
     return NextResponse.json({ error: "Send JSON." }, { status: 400 });
@@ -73,8 +83,9 @@ export async function POST(request: NextRequest) {
   }
   const cadence = parseCadence(body.cadence);
   const source = SOURCES.has(body.source as ListSource) ? (body.source as ListSource) : "Brief";
+  const ref = normalizeJoinRef(body.ref);
   try {
-    const result = await addSubscriber(email, desks, source, cadence, { name, zip });
+    const result = await addSubscriber(email, desks, source, cadence, { name, zip, ref });
     const coasts = coastsForDesks(result.subscriber.desks);
     if (!result.excluded) {
       enqueueWelcome(after, () =>

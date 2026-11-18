@@ -7,6 +7,7 @@ import { theaterLabel } from "@/lib/data/theaters";
 import { layoutTideChart } from "@/lib/tide-chart";
 import { loadTides } from "@/lib/tides";
 import type { TideChartLayout } from "@/lib/tide-chart";
+import { ogTideLabelTop, OG_TIDE_CHART_HEIGHT, OG_TIDE_CHART_WIDTH, OG_TIDE_HEIGHT, OG_TIDE_WIDTH } from "@/lib/og-tide";
 import { CHARCOAL, HULL, PAPER, PEACH, SAND, SUN, TEAL } from "@/lib/house";
 
 function TideChartOg({ layout }: { layout: TideChartLayout }) {
@@ -25,7 +26,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
           style={{
             position: "absolute",
             left: 0,
-            top: t.y - fontSize * 0.6,
+            top: ogTideLabelTop("y", { y: t.y, fontSize, height, padB }),
             width: padL - 8,
             display: "flex",
             justifyContent: "flex-end",
@@ -43,7 +44,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
           style={{
             position: "absolute",
             left: m.x - 10,
-            top: m.type === "H" ? m.y - fontSize * 1.6 : m.y + 6,
+            top: ogTideLabelTop(m.type, { y: m.y, fontSize, height, padB }),
             width: 20,
             display: "flex",
             justifyContent: "center",
@@ -78,7 +79,7 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
             style={{
               position: "absolute",
               left: m.x,
-              top: height - padB + 4,
+              top: ogTideLabelTop("day", { fontSize, height, padB }),
               fontSize,
               color: "rgba(74,71,66,0.45)",
               fontFamily: "ui-sans-serif, system-ui, sans-serif",
@@ -94,8 +95,8 @@ function TideChartOg({ layout }: { layout: TideChartLayout }) {
 export const runtime = "nodejs";
 export const revalidate = 300;
 
-const WIDTH = 1200;
-const HEIGHT = 520;
+const WIDTH = OG_TIDE_WIDTH;
+const HEIGHT = OG_TIDE_HEIGHT;
 
 function chrome(opts: { kicker: string; title: string; stage: string; source: string; children?: ReactNode }) {
   return (
@@ -202,8 +203,8 @@ export async function GET(request: NextRequest) {
       hourly: tides.hourly,
       nextHiLo: tides.nextHiLo,
       timezone: area.timezone,
-      width: 1128,
-      height: 340,
+      width: OG_TIDE_CHART_WIDTH,
+      height: OG_TIDE_CHART_HEIGHT,
     });
     const stage = `${tides.stage.replace("-", " ")}${
       tides.predictedNow != null ? ` · ${tides.predictedNow.toFixed(2)} ft` : ""
