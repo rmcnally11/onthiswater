@@ -44,7 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const dated: MetadataRoute.Sitemap = [];
-  for (let i = 0; i <= 14; i++) {
+  for (let i = 1; i <= 14; i++) {
     const day = addDaysYmd(today, -i);
     for (const areaId of AREA_IDS) {
       dated.push({
