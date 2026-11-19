@@ -26,7 +26,8 @@
     "test:decode": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-safe-decode.ts",
     "test:cache": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-cdn-cache.ts",
     "test:dispatch": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-dispatch.ts",
-    "test:wx": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-wx.ts"
+    "test:wx": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-wx.ts",
+    "test:sitemap": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-sitemap.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
