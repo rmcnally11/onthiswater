@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:sister": "node --experimental-strip-types scripts/test-dock-posted.ts",
+    "test:dock-diesel": "node --experimental-strip-types scripts/test-dock-diesel.ts",
     "test:hab": "node --experimental-strip-types scripts/test-hab.ts",
     "test:openmeteo": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-openmeteo.ts",
     "test:upstream": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-upstream-timeout.ts",
