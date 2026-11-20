@@ -1,0 +1,634 @@
+{
+  "fetchedFrom": "https://www.onthiswater.com/api/letter",
+  "fetchedAt": "2026-11-15T01:41:09.504Z",
+  "body": {
+    "source": "https://onthiswater.com/newsletter",
+    "permalink": "https://onthiswater.com/newsletter/2026-11-14",
+    "github": "https://github.com/rmcnally11/onthiswater",
+    "instructions": "https://onthiswater.com/for-the-letter",
+    "title": "Saturday on your water",
+    "subtitle": "November 9 – November 15, 2026. Wind, sky, and the water",
+    "description": "Saturday on the coasts you asked for — Galveston, Venice, Islamorada, Andros, Ascension, San Juan, Alphonse. Wind, sky, and the water. A Texas list does not carry Seychelles.",
+    "imageAlt": "Saturday letter. Wind, sky, and the water on the coasts you asked for.",
+    "shareText": "Week of November 9. November has a rule: Texas flounder are closed the entire month. Do not keep one. Reds still peak. Drum arrive with the first real front. Keys bones like the cooler water. Andros winter singles begin, which is why people book this week in March. Long leaders. Soft landings. Fewer boats. Wind, sky, and the water. Not a bite. Not a chart you steer by.",
+    "weekId": "2026-11-14",
+    "weekLabel": "Week of November 9",
+    "weekNumber": 46,
+    "year": 2026,
+    "month": 11,
+    "monthName": "November",
+    "rangeLabel": "November 9 – November 15, 2026",
+    "letter": "November has a rule: Texas flounder are closed the entire month. Do not keep one. Reds still peak. Drum arrive with the first real front. Keys bones like the cooler water. Andros winter singles begin, which is why people book this week in March. Long leaders. Soft landings. Fewer boats.",
+    "frozen": false,
+    "generatedAt": "2026-11-15T01:41:09.448Z",
+    "desks": [
+      {
+        "desk": "Texas water",
+        "kicker": "Wind is the tide",
+        "theater": "texas",
+        "areaId": "galveston",
+        "href": "https://onthiswater.com/?area=galveston&theater=texas",
+        "shortName": "Galveston",
+        "headline": "Redfish today. Push West and East Bay grass as the wind lets water back in.",
+        "conditions": "A breeze, 10 mph E. Partly cloudy. 72° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass steady.",
+        "shareText": "Galveston. A breeze, 10 mph E. Partly cloudy. 72° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass steady. Not a bite.",
+        "imageAlt": "Galveston. A breeze, 10 mph E. Partly cloudy.",
+        "confidence": "high",
+        "wind": "10 mph E",
+        "sky": "Partly cloudy",
+        "precipChance": 3,
+        "pressureMb": 1017.3,
+        "pressureTrendMb": 0.2,
+        "pressureCite": "NOAA 8771450 · Galveston Pier 21",
+        "waterTempF": 71.6,
+        "tide": "incoming",
+        "anomalyFt": 0.9720000000000002,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Black drum",
+          "Sheepshead"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8771450 Galveston Pier 21.",
+          "On this coast the wind often outruns the printed tide. Observed water is +0.97 ft versus the prediction."
+        ],
+        "hab": {
+          "hot": false,
+          "level": "background",
+          "where": "No fish kills reported.",
+          "when": "October 3-4, 2026",
+          "source": "TPWD"
+        },
+        "seasonal": "Flounder closed the entire month. Do not keep one. Reds still peak. Trout on the last warm grass. Drum show up with the first real front.",
+        "error": null
+      },
+      {
+        "desk": "Louisiana water",
+        "kicker": "River is the tide",
+        "theater": "louisiana",
+        "areaId": "venice",
+        "href": "https://onthiswater.com/?area=venice&theater=louisiana",
+        "shortName": "Venice",
+        "headline": "Redfish today. Flood the west-bank ponds, then the south passes if the bulls are in.",
+        "conditions": "Light air, 4 mph NNE. Mostly Clear. 69° water. Incoming tide, close to the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Venice. Light air, 4 mph NNE. Mostly Clear. 69° water. Incoming tide, close to the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Venice. Light air, 4 mph NNE. Mostly Clear.",
+        "confidence": "high",
+        "wind": "4 mph NNE",
+        "sky": "Mostly Clear",
+        "precipChance": 0,
+        "pressureMb": 1022.5,
+        "pressureTrendMb": 1.1,
+        "pressureCite": "NOAA 8760721 · Pilottown",
+        "waterTempF": 68.5,
+        "tide": "incoming",
+        "anomalyFt": 0.188,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Black drum"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8760721 Pilottown.",
+          "Observed water is close to the astronomical prediction — the table is telling the truth today."
+        ],
+        "hab": {
+          "hot": false,
+          "level": "see NOAA",
+          "where": "Louisiana has no FWC-style daily K. brevis grid. NOAA NCCOS gulf forecast is the cite.",
+          "when": null,
+          "source": "NOAA NCCOS"
+        },
+        "seasonal": "Flounder closed the entire month. Reds still eat. Trout on the last warm ponds. A front is a plan.",
+        "error": null
+      },
+      {
+        "desk": "Florida water",
+        "kicker": "Educated fish, short windows",
+        "theater": "florida",
+        "areaId": "islamorada",
+        "href": "https://onthiswater.com/?area=islamorada&theater=florida",
+        "shortName": "Islamorada",
+        "headline": "Bonefish today. Wait for the flood; Islamorada does not forgive a low-slack cast.",
+        "conditions": "A breeze, 9 mph NE. Partly Cloudy. 78° water. Low slack tide, a little above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Islamorada. A breeze, 9 mph NE. Partly Cloudy. 78° water. Low slack tide, a little above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Islamorada. A breeze, 9 mph NE. Partly Cloudy.",
+        "confidence": "high",
+        "wind": "9 mph NE",
+        "sky": "Partly Cloudy",
+        "precipChance": 1,
+        "pressureMb": 1017.7,
+        "pressureTrendMb": 1.8,
+        "pressureCite": "NOAA 8723970 · Vaca Key, Florida Bay",
+        "waterTempF": 77.7,
+        "tide": "low-slack",
+        "anomalyFt": 0.29700000000000004,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Bonefish",
+          "Hogfish",
+          "Yellowtail snapper"
+        ],
+        "why": [
+          "Tide is low slack from NOAA 8723970 Vaca Key, Florida Bay.",
+          "Observed water is close to the astronomical prediction — the table is telling the truth today."
+        ],
+        "hab": {
+          "hot": false,
+          "level": "background",
+          "where": "No FWC K. brevis above background within 90 km of Islamorada in the last eight days.",
+          "when": null,
+          "source": "FWC-FWRI"
+        },
+        "seasonal": "Bones like the cooler water. Backcountry reds. Boca and Jupiter snook still typically open — verify FWC. Tarpon are mostly gone.",
+        "error": null
+      },
+      {
+        "desk": "Bahamas water",
+        "kicker": "Bonefish country",
+        "theater": "bahamas",
+        "areaId": "andros",
+        "href": "https://onthiswater.com/?area=andros&theater=bahamas",
+        "shortName": "Andros",
+        "headline": "Bonefish today. West-side white sand — schools, then the double-digit singles.",
+        "conditions": "Light air, 5 mph NNW. Clear. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet.",
+        "shareText": "Andros. Light air, 5 mph NNW. Clear. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet. Not a bite.",
+        "imageAlt": "Andros. Light air, 5 mph NNW. Clear.",
+        "confidence": "medium",
+        "wind": "5 mph NNW",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1016.7,
+        "pressureTrendMb": null,
+        "pressureCite": "Open-Meteo modeled",
+        "waterTempF": null,
+        "tide": "incoming",
+        "anomalyFt": null,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Bonefish"
+        ],
+        "why": [
+          "Tide is incoming (modeled — no NOAA gauge on this water).",
+          "Clear · 0%. Sky is workable."
+        ],
+        "hab": null,
+        "seasonal": "Winter singles begin. This is why people book Andros in November. Long leaders. Soft landings. Fewer boats.",
+        "error": null
+      },
+      {
+        "desk": "Mexico water",
+        "kicker": "Two oceans",
+        "theater": "mexico",
+        "areaId": "ascension",
+        "href": "https://onthiswater.com/?area=ascension&theater=mexico",
+        "shortName": "Ascension",
+        "headline": "Bonefish today. Flood the Ascension flats off Punta Allen — bones first, permit if you earned it.",
+        "conditions": "Light air, 3 mph NE. Rain · 86%. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet.",
+        "shareText": "Ascension. Light air, 3 mph NE. Rain · 86%. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet. Not a bite.",
+        "imageAlt": "Ascension. Light air, 3 mph NE. Rain · 86%.",
+        "confidence": "medium",
+        "wind": "3 mph NE",
+        "sky": "Drizzle",
+        "precipChance": 86,
+        "pressureMb": 1014.9,
+        "pressureTrendMb": null,
+        "pressureCite": "Open-Meteo modeled",
+        "waterTempF": null,
+        "tide": "incoming",
+        "anomalyFt": null,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Bonefish"
+        ],
+        "why": [
+          "Tide is incoming (modeled — no NOAA gauge on this water).",
+          "Rain · 86%. Sight water goes blind. Wait it out or switch to stained marsh."
+        ],
+        "hab": null,
+        "seasonal": "Ascension winter bones. Mujeres sail start to show. Baja rooster still eat on a warm afternoon.",
+        "error": null
+      },
+      {
+        "desk": "Puerto Rico water",
+        "kicker": "Urban tarpon, then the drop",
+        "theater": "puerto-rico",
+        "areaId": "san-juan",
+        "href": "https://onthiswater.com/?area=san-juan&theater=puerto-rico",
+        "shortName": "San Juan",
+        "headline": "Snook today. Condado and the bay — urban tarpon, then the north drop if you switched to Offshore.",
+        "conditions": "A breeze, 9 mph SE. Clear. 86° water. Incoming tide, a little above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "San Juan. A breeze, 9 mph SE. Clear. 86° water. Incoming tide, a little above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "San Juan. A breeze, 9 mph SE. Clear.",
+        "confidence": "high",
+        "wind": "9 mph SE",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1016.7,
+        "pressureTrendMb": 1.8,
+        "pressureCite": "NOAA 9755371 · San Juan, La Puntilla",
+        "waterTempF": 85.8,
+        "tide": "incoming",
+        "anomalyFt": 0.59,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Snook"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 9755371 San Juan, La Puntilla.",
+          "The gauge is +0.59 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. East-island bones. A north swell is a plan, not a cancellation.",
+        "error": null
+      },
+      {
+        "desk": "Seychelles water",
+        "kicker": "GT country",
+        "theater": "seychelles",
+        "areaId": "alphonse",
+        "href": "https://onthiswater.com/?area=alphonse&theater=seychelles",
+        "shortName": "Alphonse",
+        "headline": "Giant trevally today. Flood St François and the lagoon — bones first, then a GT on the rim.",
+        "conditions": "Light air, 6 mph ESE. Drizzle. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet.",
+        "shareText": "Alphonse. Light air, 6 mph ESE. Drizzle. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet. Not a bite.",
+        "imageAlt": "Alphonse. Light air, 6 mph ESE. Drizzle.",
+        "confidence": "medium",
+        "wind": "6 mph ESE",
+        "sky": "Drizzle",
+        "precipChance": 49,
+        "pressureMb": 1013.8,
+        "pressureTrendMb": null,
+        "pressureCite": "Open-Meteo modeled",
+        "waterTempF": null,
+        "tide": "incoming",
+        "anomalyFt": null,
+        "moon": "Waxing crescent · mid",
+        "window": "First light · incoming — First light on incoming water.",
+        "inPlay": [
+          "Bonefish",
+          "Giant trevally"
+        ],
+        "why": [
+          "Tide is incoming (modeled — no NOAA gauge on this water).",
+          "Drizzle. Clouds steal the window on bones and permit."
+        ],
+        "hab": null,
+        "seasonal": "Prime. Alphonse and Farquhar both look like the photograph. You came for a GT.",
+        "error": null
+      },
+      {
+        "desk": "North Carolina water",
+        "kicker": "The Stream or the wind",
+        "theater": "north-carolina",
+        "areaId": "hatteras",
+        "href": "https://onthiswater.com/?area=hatteras&theater=north-carolina",
+        "shortName": "Hatteras",
+        "headline": "Redfish today. Oregon Inlet and the first sound drains — then the Stream if the wind lets you go.",
+        "conditions": "A breeze, 12 mph NW. Mostly Clear. 58° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Hatteras. A breeze, 12 mph NW. Mostly Clear. 58° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Hatteras. A breeze, 12 mph NW. Mostly Clear.",
+        "confidence": "high",
+        "wind": "12 mph NW",
+        "sky": "Mostly Clear",
+        "precipChance": 0,
+        "pressureMb": 1019,
+        "pressureTrendMb": 2.3,
+        "pressureCite": "NOAA 8654467 · USCG Station Hatteras",
+        "waterTempF": 58.1,
+        "tide": "incoming",
+        "anomalyFt": 0.934,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Southern flounder",
+          "Speckled trout",
+          "Redfish"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8654467 USCG Station Hatteras.",
+          "The gauge is +0.93 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. Reds still eat. Flounder may already be shut — verify NCDMF. A norther is a plan.",
+        "error": null
+      },
+      {
+        "desk": "North Carolina water",
+        "kicker": "Short run to blue water",
+        "theater": "north-carolina",
+        "areaId": "morehead-city",
+        "href": "https://onthiswater.com/?area=morehead-city&theater=north-carolina",
+        "shortName": "Morehead",
+        "headline": "Redfish today. Beaufort Inlet and the first Crystal Coast points — reds inside, Big Rock outside.",
+        "conditions": "Light air, 4 mph NW. Clear. 62° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Morehead. Light air, 4 mph NW. Clear. 62° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Morehead. Light air, 4 mph NW. Clear.",
+        "confidence": "high",
+        "wind": "4 mph NW",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1019.3,
+        "pressureTrendMb": 2.1,
+        "pressureCite": "NOAA 8656483 · Beaufort, Duke Marine Lab",
+        "waterTempF": 62.2,
+        "tide": "incoming",
+        "anomalyFt": 0.952,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Southern flounder"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8656483 Beaufort, Duke Marine Lab.",
+          "The gauge is +0.95 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. Reds still eat. Flounder may already be shut — verify NCDMF. A norther is a plan.",
+        "error": null
+      },
+      {
+        "desk": "North Carolina water",
+        "kicker": "Cape Fear inshore, then the shoals",
+        "theater": "north-carolina",
+        "areaId": "wilmington",
+        "href": "https://onthiswater.com/?area=wilmington&theater=north-carolina",
+        "shortName": "Wilmington",
+        "headline": "Redfish today. Flood Wrightsville and the Cape Fear marsh — reds and trout, not a Hatteras Stream sentence.",
+        "conditions": "Light air, 6 mph NW. Clear. 66° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Wilmington. Light air, 6 mph NW. Clear. 66° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Wilmington. Light air, 6 mph NW. Clear.",
+        "confidence": "high",
+        "wind": "6 mph NW",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1020.2,
+        "pressureTrendMb": 2.2,
+        "pressureCite": "NOAA 8658163 · Wrightsville Beach",
+        "waterTempF": 66,
+        "tide": "incoming",
+        "anomalyFt": 0.851,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Southern flounder",
+          "Black drum"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8658163 Wrightsville Beach.",
+          "The gauge is +0.85 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. Reds still eat. Flounder may already be shut — verify NCDMF. A norther is a plan.",
+        "error": null
+      },
+      {
+        "desk": "South Carolina water",
+        "kicker": "Marsh reds, harbor bulls",
+        "theater": "south-carolina",
+        "areaId": "charleston",
+        "href": "https://onthiswater.com/?area=charleston&theater=south-carolina",
+        "shortName": "Charleston",
+        "headline": "Redfish today. Flood the harbor creeks and the first marsh — reds, then a bull if they are in.",
+        "conditions": "Light air, 4 mph N. Clear. 66° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Charleston. Light air, 4 mph N. Clear. 66° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Charleston. Light air, 4 mph N. Clear.",
+        "confidence": "high",
+        "wind": "4 mph N",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1021.2,
+        "pressureTrendMb": 1.8,
+        "pressureCite": "NOAA 8665530 · Charleston, Cooper River Entrance",
+        "waterTempF": 66.4,
+        "tide": "incoming",
+        "anomalyFt": 0.7809999999999997,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Southern flounder",
+          "Black drum"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8665530 Charleston, Cooper River Entrance.",
+          "The gauge is +0.78 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. Marsh reds. A north swell is a plan, not a cancellation.",
+        "error": null
+      },
+      {
+        "desk": "South Carolina water",
+        "kicker": "Port Royal Sound",
+        "theater": "south-carolina",
+        "areaId": "hilton-head",
+        "href": "https://onthiswater.com/?area=hilton-head&theater=south-carolina",
+        "shortName": "Hilton Head",
+        "headline": "Redfish today. Flood Port Royal and Calibogue — same Lowcountry fish, a bigger tide than Charleston.",
+        "conditions": "Light air, 6 mph NNW. Clear. 66° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Hilton Head. Light air, 6 mph NNW. Clear. 66° water. Incoming tide, about a foot above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Hilton Head. Light air, 6 mph NNW. Clear.",
+        "confidence": "high",
+        "wind": "6 mph NNW",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1021.4,
+        "pressureTrendMb": 2,
+        "pressureCite": "NOAA 8670870 · Fort Pulaski, Savannah River",
+        "waterTempF": 65.8,
+        "tide": "incoming",
+        "anomalyFt": 0.9689999999999999,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Southern flounder",
+          "Black drum"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8670870 Fort Pulaski, Savannah River.",
+          "The gauge is +0.97 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. Marsh reds. A north swell is a plan, not a cancellation.",
+        "error": null
+      },
+      {
+        "desk": "South Carolina water",
+        "kicker": "Grand Strand to Winyah",
+        "theater": "south-carolina",
+        "areaId": "myrtle-beach",
+        "href": "https://onthiswater.com/?area=myrtle-beach&theater=south-carolina",
+        "shortName": "Myrtle",
+        "headline": "Redfish today. Murrells Inlet and the Winyah edges — surf pompano, then a creek red.",
+        "conditions": "Light air, 5 mph NNW. Clear. 65° water. Incoming tide, a little above the table. Waxing crescent moon. Glass rising.",
+        "shareText": "Myrtle. Light air, 5 mph NNW. Clear. 65° water. Incoming tide, a little above the table. Waxing crescent moon. Glass rising. Not a bite.",
+        "imageAlt": "Myrtle. Light air, 5 mph NNW. Clear.",
+        "confidence": "high",
+        "wind": "5 mph NNW",
+        "sky": "Clear",
+        "precipChance": 0,
+        "pressureMb": 1022.2,
+        "pressureTrendMb": 2.3,
+        "pressureCite": "NOAA 8661070 · Springmaid Pier, Myrtle Beach",
+        "waterTempF": 65.3,
+        "tide": "incoming",
+        "anomalyFt": 0.7170000000000001,
+        "moon": "Waxing crescent · mid",
+        "window": "Last light · incoming — Last light on incoming water.",
+        "inPlay": [
+          "Redfish",
+          "Speckled trout",
+          "Southern flounder",
+          "Florida pompano"
+        ],
+        "why": [
+          "Tide is incoming from NOAA 8661070 Springmaid Pier, Myrtle Beach.",
+          "The gauge is +0.72 ft off the predicted table — read the water, not just the printout."
+        ],
+        "hab": null,
+        "seasonal": "Cooler water. Marsh reds. A north swell is a plan, not a cancellation.",
+        "error": null
+      },
+      {
+        "desk": "Azores water",
+        "kicker": "Blue-marlin country",
+        "theater": "azores",
+        "areaId": "horta",
+        "href": "https://onthiswater.com/?area=horta&theater=azores",
+        "shortName": "Horta",
+        "headline": "Blue marlin are around. The Faial Channel and Princess Alice — blue marlin, not a marsh morning. Work the leeward edge — troll if the fly will not go.",
+        "conditions": "Windy, 20 mph WNW. Rain · 83%. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet.",
+        "shareText": "Horta. Windy, 20 mph WNW. Rain · 83%. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet. Not a bite.",
+        "imageAlt": "Horta. Windy, 20 mph WNW. Rain · 83%.",
+        "confidence": "medium",
+        "wind": "20 mph WNW",
+        "sky": "Overcast",
+        "precipChance": 83,
+        "pressureMb": 1012.1,
+        "pressureTrendMb": null,
+        "pressureCite": "Open-Meteo modeled",
+        "waterTempF": null,
+        "tide": "incoming",
+        "anomalyFt": null,
+        "moon": "Waxing crescent · mid",
+        "window": "First light · incoming — First light on incoming water.",
+        "inPlay": [],
+        "why": [
+          "Tide is incoming (modeled — no NOAA gauge on this water).",
+          "Rain · 83%. Marsh still fishes in a shower. A soaker is a different day."
+        ],
+        "hab": null,
+        "seasonal": "Off-season. The photograph was July. Tuna if a boat is still running.",
+        "error": null
+      },
+      {
+        "desk": "Azores water",
+        "kicker": "Early-season second door",
+        "theater": "azores",
+        "areaId": "sao-miguel",
+        "href": "https://onthiswater.com/?area=sao-miguel&theater=azores",
+        "shortName": "S. Miguel",
+        "headline": "Tuna (blackfin / yellowfin) are around. The Ponta Delgada south drop — tuna first, a billfish if you earned the early season.",
+        "conditions": "Windy, 16 mph WSW. Rain · 100%. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet.",
+        "shareText": "S. Miguel. Windy, 16 mph WSW. Rain · 100%. Incoming tide. Waxing crescent moon. Glass no 3-hour change yet. Not a bite.",
+        "imageAlt": "S. Miguel. Windy, 16 mph WSW. Rain · 100%.",
+        "confidence": "medium",
+        "wind": "16 mph WSW",
+        "sky": "Drizzle",
+        "precipChance": 100,
+        "pressureMb": 1012.3,
+        "pressureTrendMb": null,
+        "pressureCite": "Open-Meteo modeled",
+        "waterTempF": null,
+        "tide": "incoming",
+        "anomalyFt": null,
+        "moon": "Waxing crescent · mid",
+        "window": "First light · incoming — First light on incoming water.",
+        "inPlay": [],
+        "why": [
+          "Tide is incoming (modeled — no NOAA gauge on this water).",
+          "Rain · 100%. Marsh still fishes in a shower. A soaker is a different day."
+        ],
+        "hab": null,
+        "seasonal": "Off-season. The photograph was July. Tuna if a boat is still running.",
+        "error": null
+      }
+    ],
+    "peaks": [
+      {
+        "name": "Redfish",
+        "theaters": "Texas · Louisiana · Florida · North Carolina · South Carolina",
+        "why": "Texas and Louisiana main event. Tails in flooded grass, wakes on shell, winter schools on mud, bulls in the passes. Keys: backcountry only, not oceanside. Boca Harbor yes. Jupiter is a snook desk."
+      },
+      {
+        "name": "Speckled trout",
+        "theaters": "Texas · Louisiana · North Carolina · South Carolina",
+        "why": "Same bays as the red, a foot deeper. Birds are GPS. Heat drives them off the flat at midday. Cold drives them to guts and mud. Louisiana lives on this fish."
+      },
+      {
+        "name": "Southern flounder",
+        "theaters": "Texas · Louisiana · North Carolina · South Carolina",
+        "why": "Fall migration to the Gulf when water drops a few degrees. Males leave first. Spring return. Texas closed Nov 1–Dec 14. Louisiana typically closed Oct 15–Nov 30 — verify LDWF."
+      },
+      {
+        "name": "Bonefish",
+        "theaters": "Florida · Bahamas · Mexico · Puerto Rico · Seychelles",
+        "why": "Absent in Texas. Keys: big, few, educated. Bahamas: the capital — winter singles, summer schools of 3–5 lb fish. Puerto Rico: east islands more than San Juan. Seychelles: Alphonse and Farquhar sand, not Mahé town water."
+      },
+      {
+        "name": "Gag grouper",
+        "theaters": "Florida · Texas · North Carolina · South Carolina",
+        "why": "Florida Gulf wrecks and the Big Bend rocks. Texas has him farther offshore than a bay brief. Not a Keys hogfish."
+      },
+      {
+        "name": "Florida pompano",
+        "theaters": "Texas · Louisiana · Florida · North Carolina · South Carolina",
+        "why": "Surf and clean sand. Texas and Florida beaches in the cool months. Not a permit. Not a jack."
+      },
+      {
+        "name": "Greater amberjack",
+        "theaters": "Texas · Louisiana · Florida · Bahamas · Mexico · Puerto Rico · North Carolina · South Carolina",
+        "why": "Gulf and Atlantic wrecks. Not a jack crevalle. Not a GT. Do not headline a flat with an AJ."
+      },
+      {
+        "name": "Giant trevally",
+        "theaters": "Seychelles",
+        "why": "Indo-Pacific. Alphonse, St François, Farquhar — the reason the atoll week exists. Absent from the Atlantic and the Gulf. Do not print a GT on Galveston or Condado."
+      }
+    ],
+    "closures": [
+      {
+        "title": "Texas flounder",
+        "body": "Closed Nov 1–Dec 14. The fall run is real in October. This week the correct fish is a red or a trout.",
+        "theaters": [
+          "texas"
+        ]
+      },
+      {
+        "title": "Louisiana flounder",
+        "body": "Typically closed Oct 15–Nov 30. LDWF, not TPWD. Verify the week you keep one.",
+        "theaters": [
+          "louisiana"
+        ]
+      }
+    ],
+    "disclaimer": "Wind, sky, and the water. Not a bite. Not for navigation."
+  }
+}
