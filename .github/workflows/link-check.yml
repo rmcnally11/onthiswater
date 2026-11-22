@@ -1,0 +1,46 @@
+# Checks external links written in source. Does not crawl the live site.
+name: Link check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    # Sunday 16:00 UTC. That is 10:00am CST and 11:00am CDT (America/Chicago).
+    - cron: "0 16 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lychee:
+    name: External links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check links in source
+        uses: lycheeverse/lychee-action@v2.9.0
+        with:
+          # Same inputs as lychee.toml. Flags are repeated here so the
+          # workflow does not depend on someone remembering the config file.
+          # Excludes live in lychee.toml (and .lycheeignore, when present).
+          args: >-
+            --no-progress
+            --max-concurrency 8
+            --max-retries 3
+            --retry-wait-time 2
+            --timeout 20
+            --accept 200,204,206,429
+            --config lychee.toml
+            app
+            components
+            lib
+            data
+            "**/*.md"
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

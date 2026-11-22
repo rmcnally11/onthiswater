@@ -1,0 +1,20 @@
+# Truly dead URLs. Left in the source on purpose. Each one is a TODO for a human.
+# Lychee treats each non-comment line as a regular expression.
+
+# TODO: 404. Only remains in docs/pr-22-link-verdicts.md, which already records
+# the replacement https://tpwd.texas.gov/about/administration-divisions/coastal-fisheries
+^https://tpwd\.texas\.gov/landwater/water/habitats/coastal/?$
+
+# TODO: 404 in a browser (the lychee agent is 403). Only remains in
+# docs/pr-22-link-verdicts.md, which already records that the ramp list was removed.
+^https://www\.wlf\.louisiana\.gov/page/boat-ramps/?$
+
+# TODO: 404. GitHub raw needs /owner/repo/<ref>/<path>. This bare origin is an
+# allowlist line in SUBSTACK.md and TWITTER.md, not a file.
+^https://raw\.githubusercontent\.com/rmcnally11/onthiswater/?$
+
+# TODO: 404. Grand Isle moved to
+# https://www.lastateparks.com/parks-preserves/grand-isle-state-park
+# The old /historic-sites/ URL is still in lib/layers.ts (acc-grand-isle-sp).
+# The host is also excluded in lychee.toml because Cloudflare challenges this checker.
+^https://www\.lastateparks\.com/historic-sites/grand-isle-state-park/?$
