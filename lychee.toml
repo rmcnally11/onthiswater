@@ -1,0 +1,114 @@
+# Dead-link check for source files. Lychee reads this from the repo root.
+# It does not crawl onthiswater.com. The workflow passes the same limits on
+# the command line.
+#
+# Local run (lychee 0.24.2, the version lychee-action v2.9.0 installs):
+#   lychee --no-progress --max-concurrency 8 --max-retries 3 \
+#     --retry-wait-time 2 --timeout 20 --accept '200,204,206,429' \
+#     app components lib data '**/*.md'
+
+no_progress = true
+max_concurrency = 8
+max_retries = 3
+retry_wait_time = 2
+timeout = 20
+
+# 429 is "slow down", not a broken link. Listing it here keeps a rate limit
+# from failing the build. Redirects are followed, so the final status is what
+# counts. Specifying accept replaces lychee's default range.
+accept = ["200", "204", "206", "429"]
+
+# External web links only. Relative paths, file://, and mailto stay out of
+# the request list. mailto and tel are also excluded below.
+scheme = ["http", "https"]
+include_mail = false
+exclude_loopback = true
+
+# Cap how hard one host is hit. max_concurrency is the global cap.
+host_concurrency = 4
+
+# Source, data, and Markdown. Default lychee extensions skip .ts/.tsx/.json.
+extensions = [
+  "md",
+  "mdx",
+  "markdown",
+  "ts",
+  "tsx",
+  "js",
+  "jsx",
+  "mjs",
+  "json",
+]
+
+exclude_path = [
+  "(^|/)node_modules(/|$)",
+  "(^|/)\\.git(/|$)",
+  "(^|/)\\.next(/|$)",
+]
+
+exclude = [
+  # Our own site. The firewall rate-limits non-browser clients, so a CI
+  # check of onthiswater.com fails even when the page is up.
+  '^https?://(www\.)?onthiswater\.com',
+
+  # Local dev servers.
+  '^https?://localhost([:/?#]|$)',
+  '^https?://127\.0\.0\.1([:/?#]|$)',
+
+  # Vercel preview hostnames (including https://….vercel.app in the README).
+  'vercel\.app',
+
+  # Not http(s) pages.
+  '^mailto:',
+  '^tel:',
+
+  # Placeholder hosts and example addresses.
+  '^https?://(www\.)?example\.(com|org|net)([:/?#]|$)',
+
+  # Template and placeholder URLs. These are not requestable:
+  # JS template literals (${station}), map tiles ({z}/{x}/{y}), and
+  # tokens such as YYYY-MM-DD. Lychee percent-encodes braces to %7B/%7D.
+  '\$\{',
+  '%7[Bb]',
+  '\{[A-Za-z]',
+  'YYYY-MM-DD',
+
+  # Not documents. A bare GET is the wrong check, and this workflow has no
+  # API keys (GITHUB_TOKEN only, for GitHub links).
+  # Airtable's token screen is a PerimeterX challenge (403) unless you are
+  # signed in. The subscribers table URL is still checked.
+  '^https://airtable\.com/create/tokens/?$',
+  # Vercel docs still send signed-in users to /dashboard. Anonymous clients
+  # get 404 "not publicly accessible".
+  '^https://vercel\.com/dashboard/?$',
+  # Resend answers 401 {"name":"missing_api_key"} without a key.
+  '^https://api\.resend\.com/emails/?$',
+  '^https://api\.resend\.com/emails/batch/?$',
+  # NOAA CO-OPS datagetter is alive and answers 400 "Product cannot be null"
+  # until the code adds query parameters. The API host root is 403 JSON.
+  '^https://api\.tidesandcurrents\.noaa\.gov/?$',
+  '^https://api\.tidesandcurrents\.noaa\.gov/api/prod/datagetter/?$',
+  # USGS IV is alive and answers 400 until the code adds sites and parameterCd.
+  '^https://waterservices\.usgs\.gov/nwis/iv/?$',
+  # Open-Meteo forecast is the same shape: the code adds coordinates. A bare
+  # GET is slow and not a page.
+  '^https://api\.open-meteo\.com/v1/forecast/?$',
+
+  # Cloudflare returns 403 to this checker. These pages were opened outside
+  # lychee and they load: Bahia Honda, John Pennekamp, Cayo Costa, and the
+  # Azores government portal (www.azores.gov.pt redirects there).
+  # lastateparks.com is the same challenge. Its one in-repo URL is also a
+  # real 404 and is listed in .lycheeignore.
+  '^https?://([^/]+\.)?floridastateparks\.org',
+  '^https?://([^/]+\.)?azores\.gov\.pt',
+  '^https?://(www\.)?lastateparks\.com',
+
+  # GitHub-hosted runners are refused, and the pages are up from elsewhere.
+  # TxGIO returns 200 to a browser and 403 to Actions.
+  '^https://data\.geographic\.texas\.gov/?$',
+  # LDWF recreational finfish returns 200 to a browser. Actions gets 405.
+  # The removed boat-ramps URL is a separate 404 in .lycheeignore.
+  '^https://www\.wlf\.louisiana\.gov/page/recreational-saltwater-finfish/?$',
+  # The Good Pirate's Almanac returns 200 outside Actions and 403 on a runner.
+  '^https://thegoodpiratesalmanac\.substack\.com',
+]
