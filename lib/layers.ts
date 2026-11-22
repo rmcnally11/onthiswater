@@ -610,7 +610,7 @@ const ACCESS: OfficialPoint[] = [
     lon: -89.955,
     kind: "access",
     source: "Louisiana State Parks",
-    sourceUrl: "https://www.lastateparks.com/historic-sites/grand-isle-state-park",
+    sourceUrl: "https://www.lastateparks.com/parks-preserves/grand-isle-state-park",
     detail: "Campground, pier, surf. NOAA 8761724 is on this island.",
   },
   {

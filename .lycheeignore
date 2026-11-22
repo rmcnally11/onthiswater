@@ -12,9 +12,3 @@
 # TODO: 404. GitHub raw needs /owner/repo/<ref>/<path>. This bare origin is an
 # allowlist line in SUBSTACK.md and TWITTER.md, not a file.
 ^https://raw\.githubusercontent\.com/rmcnally11/onthiswater/?$
-
-# TODO: 404. Grand Isle moved to
-# https://www.lastateparks.com/parks-preserves/grand-isle-state-park
-# The old /historic-sites/ URL is still in lib/layers.ts (acc-grand-isle-sp).
-# The host is also excluded in lychee.toml because Cloudflare challenges this checker.
-^https://www\.lastateparks\.com/historic-sites/grand-isle-state-park/?$
