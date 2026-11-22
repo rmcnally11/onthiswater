@@ -102,13 +102,13 @@ exclude = [
   '^https?://([^/]+\.)?floridastateparks\.org',
   '^https?://([^/]+\.)?azores\.gov\.pt',
   '^https?://(www\.)?lastateparks\.com',
+
+  # GitHub-hosted runners are refused, and the pages are up from elsewhere.
+  # TxGIO returns 200 to a browser and 403 to Actions.
+  '^https://data\.geographic\.texas\.gov/?$',
+  # LDWF recreational finfish returns 200 to a browser. Actions gets 405.
+  # The removed boat-ramps URL is a separate 404 in .lycheeignore.
+  '^https://www\.wlf\.louisiana\.gov/page/recreational-saltwater-finfish/?$',
+  # The Good Pirate's Almanac returns 200 outside Actions and 403 on a runner.
+  '^https://thegoodpiratesalmanac\.substack\.com',
 ]
-
-# These two hosts answer 403 to the default lychee agent and 200 to a browser.
-# A global browser agent makes Airtable and bahamas.com fail their bot checks,
-# so the browser agent is limited to the hosts that need it.
-[hosts."data.geographic.texas.gov"]
-headers = { "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" }
-
-[hosts."www.wlf.louisiana.gov"]
-headers = { "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" }
