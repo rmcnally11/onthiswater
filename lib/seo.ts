@@ -177,11 +177,11 @@ export function letterCanonicalUrl(path: string) {
   return `${LETTER_WWW_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-/** Absolute form of the og:image these pages already emit (`metadataBase` + `/og.jpg`). */
+/** Same `/og.jpg` the pages already use, on the www host. */
 export function letterOgImageUrl(image: string = DEFAULT_OG_IMAGE) {
   if (/^https?:\/\//.test(image)) return image;
   const path = image.startsWith("/") ? image : `/${image}`;
-  return `https://${PRODUCT_DOMAIN}${path}`;
+  return `${LETTER_WWW_ORIGIN}${path}`;
 }
 
 export function letterArticleJsonLd(opts: {
