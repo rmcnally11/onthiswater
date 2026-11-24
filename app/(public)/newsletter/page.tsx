@@ -1,8 +1,11 @@
-import { getNewsletter, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
+import { getNewsletter, letterWeekId, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
 import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
+import { JsonLd } from "@/components/json-ld";
 import { LetterIssue } from "@/components/letter-issue";
 import { resolveElectedCoasts } from "@/lib/coasts";
+import { LETTER_SEO } from "@/lib/letter-copy";
 import { readCoastsPref } from "@/lib/prefs";
+import { letterArticleJsonLd, letterPageTitle } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +21,16 @@ export default async function NewsletterPage({
     desksQuery: q.desks,
     cookie: cookie?.join(",") ?? null,
   });
+  const jsonLd = (
+    <JsonLd
+      data={letterArticleJsonLd({
+        headline: letterPageTitle(LETTER_SEO.title),
+        description: LETTER_SEO.description,
+        path: "/newsletter",
+        datePublished: letterWeekId(),
+      })}
+    />
+  );
 
   let issue;
   let error: string | null = null;
@@ -30,6 +43,7 @@ export default async function NewsletterPage({
   if (error || !issue) {
     return (
       <div className="space-y-6">
+        {jsonLd}
         <PrintSheet />
         <FieldLetterHeader priority />
         <div className="rounded-2xl border border-rose-400/40 bg-rose-50 p-6 text-rose-900">
@@ -42,5 +56,10 @@ export default async function NewsletterPage({
   }
 
   const tomorrows = await loadLetterTomorrows(issue);
-  return <LetterIssue issue={issue} coasts={coasts} tomorrows={tomorrows} />;
+  return (
+    <>
+      {jsonLd}
+      <LetterIssue issue={issue} coasts={coasts} tomorrows={tomorrows} />
+    </>
+  );
 }

@@ -157,3 +157,71 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
     })),
   };
 }
+
+/** Apex redirects here. Letter JSON-LD page URLs use this host. */
+export const LETTER_WWW_ORIGIN = "https://www.onthiswater.com";
+
+const LETTER_AUTHOR = "Robert McNally";
+const LETTER_PUBLISHER = "The Good Pirate's Almanac";
+const LETTER_SERIES_URL = "https://thegoodpiratesalmanac.substack.com";
+
+/** Same string as the root layout title template. */
+const ROOT_TITLE_TEMPLATE = "%s — On This Water";
+
+export function letterPageTitle(title: string) {
+  return ROOT_TITLE_TEMPLATE.replace("%s", title);
+}
+
+export function letterCanonicalUrl(path: string) {
+  if (!path || path === "/") return `${LETTER_WWW_ORIGIN}/`;
+  return `${LETTER_WWW_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/** Same `/og.jpg` the pages already use, on the www host. */
+export function letterOgImageUrl(image: string = DEFAULT_OG_IMAGE) {
+  if (/^https?:\/\//.test(image)) return image;
+  const path = image.startsWith("/") ? image : `/${image}`;
+  return `${LETTER_WWW_ORIGIN}${path}`;
+}
+
+export function letterArticleJsonLd(opts: {
+  headline: string;
+  description: string;
+  path: string;
+  /** Saturday date, `YYYY-MM-DD`. Omit when the page has no letter date. */
+  datePublished?: string;
+  image?: string;
+}) {
+  const url = letterCanonicalUrl(opts.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: opts.headline,
+    description: opts.description,
+    ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
+    url,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    image: letterOgImageUrl(opts.image),
+    author: { "@type": "Person", name: LETTER_AUTHOR },
+    publisher: { "@type": "Organization", name: LETTER_PUBLISHER },
+    isPartOf: {
+      "@type": "CreativeWork",
+      name: LETTER_PUBLISHER,
+      url: LETTER_SERIES_URL,
+    },
+  };
+}
+
+/** Breadcrumb URLs use the www origin, same as the letter Article. */
+export function letterBreadcrumbJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: letterCanonicalUrl(item.path),
+    })),
+  };
+}

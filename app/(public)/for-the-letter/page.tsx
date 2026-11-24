@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
 import { Waterline } from "@/components/viz/waterline";
 import { GITHUB_REPO, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
 import { DESKS, deskChoiceLabel } from "@/lib/desks";
 import { LETTER_DISCLAIMER } from "@/lib/letter-copy";
-import { pageMeta } from "@/lib/seo";
+import { letterArticleJsonLd, letterPageTitle, pageMeta } from "@/lib/seo";
+
+const TITLE = "For the Saturday letter";
+const DESCRIPTION =
+  "Substack may only reprint On This Water. The Saturday letter is wind, sky, and the water. Morning and calendar pictures are screenshots of this site.";
 
 export const metadata: Metadata = pageMeta({
-  title: "For the Saturday letter",
-  description:
-    "Substack may only reprint On This Water. The Saturday letter is wind, sky, and the water. Morning and calendar pictures are screenshots of this site.",
+  title: TITLE,
+  description: DESCRIPTION,
   path: "/for-the-letter",
   imageAlt: "Rules for reprinting the Saturday letter. Wind, sky, and the water.",
 });
@@ -23,6 +27,13 @@ const DESK_HREFS = DESKS.map((desk) => [
 export default function ForTheLetterPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
+      <JsonLd
+        data={letterArticleJsonLd({
+          headline: letterPageTitle(TITLE),
+          description: DESCRIPTION,
+          path: "/for-the-letter",
+        })}
+      />
       <header>
         <p className="kicker text-[color:var(--copper)]">Source of truth</p>
         <h1 className="page-title mt-3 text-[color:var(--cream)]">
