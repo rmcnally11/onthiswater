@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PRODUCT_DOMAIN, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
+import { PRODUCT_NAME, SITE_URL } from "@/lib/brand";
 import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE } from "@/lib/house";
 
 export const HOME_TITLE =
@@ -18,9 +18,8 @@ export function ogImageForArea(areaId: string) {
 }
 
 export function canonicalUrl(path: string) {
-  const origin = siteOrigin();
-  if (!path || path === "/") return `${origin}/`;
-  return `${origin}${path.startsWith("/") ? path : `/${path}`}`;
+  if (!path || path === "/") return `${SITE_URL}/`;
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export function pageMeta(opts: {
@@ -34,7 +33,8 @@ export function pageMeta(opts: {
 }): Metadata {
   const url = canonicalUrl(opts.path);
   const image = opts.image ?? DEFAULT_OG_IMAGE;
-  const ogHeight = 630;
+  const alt = opts.imageAlt ?? (image === DEFAULT_OG_IMAGE ? DEFAULT_OG_ALT : opts.title);
+  const share = { url: image, width: 1200, height: 630, alt };
   const title = opts.absoluteTitle ? { absolute: opts.title } : opts.title;
   return {
     title,
@@ -47,13 +47,13 @@ export function pageMeta(opts: {
       url,
       siteName: PRODUCT_NAME,
       type: "website",
-      images: [{ url: image, width: 1200, height: ogHeight, alt: opts.imageAlt ?? (image === DEFAULT_OG_IMAGE ? DEFAULT_OG_ALT : opts.title) }],
+      images: [share],
     },
     twitter: {
       card: "summary_large_image",
       title: opts.title,
       description: opts.description,
-      images: [image],
+      images: [share],
     },
   };
 }
@@ -80,7 +80,7 @@ export function webAppJsonLd() {
     operatingSystem: "Web",
     description: HOME_DESCRIPTION,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    publisher: { "@type": "Organization", name: PRODUCT_NAME, url: `https://${PRODUCT_DOMAIN}` },
+    publisher: { "@type": "Organization", name: PRODUCT_NAME, url: SITE_URL },
   };
 }
 

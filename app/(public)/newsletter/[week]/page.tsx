@@ -4,6 +4,7 @@ import { LetterIssue } from "@/components/letter-issue";
 import { withFetchRevalidate, withHistoricalFetches } from "@/lib/external-fetch";
 import { letterWeekMeta } from "@/lib/letter-copy";
 import { getNewsletter, letterWeekId, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
+import { indexableLetterArchives } from "@/lib/archive-paths";
 import { letterArticleJsonLd, letterBreadcrumbJsonLd, pageMeta } from "@/lib/seo";
 import { isPastYmd, isYmd } from "@/lib/time";
 
@@ -15,6 +16,10 @@ export const dynamic = "error";
 
 function pastIssue(week: string) {
   return isYmd(week) && isPastYmd(week, letterWeekId());
+}
+
+export function generateStaticParams() {
+  return indexableLetterArchives().map((week) => ({ week }));
 }
 
 export async function generateMetadata({

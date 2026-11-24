@@ -5,6 +5,7 @@ import { getBriefing, parseBriefDate } from "@/lib/briefing";
 import { AREA_BY_ID } from "@/lib/data/areas";
 import { withFetchRevalidate, withHistoricalFetches } from "@/lib/external-fetch";
 import { morningLine } from "@/lib/morning";
+import { indexableMorningArchives } from "@/lib/archive-paths";
 import { ogImageForArea, pageMeta } from "@/lib/seo";
 import { formatYmdLong, isPastYmd, ymdInZone } from "@/lib/time";
 
@@ -20,6 +21,10 @@ function pastMorning(areaId: string, date: string) {
   const area = AREA_BY_ID[areaId];
   if (!area) return false;
   return isPastYmd(date, ymdInZone(new Date(), area.timezone));
+}
+
+export function generateStaticParams() {
+  return indexableMorningArchives();
 }
 
 export async function generateMetadata({

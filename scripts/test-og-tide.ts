@@ -15,37 +15,35 @@ assert.equal(OG_TIDE_HEIGHT, 630);
 assert.equal(OG_TIDE_CHART_HEIGHT, 450);
 assert.ok(OG_TIDE_CHART_HEIGHT > 340);
 
-function imageHeight(meta: ReturnType<typeof pageMeta>) {
-  const images = meta.openGraph?.images;
+function shareSize(meta: ReturnType<typeof pageMeta>, slot: "openGraph" | "twitter") {
+  const images = meta[slot]?.images;
   assert.ok(Array.isArray(images));
   const image = images[0];
   assert.equal(typeof image, "object");
   assert.ok(image);
-  assert.ok("height" in image);
-  return image.height;
+  assert.ok("width" in image && "height" in image);
+  return { width: image.width, height: image.height };
 }
 
-assert.equal(
-  imageHeight(
-    pageMeta({
-      title: "Galveston this morning",
-      description: "Tide and wind.",
-      path: "/morning/galveston",
-      image: "/api/og/tide?area=galveston",
-    }),
-  ),
-  630,
-);
-assert.equal(
-  imageHeight(
-    pageMeta({
-      title: "On This Water",
-      description: "This morning.",
-      path: "/",
-    }),
-  ),
-  630,
-);
+const tideShare = pageMeta({
+  title: "Galveston this morning",
+  description: "Tide and wind.",
+  path: "/morning/galveston",
+  image: "/api/og/tide?area=galveston",
+});
+assert.deepEqual(shareSize(tideShare, "openGraph"), { width: 1200, height: 630 });
+assert.deepEqual(shareSize(tideShare, "twitter"), { width: 1200, height: 630 });
+assert.equal(tideShare.alternates?.canonical, "https://www.onthiswater.com/morning/galveston");
+assert.equal(tideShare.openGraph?.url, "https://www.onthiswater.com/morning/galveston");
+
+const homeShare = pageMeta({
+  title: "On This Water",
+  description: "This morning.",
+  path: "/",
+});
+assert.deepEqual(shareSize(homeShare, "openGraph"), { width: 1200, height: 630 });
+assert.deepEqual(shareSize(homeShare, "twitter"), { width: 1200, height: 630 });
+assert.equal(homeShare.alternates?.canonical, "https://www.onthiswater.com/");
 
 const hourly: HourlyTide[] = Array.from({ length: 48 }, (_, i) => ({
   time: new Date(Date.UTC(2026, 0, 4, i)).toISOString(),

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { NextRequest } from "next/server";
 import { proxy } from "@/proxy";
 import { cookieValue, documentCookie } from "@/lib/cookie-jar";
@@ -84,5 +85,25 @@ const queried = fundamentalsSelection({ nowMonth: 11, coastsCookie: "texas", the
 assert.equal(queried.theater, "florida");
 assert.equal(queried.month, 4);
 assert.deepEqual(queried.regionIds, ["florida"]);
+
+const letterArchive = readFileSync(new URL("../app/(public)/newsletter/[week]/page.tsx", import.meta.url), "utf8");
+assert.match(letterArchive, /generateStaticParams/);
+assert.match(letterArchive, /indexableLetterArchives/);
+assert.match(letterArchive, /revalidate = 2592000/);
+assert.doesNotMatch(letterArchive, /force-dynamic/);
+
+const morningArchive = readFileSync(new URL("../app/(app)/morning/[area]/[date]/page.tsx", import.meta.url), "utf8");
+assert.match(morningArchive, /generateStaticParams/);
+assert.match(morningArchive, /indexableMorningArchives/);
+assert.match(morningArchive, /revalidate = 2592000/);
+assert.doesNotMatch(morningArchive, /force-dynamic/);
+
+const liveMorning = readFileSync(new URL("../app/(app)/morning/[area]/page.tsx", import.meta.url), "utf8");
+assert.match(liveMorning, /force-dynamic/);
+assert.doesNotMatch(liveMorning, /generateStaticParams/);
+
+const liveLetter = readFileSync(new URL("../app/(public)/newsletter/page.tsx", import.meta.url), "utf8");
+assert.match(liveLetter, /force-dynamic/);
+assert.doesNotMatch(liveLetter, /generateStaticParams/);
 
 console.log("ok cdn cache");

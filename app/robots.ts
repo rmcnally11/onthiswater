@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
-import { siteOrigin } from "@/lib/brand";
+import { SITE_URL } from "@/lib/brand";
 
 export default function robots(): MetadataRoute.Robots {
-  const origin = siteOrigin();
   return {
     rules: [
       {
@@ -11,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/card", "/enter", "/book"],
       },
     ],
-    sitemap: `${origin}/sitemap.xml`,
-    host: origin,
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

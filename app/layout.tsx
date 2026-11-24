@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { PRODUCT_DOMAIN } from "@/lib/brand";
+import { SITE_URL } from "@/lib/brand";
 import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE, PAPER } from "@/lib/house";
 import { HOME_DESCRIPTION, HOME_TITLE } from "@/lib/seo";
 import "./globals.css";
@@ -32,17 +32,17 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(`https://${PRODUCT_DOMAIN}`),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: HOME_TITLE,
     template: "%s — On This Water",
   },
   description: HOME_DESCRIPTION,
-  alternates: { canonical: `https://${PRODUCT_DOMAIN}/` },
+  alternates: { canonical: `${SITE_URL}/` },
   openGraph: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    url: `https://${PRODUCT_DOMAIN}`,
+    url: `${SITE_URL}/`,
     siteName: "On This Water",
     images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: DEFAULT_OG_ALT }],
   },
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE],
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: DEFAULT_OG_ALT }],
   },
   verification: {
     google: "XtYDmfLeGD3mJmY46px9lVZIQjGLLstjeXM26UID62A",
