@@ -1,5 +1,6 @@
 import { fetchExternal } from "@/lib/external-fetch";
 import { normalizeJoinRef } from "@/lib/join-ref";
+import { signupAttributionFields } from "@/lib/signup-attribution";
 
 /** On This Water list — Costal Cavaliers workspace. IDs are public; the token is not. */
 export const AIRTABLE_BASE = "app3GRvkkpJdnVIKy";
@@ -84,6 +85,11 @@ export async function upsertAirtableSubscriber(input: {
   zip?: string;
   /** Page tag from `?ref=`. Written only when this call creates the row. */
   ref?: string;
+  /** Landing path and utm_*. Written only when this call creates the row. */
+  signup_path?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
 }) {
   const found = await airtable<{ records: AirtableRecord[] }>(
     `?${new URLSearchParams({
@@ -119,12 +125,15 @@ export async function upsertAirtableSubscriber(input: {
     return { id: existing.id, created: false, excluded };
   }
   const entry = normalizeJoinRef(input.ref);
-  const createdFields = entry ? { ...fields, [AIRTABLE_ENTRY_FIELD]: entry } : fields;
+  const attribution = signupAttributionFields(input);
+  const createdFields: Record<string, unknown> = { ...fields, ...attribution };
+  if (entry) createdFields[AIRTABLE_ENTRY_FIELD] = entry;
+  const optional = Boolean(entry) || Object.keys(attribution).length > 0;
   try {
     const created = await createAirtableRow(createdFields);
     return { id: created.id, created: true, excluded: false };
   } catch (error) {
-    if (!entry || !isUnknownAirtableField(error)) throw error;
+    if (!optional || !isUnknownAirtableField(error)) throw error;
     const created = await createAirtableRow(fields);
     return { id: created.id, created: true, excluded: false };
   }

@@ -21,6 +21,7 @@
     "test:card": "node --experimental-strip-types --import ./scripts/register-alias.mjs --import ./scripts/register-tsx.mjs scripts/test-card-no-scores.ts",
     "test:subscribe": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-subscribe-returns.ts",
     "test:join-ref": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-join-ref.ts",
+    "test:signup-attribution": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-signup-attribution.ts",
     "test:og-tide": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-og-tide.ts",
     "test:time": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-time-format.ts",
     "test:decode": "node --experimental-strip-types --import ./scripts/register-alias.mjs scripts/test-safe-decode.ts",

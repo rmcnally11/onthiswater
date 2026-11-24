@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { AREAS, areasInTheater, waterChipLabel } from "@/lib/data/areas";
 import { THEATER_IDS, THEATER_META } from "@/lib/data/theaters";
 import { CADENCE_META, letterDeskForArea, type Cadence } from "@/lib/coasts";
@@ -9,6 +9,46 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { subscribePayload } from "@/lib/join-ref";
+import { captureBrowserLanding, signupAttributionFields, type SignupAttribution } from "@/lib/signup-attribution";
+
+let cachedLanding = "{}";
+
+function emptySubscribe() {
+  return () => {};
+}
+
+function landingSnapshot() {
+  const next = JSON.stringify(captureBrowserLanding());
+  if (next === cachedLanding) return cachedLanding;
+  cachedLanding = next;
+  return cachedLanding;
+}
+
+function landingServerSnapshot() {
+  return "{}";
+}
+
+function formText(data: FormData, name: string) {
+  const value = data.get(name);
+  return typeof value === "string" ? value : "";
+}
+
+/** Hidden fields carry the landing. sessionStorage fills anything still blank. */
+function carriedAttribution(data: FormData): SignupAttribution {
+  const fromForm = signupAttributionFields({
+    signup_path: formText(data, "signup_path"),
+    utm_source: formText(data, "utm_source"),
+    utm_medium: formText(data, "utm_medium"),
+    utm_campaign: formText(data, "utm_campaign"),
+  });
+  const stored = captureBrowserLanding();
+  return signupAttributionFields({
+    signup_path: fromForm.signup_path || stored.signup_path,
+    utm_source: fromForm.utm_source || stored.utm_source,
+    utm_medium: fromForm.utm_medium || stored.utm_medium,
+    utm_campaign: fromForm.utm_campaign || stored.utm_campaign,
+  });
+}
 
 export function MorningMail({
   defaultDesk,
@@ -33,6 +73,9 @@ export function MorningMail({
   const [cadence, setCadence] = useState<Cadence[]>(["daily", "weekly", "calendar", "seasonal"]);
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "err">("idle");
   const [note, setNote] = useState<string | null>(null);
+  const landing = JSON.parse(
+    useSyncExternalStore(emptySubscribe, landingSnapshot, landingServerSnapshot),
+  ) as SignupAttribution;
 
   function toggleDesk(id: string) {
     setDesks((cur) => (cur.includes(id) ? cur.filter((d) => d !== id) : [...cur, id]));
@@ -50,15 +93,31 @@ export function MorningMail({
     setCadence((cur) => (cur.includes(id) ? cur.filter((c) => c !== id) : [...cur, id]));
   }
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
     setNote(null);
+    const data = new FormData(e.currentTarget);
+    const carried = carriedAttribution(data);
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(subscribePayload({ name, email, zip, desks, cadence, source, ref: entry })),
+        body: JSON.stringify(
+          subscribePayload({
+            name,
+            email,
+            zip,
+            desks,
+            cadence,
+            source,
+            ref: entry,
+            signup_path: carried.signup_path,
+            utm_source: carried.utm_source,
+            utm_medium: carried.utm_medium,
+            utm_campaign: carried.utm_campaign,
+          }),
+        ),
       });
       const json = (await res.json()) as { error?: string; note?: string };
       if (!res.ok) {
@@ -86,6 +145,10 @@ export function MorningMail({
           : "rounded-3xl border border-[color:var(--line)] bg-[color:var(--panel)] p-5"
       }
     >
+      <input type="hidden" name="signup_path" value={landing.signup_path ?? ""} />
+      <input type="hidden" name="utm_source" value={landing.utm_source ?? ""} />
+      <input type="hidden" name="utm_medium" value={landing.utm_medium ?? ""} />
+      <input type="hidden" name="utm_campaign" value={landing.utm_campaign ?? ""} />
       <p className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--copper)]">The list</p>
       <h2 className={`mt-1 font-heading text-[color:var(--cream)] ${compact ? "text-xl" : "text-2xl"}`}>
         {join ? "Who you are, and which water" : "Get the water you fish"}

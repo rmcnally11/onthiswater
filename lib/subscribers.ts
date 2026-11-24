@@ -100,7 +100,15 @@ export async function addSubscriber(
   desks: string[],
   source: ListSource = "Brief",
   cadence: Cadence[] = [...CADENCES],
-  profile?: { name?: string; zip?: string; ref?: string },
+  profile?: {
+    name?: string;
+    zip?: string;
+    ref?: string;
+    signup_path?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+  },
 ) {
   const sub: Subscriber = {
     name: profile?.name?.trim() ?? "",
@@ -130,6 +138,10 @@ export async function addSubscriber(
       name: sub.name,
       zip: sub.zip,
       ref: profile?.ref,
+      signup_path: profile?.signup_path,
+      utm_source: profile?.utm_source,
+      utm_medium: profile?.utm_medium,
+      utm_campaign: profile?.utm_campaign,
     });
     return { subscriber: sub, persisted: true, via: "airtable" as const, excluded: saved.excluded };
   }
