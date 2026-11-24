@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE],
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: DEFAULT_OG_ALT }],
   },
   verification: {
     google: "XtYDmfLeGD3mJmY46px9lVZIQjGLLstjeXM26UID62A",

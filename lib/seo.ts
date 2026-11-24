@@ -33,7 +33,8 @@ export function pageMeta(opts: {
 }): Metadata {
   const url = canonicalUrl(opts.path);
   const image = opts.image ?? DEFAULT_OG_IMAGE;
-  const ogHeight = 630;
+  const alt = opts.imageAlt ?? (image === DEFAULT_OG_IMAGE ? DEFAULT_OG_ALT : opts.title);
+  const share = { url: image, width: 1200, height: 630, alt };
   const title = opts.absoluteTitle ? { absolute: opts.title } : opts.title;
   return {
     title,
@@ -46,13 +47,13 @@ export function pageMeta(opts: {
       url,
       siteName: PRODUCT_NAME,
       type: "website",
-      images: [{ url: image, width: 1200, height: ogHeight, alt: opts.imageAlt ?? (image === DEFAULT_OG_IMAGE ? DEFAULT_OG_ALT : opts.title) }],
+      images: [share],
     },
     twitter: {
       card: "summary_large_image",
       title: opts.title,
       description: opts.description,
-      images: [image],
+      images: [share],
     },
   };
 }
