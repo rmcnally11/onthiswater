@@ -11,6 +11,7 @@ import {
   parseCadence,
 } from "@/lib/coasts";
 import { normalizeJoinRef } from "@/lib/join-ref";
+import { signupAttributionFields } from "@/lib/signup-attribution";
 
 const SOURCES = new Set<ListSource>(["Brief", "Letter", "Morning", "Operator"]);
 
@@ -51,6 +52,10 @@ export async function POST(request: NextRequest) {
     cadence?: unknown;
     source?: string;
     ref?: string;
+    signup_path?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
   };
   try {
     body = (await request.json()) as {
@@ -61,6 +66,10 @@ export async function POST(request: NextRequest) {
       cadence?: unknown;
       source?: string;
       ref?: string;
+      signup_path?: string;
+      utm_source?: string;
+      utm_medium?: string;
+      utm_campaign?: string;
     };
   } catch {
     return NextResponse.json({ error: "Send JSON." }, { status: 400 });
@@ -84,8 +93,14 @@ export async function POST(request: NextRequest) {
   const cadence = parseCadence(body.cadence);
   const source = SOURCES.has(body.source as ListSource) ? (body.source as ListSource) : "Brief";
   const ref = normalizeJoinRef(body.ref);
+  const attribution = signupAttributionFields({
+    signup_path: typeof body.signup_path === "string" ? body.signup_path : undefined,
+    utm_source: typeof body.utm_source === "string" ? body.utm_source : undefined,
+    utm_medium: typeof body.utm_medium === "string" ? body.utm_medium : undefined,
+    utm_campaign: typeof body.utm_campaign === "string" ? body.utm_campaign : undefined,
+  });
   try {
-    const result = await addSubscriber(email, desks, source, cadence, { name, zip, ref });
+    const result = await addSubscriber(email, desks, source, cadence, { name, zip, ...attribution, ref });
     const coasts = coastsForDesks(result.subscriber.desks);
     if (!result.excluded) {
       enqueueWelcome(after, () =>

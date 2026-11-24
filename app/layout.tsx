@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { RememberLanding } from "@/components/remember-landing";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SITE_URL } from "@/lib/brand";
 import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE, PAPER } from "@/lib/house";
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <RememberLanding />
         <TooltipProvider>{children}</TooltipProvider>
         <Analytics />
       </body>

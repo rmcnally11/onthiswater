@@ -1,5 +1,6 @@
 import { AREA_BY_ID } from "@/lib/data/areas";
 import { COAST_HUB_BY_SLUG } from "@/lib/coast-hubs";
+import { signupAttributionFields } from "@/lib/signup-attribution";
 
 const REF_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 
@@ -69,6 +70,10 @@ export function subscribePayload(input: {
   cadence: string[];
   source: string;
   ref?: string | null;
+  signup_path?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
 }) {
   const ref = normalizeJoinRef(input.ref);
   return {
@@ -79,5 +84,6 @@ export function subscribePayload(input: {
     cadence: input.cadence,
     source: input.source,
     ...(ref ? { ref } : {}),
+    ...signupAttributionFields(input),
   };
 }
