@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
 import { AREA_IDS, AREAS } from "@/lib/data/areas";
 import { COAST_HUBS } from "@/lib/coast-hubs";
-import { siteOrigin } from "@/lib/brand";
+import { SITE_URL } from "@/lib/brand";
 import { addDaysYmd, mostRecentSaturday, ymdInZone } from "@/lib/time";
 
 export const revalidate = 3600;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const origin = siteOrigin();
+  const origin = SITE_URL;
   const today = ymdInZone(new Date(), "America/Chicago");
   const lastMod = new Date();
 

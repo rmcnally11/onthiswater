@@ -5,6 +5,13 @@ export const PRODUCT_DOMAIN = "onthiswater.com";
 export const GITHUB_REPO = "https://github.com/rmcnally11/onthiswater";
 export const USER_AGENT = "OnThisWater/1.0 (inshore conditions; https://onthiswater.com)";
 
+/**
+ * Canonical public origin. The apex 308s here, so canonical tags, Open Graph
+ * URLs, sitemap locs, and robots must not follow NEXT_PUBLIC_SITE_URL.
+ */
+export const SITE_URL = "https://www.onthiswater.com";
+
+/** Mail, letter JSON, and tweet links. Not for canonical or Open Graph URLs. */
 export function siteOrigin(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || `https://${PRODUCT_DOMAIN}`).replace(/\/$/, "");
 }

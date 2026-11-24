@@ -74,7 +74,9 @@ assert.doesNotMatch(mail, /\/run\?corridor/);
 
 const robots = readFileSync(path.join(root, "app/robots.ts"), "utf8");
 assert.match(robots, /sitemap\.xml/);
-assert.match(robots, /siteOrigin/);
+assert.match(robots, /SITE_URL/);
+assert.doesNotMatch(robots, /siteOrigin/);
+assert.doesNotMatch(robots, /https:\/\/onthiswater\.com/);
 
 const sitemap = readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
 assert.match(sitemap, /morning\/\$\{area/);

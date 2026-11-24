@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PRODUCT_DOMAIN, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
+import { PRODUCT_NAME, SITE_URL } from "@/lib/brand";
 import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE } from "@/lib/house";
 
 export const HOME_TITLE =
@@ -18,9 +18,8 @@ export function ogImageForArea(areaId: string) {
 }
 
 export function canonicalUrl(path: string) {
-  const origin = siteOrigin();
-  if (!path || path === "/") return `${origin}/`;
-  return `${origin}${path.startsWith("/") ? path : `/${path}`}`;
+  if (!path || path === "/") return `${SITE_URL}/`;
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export function pageMeta(opts: {
@@ -80,7 +79,7 @@ export function webAppJsonLd() {
     operatingSystem: "Web",
     description: HOME_DESCRIPTION,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    publisher: { "@type": "Organization", name: PRODUCT_NAME, url: `https://${PRODUCT_DOMAIN}` },
+    publisher: { "@type": "Organization", name: PRODUCT_NAME, url: SITE_URL },
   };
 }
 
