@@ -80,7 +80,12 @@ assert.doesNotMatch(robots, /https:\/\/onthiswater\.com/);
 
 const sitemap = readFileSync(path.join(root, "app/sitemap.ts"), "utf8");
 assert.match(sitemap, /morning\/\$\{area/);
+assert.match(sitemap, /SITE_URL/);
+assert.match(sitemap, /contentLastMod/);
 assert.doesNotMatch(sitemap, /vercel\.app/);
+assert.doesNotMatch(sitemap, /https:\/\/onthiswater\.com/);
+assert.doesNotMatch(sitemap, /const lastMod = new Date\(\)/);
+assert.doesNotMatch(sitemap, /SITE_BUILD_TIME/);
 
 const desks = readFileSync(path.join(root, "lib/desks.ts"), "utf8");
 for (const id of [
