@@ -63,3 +63,5 @@ Do not send mail, post, or hit a live webhook to prove a change.
 Timeout-only failures on a gov host that loads in a browser → exclude with a dated comment; never widen `accept`.
 
 The Link check on `main` failed after PR #41 ([run 45399329692](https://github.com/rmcnally11/onthiswater/actions/runs/45399329692), 2026-11-24 13:02 UTC, 7:02am CST). All five failures were `TIMEOUT` on `https://www.drna.pr.gov/` (`lib/layers.ts` 672, 682, 692, `lib/regs.ts` 51, `README.md` 141). The same URL returned HTTP 200 in a browser on 2026-11-27. `accept` stays `200`, `204`, `206`, and `429`. A timeout is not a status to add there.
+
+A Cloudflare 403 is the same kind of miss. Do not add `403` to `accept`. Miami-Dade parks (`www.miamidade.gov`) answered a "Just a moment..." challenge on 2026-11-27, including on the pull-request run after the Puerto Rico exclude. Those three park URLs were HTTP 200 on 2026-11-04 and were not errors on the 2026-11-24 link check. Exclude the host.

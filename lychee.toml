@@ -102,6 +102,8 @@ exclude = [
   '^https?://([^/]+\.)?floridastateparks\.org',
   '^https?://([^/]+\.)?azores\.gov\.pt',
   '^https?://(www\.)?lastateparks\.com',
+  # Miami-Dade parks returns a Cloudflare "Just a moment" 403 to this checker (checked 2026-11-27).
+  '^https?://(www\.)?miamidade\.gov',
 
   # GitHub-hosted runners are refused, and the pages are up from elsewhere.
   # TxGIO returns 200 to a browser and 403 to Actions.
