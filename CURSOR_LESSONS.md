@@ -79,3 +79,13 @@ Do not keep adding hosts to `exclude` for this. Lychee still retries first (`max
 `node scripts/lychee-gate.mjs --self-test` is the deterministic check: a fixture 404 fails, and a fixture timeout or TLS error warns. The Link check workflow runs that step before the network check.
 
 The three hosts from run 46015912504 are also excluded, with a 2026-11-27 comment, so the checker does not wait out their timeouts. The next flaky host is a warning, not a new exclude line.
+
+## 10. What the test scripts need in CI (2026-11-27)
+
+`npm run test:openmeteo` is the only `test:*` script that leaves the machine. It calls `https://api.open-meteo.com/v1/forecast` through `fetchOpenMeteo` in `lib/openmeteo.ts`. There is no key. The CI step is `continue-on-error` because a timeout or a blocked host is the network, not a regression. The other 21 scripts stub `fetch` or never call it. They do not read `RESEND_API_KEY`, `AIRTABLE_API_KEY`, `AIRTABLE_TOKEN`, `BLOB_READ_WRITE_TOKEN`, or `CRON_SECRET` from the runner. A few assign those names a fake value and delete it before the process exits.
+
+The scripts run on Node 22 with `node --experimental-strip-types`. `test:upstream` and `test:routes` sleep on purpose (about 17s and 22s here) against a mocked fetch. That is still inside the 15 minute job.
+
+`test:hrefs` still required `/card?area=galveston&theater=texas` after PR #30 took the Twitter block off `/for-the-letter`. The check now locks the desk links that page prints (`/?area=<id>&theater=<theater>` from `lib/desks.ts`) plus `/for-the-letter`, `/api/letter`, and `/newsletter`. It still rejects `amp;` inside an href. In a React href, `&` is just `&`.
+
+`npm run lint` already exits 1 on main. The plugin files in `@next/eslint-plugin-next` 16.4.3 and 16.4.6 match, so the 16.4.6 pin did not add those errors. They are `react-hooks/error-boundaries`, `react-hooks/set-state-in-effect`, and `@next/next/no-html-link-for-pages`. CI keeps those three as warnings. Any other ESLint error still fails the job. Do not rewrite `/book`, the letter page, or the header just to silence them.

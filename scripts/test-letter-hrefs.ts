@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ForTheLetterPage from "../app/(public)/for-the-letter/page.tsx";
+import { siteOrigin } from "../lib/brand.ts";
+import { DESKS } from "../lib/desks.ts";
 
 const html = renderToStaticMarkup(createElement(ForTheLetterPage));
 
@@ -10,12 +12,21 @@ const hrefs = [...html.matchAll(/href="([^"]+)"/g)].map((match) =>
 );
 
 function has(href: string) {
-  assert.ok(hrefs.includes(href), `missing ${href}\n${hrefs.filter((h) => h.startsWith("/card") || h.startsWith("/calendar")).join("\n")}`);
+  assert.ok(
+    hrefs.includes(href),
+    `missing ${href}\n${hrefs.filter((h) => h.includes("area=") || h.startsWith("/")).join("\n")}`,
+  );
 }
 
-has("/card?area=galveston&theater=texas");
-has("/calendar?area=galveston&theater=texas");
-has("/card/calendar?area=galveston&theater=texas");
+// PR #30 removed the Twitter card links from this page. The desk links
+// still carry a query, which is where an encoded amp used to land.
+const origin = siteOrigin();
+has("/for-the-letter");
+has("/api/letter");
+has("/newsletter");
+for (const desk of DESKS) {
+  has(`${origin}/?area=${desk.areaId}&theater=${desk.theater}`);
+}
 
 for (const href of hrefs) {
   assert.equal(href.includes("amp;"), false, `encoded amp in href: ${href}`);
