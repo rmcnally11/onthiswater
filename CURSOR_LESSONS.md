@@ -57,3 +57,11 @@ Do not send mail, post, or hit a live webhook to prove a change.
 - In a React href, `&` is just `&`. Writing `&amp;` inside the quote does not become an ampersand. The link goes out with the word `amp` in the query, so `theater` never arrives. The bot rules page was doing this on `/card`, `/calendar`, and `/card/calendar`.
 - This site is a light page: navy text on white. Text set to about half strength (`/40` through `/55`) is too faint to read, and a white wash (`bg-white/8`) disappears on the white background. Off months on the species year-bar were blank for that reason. Darken the type instead of reaching for a redesign.
 - `npm audit fix` will not move a package that is pinned to an exact version. Next was pinned at 16.3.2, so the security fixes in 16.4.3 needed an explicit minor bump. Do not use `npm audit fix --force` here. It wants to downgrade ESLint to version 4 and shadcn to version 1.
+
+## 8. A timeout on a live gov host is an exclude (2026-11-27)
+
+Timeout-only failures on a gov host that loads in a browser → exclude with a dated comment; never widen `accept`.
+
+The Link check on `main` failed after PR #41 ([run 45399329692](https://github.com/rmcnally11/onthiswater/actions/runs/45399329692), 2026-11-24 13:02 UTC, 7:02am CST). All five failures were `TIMEOUT` on `https://www.drna.pr.gov/` (`lib/layers.ts` 672, 682, 692, `lib/regs.ts` 51, `README.md` 141). The same URL returned HTTP 200 in a browser on 2026-11-27. `accept` stays `200`, `204`, `206`, and `429`. A timeout is not a status to add there.
+
+A Cloudflare 403 is the same kind of miss. Do not add `403` to `accept`. Miami-Dade parks (`www.miamidade.gov`) answered a "Just a moment..." challenge on 2026-11-27, including on the pull-request run after the Puerto Rico exclude. Those three park URLs were HTTP 200 on 2026-11-04 and were not errors on the 2026-11-24 link check. Exclude the host.

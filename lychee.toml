@@ -102,6 +102,8 @@ exclude = [
   '^https?://([^/]+\.)?floridastateparks\.org',
   '^https?://([^/]+\.)?azores\.gov\.pt',
   '^https?://(www\.)?lastateparks\.com',
+  # Miami-Dade parks returns a Cloudflare "Just a moment" 403 to this checker (checked 2026-11-27).
+  '^https?://(www\.)?miamidade\.gov',
 
   # GitHub-hosted runners are refused, and the pages are up from elsewhere.
   # TxGIO returns 200 to a browser and 403 to Actions.
@@ -111,4 +113,6 @@ exclude = [
   '^https://www\.wlf\.louisiana\.gov/page/recreational-saltwater-finfish/?$',
   # The Good Pirate's Almanac returns 200 outside Actions and 403 on a runner.
   '^https://thegoodpiratesalmanac\.substack\.com',
+  # Puerto Rico DRNA returns 200 to a browser (checked 2026-11-27) and times out on Actions runners.
+  '^https?://(www\.)?drna\.pr\.gov/?$',
 ]
