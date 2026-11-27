@@ -111,4 +111,6 @@ exclude = [
   '^https://www\.wlf\.louisiana\.gov/page/recreational-saltwater-finfish/?$',
   # The Good Pirate's Almanac returns 200 outside Actions and 403 on a runner.
   '^https://thegoodpiratesalmanac\.substack\.com',
+  # Puerto Rico DRNA returns 200 to a browser (checked 2026-11-27) and times out on Actions runners.
+  '^https?://(www\.)?drna\.pr\.gov/?$',
 ]
