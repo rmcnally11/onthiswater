@@ -65,3 +65,17 @@ Timeout-only failures on a gov host that loads in a browser → exclude with a d
 The Link check on `main` failed after PR #41 ([run 45399329692](https://github.com/rmcnally11/onthiswater/actions/runs/45399329692), 2026-11-24 13:02 UTC, 7:02am CST). All five failures were `TIMEOUT` on `https://www.drna.pr.gov/` (`lib/layers.ts` 672, 682, 692, `lib/regs.ts` 51, `README.md` 141). The same URL returned HTTP 200 in a browser on 2026-11-27. `accept` stays `200`, `204`, `206`, and `429`. A timeout is not a status to add there.
 
 A Cloudflare 403 is the same kind of miss. Do not add `403` to `accept`. Miami-Dade parks (`www.miamidade.gov`) answered a "Just a moment..." challenge on 2026-11-27, including on the pull-request run after the Puerto Rico exclude. Those three park URLs were HTTP 200 on 2026-11-04 and were not errors on the 2026-11-24 link check. Exclude the host.
+
+That exclude-the-host rule is how the next red main happened. See section 9. Do not add another host exclude for a timeout or a TLS error. The three hosts named there are the last of that kind.
+
+## 9. Timeouts and TLS errors warn; HTTP statuses still fail (2026-11-27)
+
+PR #42 excluded one host, then the next. The merge commit on main was still red ([run 46015912504](https://github.com/rmcnally11/onthiswater/actions/runs/46015912504), 2026-11-27 14:26 UTC, 8:26am CST). `dshs.texas.gov` returned a TLS `InternalError` (`lib/data/texas-hab.ts`). `cityofkeywest-fl.gov` and `monroecounty-fl.gov` timed out (`lib/layers.ts`).
+
+Do not keep adding hosts to `exclude` for this. Lychee still retries first (`max_retries` 3, `retry_wait_time` 2 seconds, `timeout` 20). `scripts/lychee-gate.mjs` then reads the JSON report (`--format json`). An `error_map` entry with an HTTP `status.code` outside `accept` fails the job. That includes 404, 410, other 4xx, and 5xx. 429 stays in `accept`. 403 is not in `accept`, so a 403 that is not already excluded still fails. A `timeout_map` entry, or a network error with no HTTP code (`Network error:`, TLS, connection reset), is a warning in the job summary.
+
+`accept` stays `200`, `204`, `206`, and `429`. Do not add `404` or `403`.
+
+`node scripts/lychee-gate.mjs --self-test` is the deterministic check: a fixture 404 fails, and a fixture timeout or TLS error warns. The Link check workflow runs that step before the network check.
+
+The three hosts from run 46015912504 are also excluded, with a 2026-11-27 comment, so the checker does not wait out their timeouts. The next flaky host is a warning, not a new exclude line.
