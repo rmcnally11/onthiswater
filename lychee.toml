@@ -1,7 +1,7 @@
 # Dead-link check for source files. Lychee reads this from the repo root.
 # It does not crawl onthiswater.com. The workflow passes the same limits on
 # the command line, writes JSON, and scripts/lychee-gate.mjs decides the
-# exit code. An HTTP status outside accept fails. A timeout or a network
+# exit code. A 4xx outside accept fails. A 5xx, a timeout, or a network
 # error (TLS, connection reset) is a warning. Do not add 404 or 403 here.
 #
 # max_retries and retry_wait_time are the backoff: 3 retries, 2 seconds
@@ -23,7 +23,8 @@ timeout = 20
 # 429 is "slow down", not a broken link. Listing it here keeps a rate limit
 # from failing the build. Redirects are followed, so the final status is what
 # counts. Specifying accept replaces lychee's default range.
-# 404 and 403 stay out. The gate fails the job on those codes.
+# 404 and 403 stay out. The gate fails the job on those codes. A 5xx is a
+# warning: lychee does not retry a rejected 5xx, and it is not a missing page.
 accept = ["200", "204", "206", "429"]
 
 # External web links only. Relative paths, file://, and mailto stay out of

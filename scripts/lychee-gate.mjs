@@ -4,11 +4,13 @@
 //   node scripts/lychee-gate.mjs lychee/out.json
 //   node scripts/lychee-gate.mjs --self-test
 //
-// accept stays 200, 204, 206, 429. A 404, 410, 403, or 5xx still fails.
-// Do not add 404 or 403 to accept. Lychee puts a rejected HTTP code in
-// error_map as { "text": "...", "code": <n> }. A timeout is in timeout_map
-// as { "text": "Timeout", "details": "Request timed out" }. A TLS failure
-// or a connection reset is an error_map entry whose text starts with
+// accept stays 200, 204, 206, 429. A 404, 410, 403, or other 4xx still fails.
+// Do not add 404 or 403 to accept. A 5xx is a warning: lychee does not retry
+// a rejected 5xx, and a 503 is the server failing this request, not a missing
+// page. Lychee puts a rejected HTTP code in error_map as
+// { "text": "...", "code": <n> }. A timeout is in timeout_map as
+// { "text": "Timeout", "details": "Request timed out" }. A TLS failure or a
+// connection reset is an error_map entry whose text starts with
 // "Network error:" and has no code.
 
 import { appendFileSync, readFileSync } from "node:fs";
@@ -38,12 +40,17 @@ function reasonText(status) {
   return text || details || "unclassified lychee error";
 }
 
-// "failure" fails the job. "warning" is a timeout or a transport error.
-// "ok" is an accepted status that should not have been in the error map.
+// "failure" fails the job. "warning" is a timeout, a transport error, or a
+// 5xx. "ok" is an accepted status that should not have been in the error map.
 function classifyStatus(status) {
   if (isTimeoutStatus(status)) return "warning";
   if (typeof status?.code === "number" && Number.isInteger(status.code)) {
-    return ACCEPTED.has(status.code) ? "ok" : "failure";
+    if (ACCEPTED.has(status.code)) return "ok";
+    // 500–599: the server failed this request. Lychee only retries a rejected
+    // status when it is 429, so a one-off 503 is recorded as final. That is
+    // not a missing page. 4xx stays a failure.
+    if (status.code >= 500 && status.code <= 599) return "warning";
+    return "failure";
   }
   const text = typeof status?.text === "string" ? status.text : "";
   const details = typeof status?.details === "string" ? status.details : "";
@@ -168,7 +175,7 @@ function renderSummary(result) {
   const lines = [
     "## External links",
     "",
-    "HTTP status codes outside accept (`200`, `204`, `206`, `429`) fail this job. Timeouts and network errors (TLS, connection reset) are warnings. `404` and `403` are not accepted.",
+    "A 4xx outside accept fails this job (`404`, `410`, `403`, and the rest). `429` stays accepted. A 5xx, a timeout, or a network error (TLS, connection reset) is a warning. `404` and `403` are not accepted.",
     "",
     "### HTTP errors",
     "",
@@ -297,7 +304,24 @@ function selfTest() {
           },
         }),
       ),
-      { ok: false, failures: 1, warnings: 0, failureCode: 500 },
+      { ok: true, failures: 0, warnings: 1, warningIncludes: "500" },
+    ),
+    assertCase(
+      "503",
+      classify(
+        report({
+          errors: 1,
+          error_map: {
+            "SUBSTACK.md": [
+              entry(
+                "https://example.com/blob",
+                http(503, "Rejected status code: 503 Service Unavailable"),
+              ),
+            ],
+          },
+        }),
+      ),
+      { ok: true, failures: 0, warnings: 1, warningIncludes: "503" },
     ),
     assertCase(
       "429 stays accepted",

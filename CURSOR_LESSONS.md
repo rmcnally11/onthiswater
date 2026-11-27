@@ -72,9 +72,9 @@ That exclude-the-host rule is how the next red main happened. See section 9. Do 
 
 PR #42 excluded one host, then the next. The merge commit on main was still red ([run 46015912504](https://github.com/rmcnally11/onthiswater/actions/runs/46015912504), 2026-11-27 14:26 UTC, 8:26am CST). `dshs.texas.gov` returned a TLS `InternalError` (`lib/data/texas-hab.ts`). `cityofkeywest-fl.gov` and `monroecounty-fl.gov` timed out (`lib/layers.ts`).
 
-Do not keep adding hosts to `exclude` for this. Lychee still retries first (`max_retries` 3, `retry_wait_time` 2 seconds, `timeout` 20). `scripts/lychee-gate.mjs` then reads the JSON report (`--format json`). An `error_map` entry with an HTTP `status.code` outside `accept` fails the job. That includes 404, 410, other 4xx, and 5xx. 429 stays in `accept`. 403 is not in `accept`, so a 403 that is not already excluded still fails. A `timeout_map` entry, or a network error with no HTTP code (`Network error:`, TLS, connection reset), is a warning in the job summary.
+Do not keep adding hosts to `exclude` for this. Lychee still retries first (`max_retries` 3, `retry_wait_time` 2 seconds, `timeout` 20). `scripts/lychee-gate.mjs` then reads the JSON report (`--format json`). An `error_map` entry with a 4xx `status.code` outside `accept` fails the job. That includes 404, 410, and 403. 429 stays in `accept`. 403 is not in `accept`, so a 403 that is not already excluded still fails. A 5xx is a warning. Lychee only retries a rejected status when the code is 429, so a 503 is stored as the final result after one try. On the first run of this gate, `github.com` blob pages for `SUBSTACK.md` and `TWITTER.md` returned 503 and were 200 a minute later. A `timeout_map` entry, or a network error with no HTTP code (`Network error:`, TLS, connection reset), is also a warning in the job summary.
 
-`accept` stays `200`, `204`, `206`, and `429`. Do not add `404` or `403`.
+`accept` stays `200`, `204`, `206`, and `429`. Do not add `404` or `403`. Do not add `503` either. The gate warns on the whole 5xx range instead of accepting one code.
 
 `node scripts/lychee-gate.mjs --self-test` is the deterministic check: a fixture 404 fails, and a fixture timeout or TLS error warns. The Link check workflow runs that step before the network check.
 

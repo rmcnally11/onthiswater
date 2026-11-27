@@ -22,8 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      # Fixture only. A 404 in the JSON fails the step. A timeout or a TLS
-      # network error is a warning and the step stays green. No network.
+      # Fixture only. A 404 in the JSON fails the step. A 5xx, a timeout, or a
+      # TLS network error is a warning and the step stays green. No network.
       - name: Prove a 404 fails and a timeout warns
         run: node scripts/lychee-gate.mjs --self-test
 
@@ -33,8 +33,8 @@ jobs:
           # Same limits as lychee.toml. Flags are repeated here so the
           # workflow does not depend on someone remembering the config file.
           # Excludes live in lychee.toml (and .lycheeignore, when present).
-          # format json and fail false: lychee still exits 2 on a timeout,
-          # and the next step is what fails the job. checkbox is false so
+          # format json and fail false: lychee still exits 2 on a timeout or a
+          # 503, and the next step fails the job only on a 4xx. checkbox is false so
           # the action does not pass --mode task into the JSON report.
           # failIfEmpty is false because that check only greps the markdown
           # summary. The gate fails when the JSON total is 0.
