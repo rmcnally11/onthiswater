@@ -47,3 +47,6 @@ next-env.d.ts
 # local 5am list and outbox — never commit addresses
 /data/subscribers.json
 /data/outbox
+
+# typst scout binary — downloaded by print/typst/build-letter.ts
+/print/typst/.cache
