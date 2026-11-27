@@ -22,12 +22,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      # Fixture only. A 404 in the JSON fails the step. A 5xx, a timeout, or a
+      # TLS network error is a warning and the step stays green. No network.
+      - name: Prove a 404 fails and a timeout warns
+        run: node scripts/lychee-gate.mjs --self-test
+
       - name: Check links in source
         uses: lycheeverse/lychee-action@v2.9.0
         with:
-          # Same inputs as lychee.toml. Flags are repeated here so the
+          # Same limits as lychee.toml. Flags are repeated here so the
           # workflow does not depend on someone remembering the config file.
           # Excludes live in lychee.toml (and .lycheeignore, when present).
+          # format json and fail false: lychee still exits 2 on a timeout or a
+          # 503, and the next step fails the job only on a 4xx. checkbox is false so
+          # the action does not pass --mode task into the JSON report.
+          # failIfEmpty is false because that check only greps the markdown
+          # summary. The gate fails when the JSON total is 0.
           args: >-
             --no-progress
             --max-concurrency 8
@@ -41,6 +51,14 @@ jobs:
             lib
             data
             "**/*.md"
-          fail: true
+          fail: false
+          format: json
+          output: lychee/out.json
+          jobSummary: false
+          checkbox: false
+          failIfEmpty: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on HTTP status errors
+        run: node scripts/lychee-gate.mjs lychee/out.json

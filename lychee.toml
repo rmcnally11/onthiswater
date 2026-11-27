@@ -1,11 +1,18 @@
 # Dead-link check for source files. Lychee reads this from the repo root.
 # It does not crawl onthiswater.com. The workflow passes the same limits on
-# the command line.
+# the command line, writes JSON, and scripts/lychee-gate.mjs decides the
+# exit code. A 4xx outside accept fails. A 5xx, a timeout, or a network
+# error (TLS, connection reset) is a warning. Do not add 404 or 403 here.
+#
+# max_retries and retry_wait_time are the backoff: 3 retries, 2 seconds
+# between them. timeout is 20 seconds per request. The gate runs after that.
 #
 # Local run (lychee 0.24.2, the version lychee-action v2.9.0 installs):
 #   lychee --no-progress --max-concurrency 8 --max-retries 3 \
 #     --retry-wait-time 2 --timeout 20 --accept '200,204,206,429' \
+#     --format json --output /tmp/lychee.json \
 #     app components lib data '**/*.md'
+#   node scripts/lychee-gate.mjs /tmp/lychee.json
 
 no_progress = true
 max_concurrency = 8
@@ -16,6 +23,8 @@ timeout = 20
 # 429 is "slow down", not a broken link. Listing it here keeps a rate limit
 # from failing the build. Redirects are followed, so the final status is what
 # counts. Specifying accept replaces lychee's default range.
+# 404 and 403 stay out. The gate fails the job on those codes. A 5xx is a
+# warning: lychee does not retry a rejected 5xx, and it is not a missing page.
 accept = ["200", "204", "206", "429"]
 
 # External web links only. Relative paths, file://, and mailto stay out of
@@ -115,4 +124,14 @@ exclude = [
   '^https://thegoodpiratesalmanac\.substack\.com',
   # Puerto Rico DRNA returns 200 to a browser (checked 2026-11-27) and times out on Actions runners.
   '^https?://(www\.)?drna\.pr\.gov/?$',
+
+  # 2026-11-27, run 46015912504, after the retries above. These three hosts
+  # failed on Actions and the pages are real: dshs.texas.gov sent a TLS
+  # InternalError (lib/data/texas-hab.ts); cityofkeywest-fl.gov and
+  # monroecounty-fl.gov timed out (lib/layers.ts). The gate already turns
+  # that class of failure into a warning. Excluding the hosts keeps the job
+  # from waiting out the timeout. Do not add the next flaky host here.
+  '^https?://(www\.)?dshs\.texas\.gov',
+  '^https?://(www\.)?cityofkeywest-fl\.gov',
+  '^https?://(www\.)?monroecounty-fl\.gov',
 ]
