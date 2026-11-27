@@ -1,0 +1,112 @@
+# Lint, the package.json test scripts, the typecheck, and the production build.
+# Does not call live mail, Airtable, or Blob. test:openmeteo is the exception below.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: test:sister
+        run: npm run test:sister
+
+      - name: test:hab
+        run: npm run test:hab
+
+      # Calls https://api.open-meteo.com/v1/forecast through fetchOpenMeteo.
+      # No API key. A timeout or a blocked host is not a code regression.
+      - name: test:openmeteo
+        run: npm run test:openmeteo
+        continue-on-error: true
+
+      - name: test:upstream
+        run: npm run test:upstream
+
+      - name: test:routes
+        run: npm run test:routes
+
+      - name: test:snapshot
+        run: npm run test:snapshot
+
+      - name: test:store
+        run: npm run test:store
+
+      - name: test:calendar
+        run: npm run test:calendar
+
+      - name: test:tweet-yolo
+        run: npm run test:tweet-yolo
+
+      - name: test:letter
+        run: npm run test:letter
+
+      - name: test:hrefs
+        run: npm run test:hrefs
+
+      - name: test:card
+        run: npm run test:card
+
+      - name: test:subscribe
+        run: npm run test:subscribe
+
+      - name: test:join-ref
+        run: npm run test:join-ref
+
+      - name: test:signup-attribution
+        run: npm run test:signup-attribution
+
+      - name: test:og-tide
+        run: npm run test:og-tide
+
+      - name: test:time
+        run: npm run test:time
+
+      - name: test:decode
+        run: npm run test:decode
+
+      - name: test:cache
+        run: npm run test:cache
+
+      - name: test:dispatch
+        run: npm run test:dispatch
+
+      - name: test:wx
+        run: npm run test:wx
+
+      - name: test:sitemap
+        run: npm run test:sitemap
+
+      - name: Build
+        run: npm run build
