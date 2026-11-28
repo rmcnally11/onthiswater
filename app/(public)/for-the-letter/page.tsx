@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AlmanacSubscribe } from "@/components/almanac-subscribe";
 import { JsonLd } from "@/components/json-ld";
 import { Waterline } from "@/components/viz/waterline";
 import { GITHUB_REPO, PRODUCT_NAME, siteOrigin } from "@/lib/brand";
@@ -147,6 +148,7 @@ export default function ForTheLetterPage() {
         </a>
         .
       </p>
+      <AlmanacSubscribe placement="for-the-letter" />
     </div>
   );
 }
