@@ -89,3 +89,9 @@ The scripts run on Node 22 with `node --experimental-strip-types`. `test:upstrea
 `test:hrefs` still required `/card?area=galveston&theater=texas` after PR #30 took the Twitter block off `/for-the-letter`. The check now locks the desk links that page prints (`/?area=<id>&theater=<theater>` from `lib/desks.ts`) plus `/for-the-letter`, `/api/letter`, and `/newsletter`. It still rejects `amp;` inside an href. In a React href, `&` is just `&`.
 
 `npm run lint` already exits 1 on main. The plugin files in `@next/eslint-plugin-next` 16.4.3 and 16.4.6 match, so the 16.4.6 pin did not add those errors. They are `react-hooks/error-boundaries`, `react-hooks/set-state-in-effect`, and `@next/next/no-html-link-for-pages`. CI keeps those three as warnings. Any other ESLint error still fails the job. Do not rewrite `/book`, the letter page, or the header just to silence them.
+
+## 11. Internal links use the canonical URL (2026-11-28)
+
+Internal links must point at the canonical URL, not a URL that canonicalizes elsewhere.
+
+The Saturday letter linked each desk to `/?area=<desk>&theater=<coast>`. The home page canonical for that query is `/morning/<desk>`, so Google was shown the query string. The link is `/morning/<desk>`. Keep a query only when that page already reads it: `/morning/<desk>` reads `activity`. It does not read `theater` or `date`. A dated morning is the path `/morning/<desk>/<yyyy-mm-dd>`.

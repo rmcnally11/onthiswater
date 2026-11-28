@@ -15,6 +15,7 @@ import type { Briefing, TheaterId } from "@/lib/types";
 import { THEATER_IDS, THEATER_META } from "@/lib/data/theaters";
 import { AREA_BY_ID, waterChipLabel } from "@/lib/data/areas";
 import { DESKS } from "@/lib/desks";
+import { morningHref } from "@/lib/hrefs";
 import { coastEditionLabel, isAllCoasts } from "@/lib/coasts";
 import { describeDesk, deskWords, forLetter, LETTER_LEGEND, letterTomorrowLine } from "@/lib/letter-copy";
 import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
@@ -27,7 +28,7 @@ function DeskCard({ desk, tomorrow }: { desk: DeskIssue; tomorrow?: Briefing | n
   const inPlay =
     briefing?.species.filter((s) => s.inPlay && s.species.role === "primary").slice(0, 4) ?? [];
   const window = briefing?.when[0];
-  const href = `/?area=${desk.areaId}&theater=${desk.theater}${briefing?.activity && briefing.activity !== "all" ? `&activity=${briefing.activity}` : ""}`;
+  const href = morningHref({ areaId: desk.areaId, activity: briefing?.activity });
   const c = briefing?.conditions;
 
   return (
@@ -277,7 +278,7 @@ export function LetterIssue({
               return (
                 <a
                   key={`strip-${desk.areaId}`}
-                  href={`/?area=${desk.areaId}&theater=${desk.theater}`}
+                  href={morningHref({ areaId: desk.areaId })}
                   data-letter-theater={desk.theater}
                   className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--panel)] px-4 py-3"
                 >
@@ -342,6 +343,7 @@ export function LetterIssue({
           areaId={issue.desks.find((d) => longRecordBay(d.areaId))?.areaId}
           month={issue.month}
           compact
+          bayLink="morning"
         />
       ) : null}
 
