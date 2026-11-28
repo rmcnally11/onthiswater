@@ -9,6 +9,7 @@ import { isAllWaterQuery, readWaterPref, resolveDeskForTheater } from "@/lib/pre
 import { getYoloDay } from "@/lib/calendar";
 import { addDaysYmd, ymdInZone } from "@/lib/time";
 import { AREA_BY_ID } from "@/lib/data/areas";
+import { AlmanacSubscribe } from "@/components/almanac-subscribe";
 import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 import { JsonLd } from "@/components/json-ld";
 import {
@@ -80,6 +81,7 @@ export default async function Home({
         <Suspense fallback={<AllWaterSkeleton />}>
           <AllWaterLoader activity={activity} date={date} />
         </Suspense>
+        <AlmanacSubscribe placement="home" className="max-w-3xl" />
       </div>
     );
   }
@@ -137,6 +139,7 @@ export default async function Home({
           }
         />
       )}
+      <AlmanacSubscribe placement="home" className="max-w-3xl" />
     </div>
   );
 }
