@@ -19,11 +19,26 @@ import {
   type RecordEra,
   type SharedFishId,
 } from "@/lib/data/long-record";
-import { briefHref } from "@/lib/hrefs";
+import { briefHref, morningHref } from "@/lib/hrefs";
 import { cn } from "@/lib/utils";
 
 function fmt(n: number) {
   return n.toLocaleString("en-US");
+}
+
+type BayLink = "morning" | "home";
+
+function bayHref(areaId: string, link: BayLink) {
+  switch (link) {
+    case "morning":
+      return morningHref({ areaId });
+    case "home":
+      return briefHref({ areaId, theater: "texas" });
+    default: {
+      const never: never = link;
+      return never;
+    }
+  }
 }
 
 function Chip({
@@ -86,10 +101,13 @@ export function LongRecord({
   areaId,
   month,
   compact = false,
+  bayLink = "home",
 }: {
   areaId?: string;
   month: number;
   compact?: boolean;
+  /** The letter uses the canonical morning URL. Other pages keep the home desk query. */
+  bayLink?: BayLink;
 }) {
   const [fish, setFish] = useState<SharedFishId>("speckled-trout");
   const [netSeason, setNetSeason] = useState<NetSeasonId>(gillNetSeason(month).id);
@@ -364,7 +382,7 @@ export function LongRecord({
                 <a
                   key={bay.id}
                   className="text-[color:var(--sea)] underline decoration-[color:var(--sea)]/40 underline-offset-4"
-                  href={briefHref({ areaId: bay.id, theater: "texas" })}
+                  href={bayHref(bay.id, bayLink)}
                 >
                   {bay.system}
                 </a>
@@ -397,7 +415,7 @@ export function LongRecord({
             {netCoast.map((row) => (
               <li key={row.id} className="py-2">
                 <a
-                  href={briefHref({ areaId: row.id, theater: "texas" })}
+                  href={bayHref(row.id, bayLink)}
                   className="flex items-baseline justify-between gap-3 text-[color:var(--cream)] hover:text-[color:var(--sea)]"
                 >
                   <p className="font-heading text-lg">{row.system}</p>
@@ -428,7 +446,7 @@ export function LongRecord({
             {dockCoast.map((row) => (
               <li key={row.id} className="py-2">
                 <a
-                  href={briefHref({ areaId: row.id, theater: "texas" })}
+                  href={bayHref(row.id, bayLink)}
                   className="flex items-baseline justify-between gap-3 text-[color:var(--cream)] hover:text-[color:var(--sea)]"
                 >
                   <p className="font-heading text-lg">{row.system}</p>
