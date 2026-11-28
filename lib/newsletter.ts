@@ -181,11 +181,61 @@ export async function getNewsletter(weekRaw?: string | null): Promise<Newsletter
   return cachedNewsletter(weekId);
 }
 
+let loadDeskBriefing: typeof getBriefing = getBriefing;
+
+/** Tests replace the gauge read. Production uses `getBriefing`. */
+export function setLetterBriefingForTests(loader: typeof getBriefing | null) {
+  loadDeskBriefing = loader ?? getBriefing;
+}
+
+type LetterGaugeOptions = {
+  /** Start each desk's tomorrow gauge when that desk's briefing resolves. */
+  chainTomorrows?: boolean;
+};
+
+/**
+ * Tomorrow reads started during the briefing round. The key is the issue object
+ * `loadLetterTomorrows` is given, so a later await joins work already in flight.
+ */
+const chainedTomorrows = new WeakMap<NewsletterIssue, Map<string, Promise<Briefing | null>>>();
+
+function readTomorrow(areaId: string, briefing: Briefing) {
+  const ymd = addDaysYmd(briefing.forDate, 1);
+  return withDeadline(loadDeskBriefing(areaId, "all", ymd), COAST_DEADLINE_MS, areaId).catch(() => null);
+}
+
+function armTomorrow(
+  chain: Map<string, Promise<Briefing | null>> | null,
+  areaId: string,
+  pending: Promise<Briefing>,
+) {
+  if (chain) {
+    chain.set(
+      areaId,
+      pending.then(
+        (value) => readTomorrow(areaId, value),
+        () => null,
+      ),
+    );
+  }
+  return pending;
+}
+
+function rememberTomorrows(issue: NewsletterIssue, slots: Map<string, Promise<Briefing | null>>) {
+  if (slots.size > 0) chainedTomorrows.set(issue, slots);
+}
+
 /** This week’s desks use the same live briefings as Today. Frozen Saturday issues stay the snapshot. */
-export async function hydrateLetterDesks(issue: NewsletterIssue): Promise<NewsletterIssue> {
+export async function hydrateLetterDesks(
+  issue: NewsletterIssue,
+  options?: LetterGaugeOptions,
+): Promise<NewsletterIssue> {
   if (issue.frozen) return issue;
+  const chain = options?.chainTomorrows ? new Map<string, Promise<Briefing | null>>() : null;
   const settled = await Promise.allSettled(
-    issue.desks.map((desk) => withDeadline(getBriefing(desk.areaId), COAST_DEADLINE_MS, desk.areaId)),
+    issue.desks.map((desk) =>
+      armTomorrow(chain, desk.areaId, withDeadline(loadDeskBriefing(desk.areaId), COAST_DEADLINE_MS, desk.areaId)),
+    ),
   );
   const desks = issue.desks.map((desk, i) => {
     const result = settled[i];
@@ -199,7 +249,9 @@ export async function hydrateLetterDesks(issue: NewsletterIssue): Promise<Newsle
       error: reason instanceof Error ? reason.message : "The gauge did not answer.",
     };
   });
-  return { ...issue, generatedAt: new Date().toISOString(), desks };
+  const next = { ...issue, generatedAt: new Date().toISOString(), desks };
+  if (chain) rememberTomorrows(next, chain);
+  return next;
 }
 
 function deskMetaForArea(areaId: string) {
@@ -291,16 +343,20 @@ export function filterNewsletter(issue: NewsletterIssue, coasts: TheaterId[] | n
 export async function withCoastWaters(
   issue: NewsletterIssue,
   coasts: TheaterId[] | null,
+  options?: LetterGaugeOptions,
 ): Promise<NewsletterIssue> {
-  const filtered = await hydrateLetterDesks(filterNewsletter(issue, coasts));
+  const filtered = await hydrateLetterDesks(filterNewsletter(issue, coasts), options);
   if (isAllCoasts(coasts) || !coasts?.length) return filtered;
 
   const waters = AREAS.filter((a) => coasts.includes(a.theater));
   const have = new Map(filtered.desks.map((d) => [d.areaId, d]));
   const missing = waters.filter((a) => !have.has(a.id));
   const dateRaw = filtered.frozen ? filtered.weekId : null;
+  const extra = options?.chainTomorrows ? new Map<string, Promise<Briefing | null>>() : null;
   const settled = await Promise.allSettled(
-    missing.map((a) => withDeadline(getBriefing(a.id, "all", dateRaw), COAST_DEADLINE_MS, a.id)),
+    missing.map((a) =>
+      armTomorrow(extra, a.id, withDeadline(loadDeskBriefing(a.id, "all", dateRaw), COAST_DEADLINE_MS, a.id)),
+    ),
   );
 
   const desks: DeskIssue[] = waters.map((area) => {
@@ -332,15 +388,24 @@ export async function withCoastWaters(
     };
   });
 
-  return publishLetter({ ...filtered, desks });
+  const next = publishLetter({ ...filtered, desks });
+  if (extra) {
+    const slots = new Map(chainedTomorrows.get(filtered));
+    extra.forEach((promise, id) => slots.set(id, promise));
+    rememberTomorrows(next, slots);
+  }
+  return next;
 }
 
 export async function loadLetterTomorrows(issue: NewsletterIssue) {
+  const chained = chainedTomorrows.get(issue);
   const pairs = await Promise.all(
     issue.desks.map(async (desk) => {
+      const pending = chained?.get(desk.areaId);
+      if (pending) return [desk.areaId, await pending] as const;
       if (!desk.briefing) return [desk.areaId, null] as const;
       const ymd = addDaysYmd(desk.briefing.forDate, 1);
-      const next = await withDeadline(getBriefing(desk.areaId, "all", ymd), COAST_DEADLINE_MS, desk.areaId).catch(
+      const next = await withDeadline(loadDeskBriefing(desk.areaId, "all", ymd), COAST_DEADLINE_MS, desk.areaId).catch(
         () => null,
       );
       return [desk.areaId, next] as const;

@@ -95,3 +95,9 @@ The scripts run on Node 22 with `node --experimental-strip-types`. `test:upstrea
 Internal links must point at the canonical URL, not a URL that canonicalizes elsewhere.
 
 The Saturday letter linked each desk to `/?area=<desk>&theater=<coast>`. The home page canonical for that query is `/morning/<desk>`, so Google was shown the query string. The link is `/morning/<desk>`. Keep a query only when that page already reads it: `/morning/<desk>` reads `activity`. It does not read `theater` or `date`. A dated morning is the path `/morning/<desk>/<yyyy-mm-dd>`.
+
+## 12. Personalized dynamic pages still cache upstream fetches; never chain independent awaits (2026-11-28)
+
+`/newsletter` stays `force-dynamic` because it reads the coasts cookie and the query. That personalization does not have to make every gauge read `cache: "no-store"`. Wrap those briefing fetches in `withFetchRevalidate(300, …)`, the same helper this week's `/newsletter/[week]` path uses, so visitors in a five-minute window share one upstream read. The HTML stays per visitor.
+
+`loadLetterTomorrows` used to wait until every desk's briefing had settled, then start a second round. Start each desk's tomorrow fetch when that desk's briefing resolves so the two rounds overlap. Do not await one independent batch and only then start the next.

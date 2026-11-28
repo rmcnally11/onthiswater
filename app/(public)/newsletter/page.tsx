@@ -1,3 +1,4 @@
+import { withFetchRevalidate } from "@/lib/external-fetch";
 import { getNewsletter, letterWeekId, loadLetterTomorrows, withCoastWaters } from "@/lib/newsletter";
 import { FieldLetterHeader, PrintSheet, RoomSaltWater } from "@/components/house-art";
 import { JsonLd } from "@/components/json-ld";
@@ -32,15 +33,22 @@ export default async function NewsletterPage({
     />
   );
 
+  // Cookie and query stay per visitor. Gauge fetches are shared for five minutes.
   let issue;
+  let tomorrows: Awaited<ReturnType<typeof loadLetterTomorrows>> | null = null;
   let error: string | null = null;
   try {
-    issue = await withCoastWaters(await getNewsletter(), coasts);
+    const loaded = await withFetchRevalidate(300, async () => {
+      const next = await withCoastWaters(await getNewsletter(), coasts, { chainTomorrows: true });
+      return { issue: next, tomorrows: await loadLetterTomorrows(next) };
+    });
+    issue = loaded.issue;
+    tomorrows = loaded.tomorrows;
   } catch (e) {
     error = e instanceof Error ? e.message : "The letter did not set.";
   }
 
-  if (error || !issue) {
+  if (error || !issue || !tomorrows) {
     return (
       <div className="space-y-6">
         {jsonLd}
@@ -55,7 +63,6 @@ export default async function NewsletterPage({
     );
   }
 
-  const tomorrows = await loadLetterTomorrows(issue);
   return (
     <>
       {jsonLd}
